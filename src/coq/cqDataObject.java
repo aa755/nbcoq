@@ -5,6 +5,7 @@
 package coq;
 
 import java.io.IOException;
+import java.util.List;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.awt.ActionID;
@@ -12,10 +13,16 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
+import org.openide.loaders.DataNode;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.ChildFactory;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
@@ -96,6 +103,45 @@ public class cqDataObject extends MultiDataObject {
         return 1;
     }
 
+/*
+    
+@Override
+protected Node createNodeDelegate() {
+    return new DataNode(
+            this,
+            Children.create(new AbcChildFactory(this), true),
+            getLookup());
+}
+
+private static class AbcChildFactory extends ChildFactory<String> {
+
+    private final cqDataObject dObj;
+
+    public AbcChildFactory(cqDataObject dObj) {
+        this.dObj = dObj;
+    }
+
+    @Override
+    protected boolean createKeys(List list) {
+        FileObject fObj = dObj.getPrimaryFile();
+        try {
+            List<String> dObjContent = fObj.asLines();
+            list.addAll(dObjContent);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return true;
+    }
+
+    @Override
+    protected Node createNodeForKey(String key) {
+        Node childNode = new AbstractNode(Children.LEAF);
+        childNode.setDisplayName(key);
+        return childNode;
+    }
+
+}
+*/
     @MultiViewElement.Registration(
             displayName = "#LBL_cq_EDITOR",
             iconBase = "coq/1372847281_ok_16x16.gif",
