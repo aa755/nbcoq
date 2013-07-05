@@ -4,24 +4,23 @@
  */
 package coq;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
-import org.openide.loaders.DataNode;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.ChildFactory;
-import org.openide.nodes.Children;
-import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
@@ -93,6 +92,11 @@ import org.openide.windows.TopComponent;
 })
 public class cqDataObject extends MultiDataObject {
 
+    private Process process;
+    private BufferedReader result;
+    private PrintWriter input;
+    public String contents;
+    private FileObject fob;
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         registerEditor("text/coq", true);
@@ -103,45 +107,71 @@ public class cqDataObject extends MultiDataObject {
         return 1;
     }
 
-/*
-    
-@Override
-protected Node createNodeDelegate() {
-    return new DataNode(
-            this,
-            Children.create(new AbcChildFactory(this), true),
-            getLookup());
-}
-
-private static class AbcChildFactory extends ChildFactory<String> {
-
-    private final cqDataObject dObj;
-
-    public AbcChildFactory(cqDataObject dObj) {
-        this.dObj = dObj;
-    }
-
-    @Override
-    protected boolean createKeys(List list) {
-        FileObject fObj = dObj.getPrimaryFile();
+    void getContents() {
         try {
-            List<String> dObjContent = fObj.asLines();
-            list.addAll(dObjContent);
+            fob = getPrimaryFile();
+            String fname = FileUtil.getFileDisplayName(fob);
+            contents=fname+"\n---\n";
+            process = new ProcessBuilder("coqtop").redirectErrorStream(true).start();
+
+            input = new PrintWriter(new OutputStreamWriter(process.getOutputStream()), true);
+            String message="Print nat.";
+            input.println(message);
+            //System.out.println(message);
+
+            result = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;// = new String();
+
+            line = result.readLine();
+            //while ((line = result.readLine()) == null) {
+
+                /* Some processing for the read line */
+
+                contents=contents+"\n"+line;
+            //}        
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-        return true;
     }
+    /*
+    
+     @Override
+     protected Node createNodeDelegate() {
+     return new DataNode(
+     this,
+     Children.create(new AbcChildFactory(this), true),
+     getLookup());
+     }
 
-    @Override
-    protected Node createNodeForKey(String key) {
-        Node childNode = new AbstractNode(Children.LEAF);
-        childNode.setDisplayName(key);
-        return childNode;
-    }
+     private static class AbcChildFactory extends ChildFactory<String> {
 
-}
-*/
+     private final cqDataObject dObj;
+
+     public AbcChildFactory(cqDataObject dObj) {
+     this.dObj = dObj;
+     }
+
+     @Override
+     protected boolean createKeys(List list) {
+     FileObject fObj = dObj.getPrimaryFile();
+     try {
+     List<String> dObjContent = fObj.asLines();
+     list.addAll(dObjContent);
+     } catch (IOException ex) {
+     Exceptions.printStackTrace(ex);
+     }
+     return true;
+     }
+
+     @Override
+     protected Node createNodeForKey(String key) {
+     Node childNode = new AbstractNode(Children.LEAF);
+     childNode.setDisplayName(key);
+     return childNode;
+     }
+
+     }
+     */
     @MultiViewElement.Registration(
             displayName = "#LBL_cq_EDITOR",
             iconBase = "coq/1372847281_ok_16x16.gif",
