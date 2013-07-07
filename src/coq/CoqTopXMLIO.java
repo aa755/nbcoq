@@ -55,25 +55,67 @@ private  PrintWriter input;
         return ret;        
     }
 
+    public String getVersion()
+    {
+        CoqRecMesg rec=communicate(CoqSendMesg.getVersionMesg());
+        if(!rec.success)
+            return "failure in init of CoqTop";
+        else
+            return rec.nuDoc.toXML();
+    }
     
     public static class CoqSendMesg{
         public String mesg;
+        public String type;
+
+
+        static CoqSendMesg getVersionMesg()
+        {
+            return new CoqSendMesg("", "about");
+        }
+        
+        public CoqSendMesg(String mesg, String type) {
+            this.mesg = mesg;
+            this.type = type;
+        }
 
         public CoqSendMesg(String mesg) {
             this.mesg = mesg;
+            this.type= "interp";
         }
         
         public String toXML()
         {            
-            return "<call val=\"interp\">"+mesg+"</call>";
+            return "<call val=\""+ type +"\">"+mesg+"</call>";
         }
+    }
+    
+    public static class CoqSendRewindMeg extends CoqSendMesg
+    {
+
+        int numSteps;
+        
+        public CoqSendRewindMeg(String mesg) {
+            super(mesg, "rewind");
+            numSteps=1;
+        }
+
+        public CoqSendRewindMeg( String mesg, int numSteps) {
+            super(mesg, "rewind");
+            this.numSteps = numSteps;
+        }
+               
+        public String toXML()
+        {            
+            return "<call val=\"rewind\" steps="+numSteps+"/>";
+        }        
     }
     
     public static class CoqRecMesg{
        nu.xom.Document nuDoc;
         Document doc;
         boolean success;
-        Element contents;
+     //   Element contents;
         char [] buf=new char [256];
         
         
@@ -90,11 +132,14 @@ private  PrintWriter input;
                     while (result.ready()) {
                         result.read(buf);
                         answer = answer + new String(buf);
-                        
+                     
                     }
                     try {
                        System.out.println("trying to parse:"+answer);
                         nuDoc = b.build(answer.trim(), null);
+                        String status=nuDoc.getRootElement().getAttribute("val").getValue();
+                        System.out.println("status="+status);
+                        success=(status.equals("good"));
                         break;
                     } catch (Exception ex) {
                         //Exceptions.printStackTrace(ex);
@@ -124,4 +169,6 @@ private  PrintWriter input;
             }
         }
     }
+    
+    
 }

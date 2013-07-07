@@ -92,14 +92,14 @@ import org.openide.windows.TopComponent;
 })
 public class cqDataObject extends MultiDataObject {
 
-    private Process process;
-    private BufferedReader result;
-    private PrintWriter input;
-    public String contents;
+    private CoqTopXMLIO coqtop;
+    public String dbugcontents;
     private FileObject fob;
+   
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         registerEditor("text/coq", true);
+        coqtop=new CoqTopXMLIO();
     }
 
     @Override
@@ -108,30 +108,10 @@ public class cqDataObject extends MultiDataObject {
     }
 
     void getContents() {
-        try {
-            fob = getPrimaryFile();
-            String fname = FileUtil.getFileDisplayName(fob);
-            contents=fname+"\n---\n";
-            process = new ProcessBuilder("coqtop").redirectErrorStream(true).start();
-
-            input = new PrintWriter(new OutputStreamWriter(process.getOutputStream()), true);
-            String message="Print nat.";
-            input.println(message);
-            //System.out.println(message);
-
-            result = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;// = new String();
-
-            line = result.readLine();
-            //while ((line = result.readLine()) == null) {
-
-                /* Some processing for the read line */
-
-                contents=contents+"\n"+line;
-            //}        
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        
+            dbugcontents= "successfully started CoqTop version: \n" +coqtop.getVersion();
+            
+        
     }
     /*
     

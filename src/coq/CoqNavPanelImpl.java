@@ -70,7 +70,7 @@ import sun.swing.SwingAccessor;
 public class CoqNavPanelImpl implements NavigatorPanel {
 
     /** holds UI of this panel */
-    private JComponent panelUI;
+    private ProofError panelUI;
     /** template for finding data in given context.
      * Object used as example, replace with your own data source, for example JavaDataObject etc */
     private static final Lookup.Template MY_DATA = new Lookup.Template(cqDataObject.class);
@@ -79,8 +79,10 @@ public class CoqNavPanelImpl implements NavigatorPanel {
     /** listener to context changes */
     private LookupListener contextL;
     
+    
     /** public no arg constructor needed for system to instantiate provider well */
     public CoqNavPanelImpl() {
+                    panelUI = new ProofError();
     }
 
     @Override
@@ -95,10 +97,6 @@ public class CoqNavPanelImpl implements NavigatorPanel {
 
     @Override
     public JComponent getComponent() {
-        if (panelUI == null) {
-            panelUI = new JLabel("Dummy label");
-            // You can override requestFocusInWindow() on the component if desired.
-        }
         return panelUI;
     }
 
@@ -109,7 +107,7 @@ public class CoqNavPanelImpl implements NavigatorPanel {
         curContext.addLookupListener(getContextListener());
         // get actual data and recompute content
         Collection data = curContext.allInstances();
-        JOptionPane.showMessageDialog(null, "found "+data.size() +" objects");
+     //   JOptionPane.showMessageDialog(null, "found "+data.size() +" objects");
         setNewContent(data);
     }
 
@@ -133,11 +131,9 @@ public class CoqNavPanelImpl implements NavigatorPanel {
         // Note - be sure to compute the content OUTSIDE event dispatch thread,
         // just final repainting of UI should be done in event dispatch thread.
         // Please use RequestProcessor and Swing.invokeLater to achieve this.
-        JTextArea cont=new JTextArea("analysing coq document");
-        panelUI=cont;
         cqDataObject cdt=(cqDataObject) newData.toArray()[0];
         cdt.getContents();
-        cont.setText(cdt.contents);        
+        panelUI.setDebugMesg(cdt.dbugcontents);        
         
     }
     
