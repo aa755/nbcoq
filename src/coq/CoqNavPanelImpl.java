@@ -54,14 +54,10 @@ package coq;
 
 import java.util.Collection;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import org.netbeans.spi.navigator.NavigatorPanel;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
-import sun.swing.SwingAccessor;
 
 /**
  * Basic dummy implementation of NavigatorPanel interface.
@@ -104,6 +100,7 @@ public class CoqNavPanelImpl implements NavigatorPanel {
     public void panelActivated(Lookup context) {
         // lookup context and listen to result to get notified about context changes
         curContext = context.lookup(MY_DATA);
+       
         curContext.addLookupListener(getContextListener());
         // get actual data and recompute content
         Collection data = curContext.allInstances();
@@ -132,6 +129,9 @@ public class CoqNavPanelImpl implements NavigatorPanel {
         // just final repainting of UI should be done in event dispatch thread.
         // Please use RequestProcessor and Swing.invokeLater to achieve this.
         cqDataObject cdt=(cqDataObject) newData.toArray()[0];
+        //cdt.
+       
+        panelUI.setEditorDoc(cdt);
         cdt.getContents();
         panelUI.setDebugMesg(cdt.dbugcontents);        
         

@@ -4,18 +4,27 @@
  */
 package coq;
 
-import java.io.BufferedReader;
+import java.awt.Color;
+import java.awt.Paint;
+import java.awt.font.TextAttribute;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
+import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
+import org.netbeans.spi.editor.highlighting.HighlightsSequence;
+import org.netbeans.spi.editor.highlighting.support.OffsetsBag;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
+import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
@@ -94,14 +103,104 @@ public class cqDataObject extends MultiDataObject {
 
     private CoqTopXMLIO coqtop;
     public String dbugcontents;
-    private FileObject fob;
-   
+    private int compiledOffset;
+    private EditorCookie editor;
+    private final int DOWN_BUTTON_STEP=128;
+    private OffsetsBag compiledArea;
+    private static final AttributeSet compiledCodeAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Background,
+            new Color(236, 235, 0));
+    private boolean initialized;   
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
+        initialized=false;
         registerEditor("text/coq", true);
         coqtop=new CoqTopXMLIO();
+        compiledOffset=0;    
     }
 
+    void initialize()
+    {
+        initialized=true;
+        assignCookie();
+        /*
+         StyleContext sc = StyleContext.getDefaultStyleContext();
+        // StyleConstants.setBackground((MutableAttributeSet)SimpleAttributeSet.EMPTY, Color.red);
+        compiledCodeAttr = sc.addAttribute(
+                SimpleAttributeSet.EMPTY,
+                StyleConstants.CharacterConstants.Background, Color.GREEN);
+        compiledCodeAttr = sc.addAttribute(
+                compiledCodeAttr,
+                StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+                * */
+        compiledArea=new OffsetsBag(getDocument(),true); 
+        //getDocument().set
+     }
+    
+    private StyledDocument getDocument()
+    {
+        return editor.getDocument();
+    }
+    
+    void handleDownButton() {
+        if(!initialized)
+            initialize();
+        String code="";
+        /* start a binary search for endpoint*/
+        int step_size = DOWN_BUTTON_STEP;
+        int endPos=getDocument().getEndPosition().getOffset();
+        if(endPos==compiledOffset)
+        {
+            dbugcontents="reached end of file";
+            return;
+        }
+            try {
+                code = getDocument().getText(compiledOffset, step_size);
+            } catch (BadLocationException ex) {
+            try {
+                //Exceptions.printStackTrace(ex); this pops up an error message
+                code=getDocument().getText(compiledOffset,endPos-compiledOffset);
+//                System.out.println("step size="+step_size);
+            } catch (BadLocationException ex1) {
+                Exceptions.printStackTrace(ex1);
+                assert(false); // this should never happen;
+            }
+            }
+        
+        
+        int dotOffset=code.indexOf('.');
+        if(dotOffset==-1)
+        {
+            dbugcontents="the next "+DOWN_BUTTON_STEP+" chars dont contain a dot. try breaking up ur next stament.";
+            return;            
+        }
+        
+        String sendtocoq=code.substring(0, dotOffset+1);
+        
+        CoqTopXMLIO.CoqRecMesg rec=coqtop.interpret(sendtocoq);
+        
+        dbugcontents="sent: "+sendtocoq+" received "+rec.nuDoc.toXML();
+        
+        if(rec.success)
+        {
+            compiledOffset=compiledOffset+dotOffset+1;
+        }  
+        System.out.println("compiled area:"+compiledArea);
+        compiledArea=new OffsetsBag(getDocument());
+        compiledArea.addHighlight(0, compiledOffset, compiledCodeAttr);
+       
+        //getDocument().setCharacterAttributes(0, compiledOffset, compiledCodeAttr, false);
+    }
+
+    /**
+     * final because it is called in the constructor
+     */
+    final void assignCookie()
+    {
+        editor=getLookup().lookup(EditorCookie.class);
+        assert(editor!=null);
+    }
+    
     @Override
     protected int associateLookup() {
         return 1;

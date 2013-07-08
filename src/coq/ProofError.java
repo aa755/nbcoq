@@ -43,8 +43,18 @@ public class ProofError extends javax.swing.JPanel {
         jScrollPane1.setViewportView(jTextArea1);
 
         org.openide.awt.Mnemonics.setLocalizedText(upButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.upButton.text")); // NOI18N
+        upButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                upButtonActionPerformed(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(downButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downButton.text")); // NOI18N
+        downButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downButtonActionPerformed(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(disableRadioBut, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.disableRadioBut.text")); // NOI18N
 
@@ -77,6 +87,26 @@ public class ProofError extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+        // TODO add your handling code here:
+        if(editorDoc==null)
+        {
+            setDebugMesg("upButton: no coq document is associated w/ this window. this could be a bug");
+        }
+    }//GEN-LAST:event_upButtonActionPerformed
+
+    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
+        // TODO add your handling code here:
+        if(editorDoc==null)
+        {
+            setDebugMesg("downButton: no coq document is associated w/ this window. this could be a bug");
+            
+        }
+       editorDoc.handleDownButton();
+       jTextArea1.setText(editorDoc.dbugcontents);           
+    }//GEN-LAST:event_downButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton disableRadioBut;
     private javax.swing.JButton downButton;

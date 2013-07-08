@@ -55,6 +55,11 @@ private  PrintWriter input;
         return ret;        
     }
 
+    public CoqRecMesg interpret(String code)
+    {
+        return communicate(new CoqSendMesg(code));
+    }
+    
     public String getVersion()
     {
         CoqRecMesg rec=communicate(CoqSendMesg.getVersionMesg());

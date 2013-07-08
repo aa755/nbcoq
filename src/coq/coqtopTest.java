@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import javax.swing.JOptionPane;
+
 //import org.openide.util.Exceptions;
 
 /*
@@ -28,10 +29,11 @@ public class coqtopTest {
     /**
      * @param args the command line arguments
      */
-    private static Process process;
+private static Process process;
 private static BufferedReader result;
 private static BufferedReader err;
 private static PrintWriter input;
+
     
     public static void main(String[] args) {
         // TODO code application logic here
