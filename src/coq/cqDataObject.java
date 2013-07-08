@@ -134,6 +134,10 @@ public class cqDataObject extends MultiDataObject {
                 StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
                 * */
         compiledArea=new OffsetsBag(getDocument(),true); 
+        if(getDocument().getProperty(cqDataObject.class)==null)
+            {
+                getDocument().putProperty(cqDataObject.class, this);
+            }
         //getDocument().set
      }
     
@@ -185,9 +189,10 @@ public class cqDataObject extends MultiDataObject {
         {
             compiledOffset=compiledOffset+dotOffset+1;
         }  
-        System.out.println("compiled area:"+compiledArea);
-        compiledArea=new OffsetsBag(getDocument());
-        compiledArea.addHighlight(0, compiledOffset, compiledCodeAttr);
+        System.out.println("compiled area:"+getCompiledArea());
+        //compiledArea=new OffsetsBag(getDocument());
+        getCompiledArea().clear();
+        getCompiledArea().addHighlight(0, compiledOffset, compiledCodeAttr);
        
         //getDocument().setCharacterAttributes(0, compiledOffset, compiledCodeAttr, false);
     }
@@ -261,5 +266,12 @@ public class cqDataObject extends MultiDataObject {
     @Messages("LBL_cq_EDITOR=Source")
     public static MultiViewEditorElement createEditor(Lookup lkp) {
         return new MultiViewEditorElement(lkp);
+    }
+
+    /**
+     * @return the compiledArea
+     */
+    public OffsetsBag getCompiledArea() {
+        return compiledArea;
     }
 }
