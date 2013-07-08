@@ -26,7 +26,7 @@ import org.netbeans.spi.editor.highlighting.support.OffsetsBag;
  //   @MimeRegistration(mimeType = "text/coq", service = HighlightsLayerFactory.class),
     @MimeRegistration(mimeType = "text/coq", service = HighlightsLayerFactory.class)
 })
-public class MarkHTMLOccurrencesHighlightsLayerFactory implements HighlightsLayerFactory {
+public class CoqHighlighter implements HighlightsLayerFactory {
     private static final AttributeSet compiledCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(50, 255, 50));
@@ -67,7 +67,7 @@ public class MarkHTMLOccurrencesHighlightsLayerFactory implements HighlightsLaye
              cqDataObject dobj = (cqDataObject) NbEditorUtilities.getDataObject(weakDoc.get());
              dobj.setHighlighter(this);
            // context.getDocument().putProperty(MarkHTMLOccurrencesHighlightsLayerFactory.class, this);
-            retb.addHighlight(context.getDocument().getStartPosition().getOffset(), context.getDocument().getEndPosition().getOffset(), compiledCodeAttr);
+//            retb.addHighlight(context.getDocument().getStartPosition().getOffset(), context.getDocument().getEndPosition().getOffset(), compiledCodeAttr);
             return new HighlightsLayer[]{
                     HighlightsLayer.create(
                     "coq compiled",

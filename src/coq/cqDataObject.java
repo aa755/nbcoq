@@ -4,22 +4,11 @@
  */
 package coq;
 
-import java.awt.Color;
-import java.awt.Paint;
-import java.awt.font.TextAttribute;
 import java.io.IOException;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
-import org.netbeans.spi.editor.highlighting.HighlightsSequence;
-import org.netbeans.spi.editor.highlighting.support.OffsetsBag;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -107,7 +96,7 @@ public class cqDataObject extends MultiDataObject {
     private EditorCookie editor;
     private final int DOWN_BUTTON_STEP=128;
     private boolean initialized;   
-    private MarkHTMLOccurrencesHighlightsLayerFactory highlighter;
+    private CoqHighlighter highlighter;
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         initialized=false;
@@ -273,7 +262,7 @@ public class cqDataObject extends MultiDataObject {
     /**
      * @param highlighter the highlighter to set
      */
-    public void setHighlighter(MarkHTMLOccurrencesHighlightsLayerFactory highlighter) {
+    public void setHighlighter(CoqHighlighter highlighter) {
         this.highlighter = highlighter;
     }
 
