@@ -9,7 +9,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,7 +30,7 @@ public class CoqInteract extends javax.swing.JFrame {
         try {
             model=new DefaultTreeModel(null);
             jTree1.setModel(model);
-            coqtop=new CoqTopXMLIO();
+            coqtop=new CoqTopXMLIO(null);
             System.out.println("creation of coqtop succedd");
             System.out.flush();
         } catch (IOException ex) {

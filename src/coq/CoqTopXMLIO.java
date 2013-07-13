@@ -7,23 +7,20 @@ package coq;
 //import java.io.BufferedReader;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 //import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.StringReader;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import nu.xom.Builder;
+
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 //import nu.xom.ParsingException;
 //import nu.xom.ValidityException;
 import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.apache.commons.lang3.StringEscapeUtils;
+
 
 /**
  *
@@ -37,10 +34,17 @@ private  BufferedReader result;
 private  PrintWriter input;
 //private static PrintWriter input;
 
-    public CoqTopXMLIO() throws IOException {
-            process = new ProcessBuilder("coqtop","-ideslave").start();
+    public CoqTopXMLIO(FileObject fob) throws IOException {
+        
+        
+            System.out.println("coq path: "+fob.getPath());
+            process = new ProcessBuilder("coqtop","-ideslave").directory(FileUtil.toFile(fob)).start();
+//            process = new ProcessBuilder("coqtop","-ideslave  -I "+fob.getPath()).start();
+//         process = new ProcessBuilder("coqtop","-ideslave  -I "+path).directory(File.)+start();
+        
             input = new PrintWriter(new OutputStreamWriter(process.getOutputStream()), true);
             result=new BufferedReader(new InputStreamReader(process.getInputStream()));
+            System.out.println("started coq");
     }
     
     public CoqRecMesg communicate(CoqSendMesg msg)
@@ -91,7 +95,7 @@ private  PrintWriter input;
         
         public String toXML()
         {            
-            return "<call val=\""+ type +"\">"+mesg+"</call>";
+            return "<call val=\""+ type +"\">"+ StringEscapeUtils.escapeXml(mesg)+"</call>";
         }
     }
     

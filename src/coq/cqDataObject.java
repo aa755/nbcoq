@@ -5,6 +5,8 @@
 package coq;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -14,6 +16,7 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
@@ -94,14 +97,17 @@ public class cqDataObject extends MultiDataObject {
     public String dbugcontents;
     private int compiledOffset;
     private EditorCookie editor;
-    private final int DOWN_BUTTON_STEP=128;
+    private final int DOWN_BUTTON_STEP=10000;
     private boolean initialized;   
     private CoqHighlighter highlighter;
+    private static final String comment_reg="(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)";
+    private static final String command_reg="([^\\s]*\\.[\\s])";
+    private static final Pattern coq=Pattern.compile(command_reg+"|"+comment_reg);
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         initialized=false;
         registerEditor("text/coq", true);
-        coqtop=new CoqTopXMLIO();
+        coqtop=new CoqTopXMLIO(pf.getParent());
         compiledOffset=0;    
     //    initialize();
     }
@@ -143,7 +149,7 @@ public class cqDataObject extends MultiDataObject {
         String code="";
         /* start a binary search for endpoint*/
         int step_size = DOWN_BUTTON_STEP;
-        int endPos=getDocument().getEndPosition().getOffset();
+        int endPos=getDocument().getEndPosition().getOffset();        
         if(endPos==compiledOffset)
         {
             dbugcontents="reached end of file";
@@ -162,15 +168,21 @@ public class cqDataObject extends MultiDataObject {
             }
             }
         
+       Matcher matcher = coq.matcher(code);
+       int dotOffset=0;
+        if(matcher.find())
+        {
+//            assert(matcher.start()==0);
+            dotOffset=matcher.end();
+        } 
         
-        int dotOffset=code.indexOf('.');
-        if(dotOffset==-1)
+        if(dotOffset==0)
         {
             dbugcontents="the next "+DOWN_BUTTON_STEP+" chars dont contain a dot. try breaking up ur next stament.";
             return;            
         }
         
-        String sendtocoq=code.substring(0, dotOffset+1);
+        String sendtocoq=code.substring(0, dotOffset+1).trim();
         
         CoqTopXMLIO.CoqRecMesg rec=coqtop.interpret(sendtocoq);
         
@@ -178,7 +190,10 @@ public class cqDataObject extends MultiDataObject {
         
         if(rec.success)
         {
-            updateCompiledOffset(dotOffset+1);
+            if(code.charAt(dotOffset-1)=='.')
+             updateCompiledOffset(dotOffset);
+            else
+             updateCompiledOffset(dotOffset+1);
         }  
         //System.out.println("compiled area:"+getCompiledArea());
         //compiledArea=new OffsetsBag(getDocument());
