@@ -98,6 +98,7 @@ public class ProofError extends javax.swing.JPanel {
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
         // TODO add your handling code here:
+        downButton.setEnabled(false);
         if(editorDoc==null)
         {
             setDebugMesg("downButton: no coq document is associated w/ this window. this could be a bug");
@@ -105,6 +106,7 @@ public class ProofError extends javax.swing.JPanel {
         }
        editorDoc.handleDownButton();
        jTextArea1.setText(editorDoc.dbugcontents);           
+        downButton.setEnabled(true);
     }//GEN-LAST:event_downButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

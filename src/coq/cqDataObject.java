@@ -102,9 +102,15 @@ public class cqDataObject extends MultiDataObject {
     private CoqHighlighter highlighter;
     private static final String comment_reg="(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)";
     private static final String command_reg="([^\\s]*\\.[\\s])";
+    private static final String command_start="([\\s]*[^\\(\\-])";
+    private static final String command_end="";
+    private static final String comment_start="([\\s]*\\(\\*)";
     private static final Pattern coq=Pattern.compile(command_reg+"|"+comment_reg);
+    private static final Pattern coqStart=Pattern.compile(command_start+"|"+comment_start);
+    private static final Pattern coqCommandEnd=Pattern.compile("(\\.[\\s])");
+    private static final Pattern coqComment=Pattern.compile("(\\(\\*)|(\\*\\))");
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
-        super(pf, loader);
+        super(pf, loader); 
         initialized=false;
         registerEditor("text/coq", true);
         coqtop=new CoqTopXMLIO(pf.getParent());
@@ -142,47 +148,71 @@ public class cqDataObject extends MultiDataObject {
     {
         return editor.getDocument();
     }
+    int getOffsetToSend()
+    {
+        try {
+            int offset=0;
+            int endPos=getDocument().getEndPosition().getOffset();        
+            String code=getDocument().getText(compiledOffset, endPos-compiledOffset);
+            Matcher commandEndMatcher = coqStart.matcher(code);
+            if(commandEndMatcher.find())
+            {
+                int cstart=commandEndMatcher.group().indexOf("(*");
+                if(cstart!=-1)
+                {  /* the next segment is a pure comment*/
+                    offset=code.indexOf("*)", endPos)+1;
+                    //char at offset is )
+                }
+                else
+                {
+                    boolean done=false;
+                    int unmatchedComLeft=0;
+                    int unmatchedStrLift=0;
+                        commandEndMatcher=coqCommandEnd.matcher(code);
+                        while (commandEndMatcher.find())
+                        {
+                            Matcher comments=coqComment.matcher(code.substring(0, commandEndMatcher.end()));
+                            while (comments.find())
+                            {
+                                if(comments.group().equals("*)"))
+                                    unmatchedComLeft=unmatchedComLeft-1;
+                                    
+                                if(comments.group().equals("(*"))
+                                    unmatchedComLeft=unmatchedComLeft+1;
+                            }
+                            if(unmatchedComLeft==0)
+                            {
+                                offset=commandEndMatcher.end()-1;
+                                // code[offset]='.'
+                                break;
+                            }
+                        }
+                }
+            }
+            
+            
+            return offset;
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+            assert(false);
+            return -1;
+        }
+        
+        
+    }
     
-    void handleDownButton() {
+    synchronized void  handleDownButton() {
         if(!initialized)
             initialize();
-        String code="";
-        /* start a binary search for endpoint*/
-        int step_size = DOWN_BUTTON_STEP;
-        int endPos=getDocument().getEndPosition().getOffset();        
-        if(endPos==compiledOffset)
-        {
-            dbugcontents="reached end of file";
-            return;
+        
+        int dotOffset=getOffsetToSend();
+        String sendtocoq="";
+        try {
+            sendtocoq = getDocument().getText(compiledOffset, dotOffset);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+            assert(false);
         }
-            try {
-                code = getDocument().getText(compiledOffset, step_size);
-            } catch (BadLocationException ex) {
-            try {
-                //Exceptions.printStackTrace(ex); this pops up an error message
-                code=getDocument().getText(compiledOffset,endPos-compiledOffset);
-//                System.out.println("step size="+step_size);
-            } catch (BadLocationException ex1) {
-                Exceptions.printStackTrace(ex1);
-                assert(false); // this should never happen;
-            }
-            }
-        
-       Matcher matcher = coq.matcher(code);
-       int dotOffset=0;
-        if(matcher.find())
-        {
-//            assert(matcher.start()==0);
-            dotOffset=matcher.end();
-        } 
-        
-        if(dotOffset==0)
-        {
-            dbugcontents="the next "+DOWN_BUTTON_STEP+" chars dont contain a dot. try breaking up ur next stament.";
-            return;            
-        }
-        
-        String sendtocoq=code.substring(0, dotOffset+1).trim();
         
         CoqTopXMLIO.CoqRecMesg rec=coqtop.interpret(sendtocoq);
         
@@ -190,10 +220,7 @@ public class cqDataObject extends MultiDataObject {
         
         if(rec.success)
         {
-            if(code.charAt(dotOffset-1)=='.')
-             updateCompiledOffset(dotOffset);
-            else
-             updateCompiledOffset(dotOffset+1);
+                updateCompiledOffset (dotOffset+1);
         }  
         //System.out.println("compiled area:"+getCompiledArea());
         //compiledArea=new OffsetsBag(getDocument());
