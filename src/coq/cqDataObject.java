@@ -4,22 +4,11 @@
  */
 package coq;
 
-import java.awt.Color;
-import java.awt.Paint;
-import java.awt.font.TextAttribute;
 import java.io.IOException;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
-import org.netbeans.spi.editor.highlighting.HighlightsSequence;
-import org.netbeans.spi.editor.highlighting.support.OffsetsBag;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -106,20 +95,24 @@ public class cqDataObject extends MultiDataObject {
     private int compiledOffset;
     private EditorCookie editor;
     private final int DOWN_BUTTON_STEP=128;
-    private OffsetsBag compiledArea;
-    private static final AttributeSet compiledCodeAttr =
-            AttributesUtilities.createImmutable(StyleConstants.Background,
-            new Color(236, 235, 0));
     private boolean initialized;   
+    private CoqHighlighter highlighter;
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         initialized=false;
         registerEditor("text/coq", true);
         coqtop=new CoqTopXMLIO();
         compiledOffset=0;    
+    //    initialize();
     }
 
-    void initialize()
+    void updateCompiledOffset(int change)
+    {
+        compiledOffset=compiledOffset+change;
+        highlighter.setHighlight(0, compiledOffset);
+    }
+    
+    final void initialize()
     {
         initialized=true;
         assignCookie();
@@ -133,12 +126,10 @@ public class cqDataObject extends MultiDataObject {
                 compiledCodeAttr,
                 StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
                 * */
-        compiledArea=new OffsetsBag(getDocument(),true); 
-        if(getDocument().getProperty(cqDataObject.class)==null)
-            {
-                getDocument().putProperty(cqDataObject.class, this);
-            }
         //getDocument().set
+       // setHighlighter((MarkHTMLOccurrencesHighlightsLayerFactory) getDocument().getProperty(MarkHTMLOccurrencesHighlightsLayerFactory.class));
+        assert(highlighter!=null);
+        
      }
     
     private StyledDocument getDocument()
@@ -187,12 +178,12 @@ public class cqDataObject extends MultiDataObject {
         
         if(rec.success)
         {
-            compiledOffset=compiledOffset+dotOffset+1;
+            updateCompiledOffset(dotOffset+1);
         }  
-        System.out.println("compiled area:"+getCompiledArea());
+        //System.out.println("compiled area:"+getCompiledArea());
         //compiledArea=new OffsetsBag(getDocument());
-        getCompiledArea().clear();
-        getCompiledArea().addHighlight(0, compiledOffset, compiledCodeAttr);
+       // getCompiledArea().clear();
+        //getCompiledArea().addHighlight(0, compiledOffset, compiledCodeAttr);
        
         //getDocument().setCharacterAttributes(0, compiledOffset, compiledCodeAttr, false);
     }
@@ -269,9 +260,13 @@ public class cqDataObject extends MultiDataObject {
     }
 
     /**
+     * @param highlighter the highlighter to set
+     */
+    public void setHighlighter(CoqHighlighter highlighter) {
+        this.highlighter = highlighter;
+    }
+
+    /**
      * @return the compiledArea
      */
-    public OffsetsBag getCompiledArea() {
-        return compiledArea;
-    }
 }

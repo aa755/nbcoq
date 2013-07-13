@@ -62,7 +62,7 @@ import org.openide.util.LookupListener;
 /**
  * Basic dummy implementation of NavigatorPanel interface.
  */
-@NavigatorPanel.Registration(mimeType="text/coq", displayName="Dummy View")
+@NavigatorPanel.Registration(mimeType="text/coq", displayName="Proof")
 public class CoqNavPanelImpl implements NavigatorPanel {
 
     /** holds UI of this panel */
