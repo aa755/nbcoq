@@ -133,7 +133,7 @@ public class CoqNavPanelImpl implements NavigatorPanel {
        
         panelUI.setEditorDoc(cdt);
         cdt.getContents();
-        panelUI.setDebugMesg(cdt.dbugcontents);        
+        panelUI.setDebugMesg(cdt.getDbugcontents());        
         
     }
     

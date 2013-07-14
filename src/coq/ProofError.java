@@ -4,6 +4,8 @@
  */
 package coq;
 
+import org.openide.util.RequestProcessor;
+
 /**
  *
  * @author Abhishek
@@ -96,17 +98,27 @@ public class ProofError extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_upButtonActionPerformed
 
+    void disableCompileButtons()
+    {
+        downButton.setEnabled(false);
+       jTextArea1.setText(editorDoc.getDbugcontents());           
+    }
+    
+    public void enableCompileButtons()
+    {
+        downButton.setEnabled(true);
+    }
+    
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
         // TODO add your handling code here:
-        downButton.setEnabled(false);
         if(editorDoc==null)
         {
             setDebugMesg("downButton: no coq document is associated w/ this window. this could be a bug");
             
         }
+        
+       disableCompileButtons();
        editorDoc.handleDownButton();
-       jTextArea1.setText(editorDoc.dbugcontents);           
-        downButton.setEnabled(true);
     }//GEN-LAST:event_downButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -122,5 +134,6 @@ public class ProofError extends javax.swing.JPanel {
      */
     public void setEditorDoc(cqDataObject editorDoc) {
         this.editorDoc = editorDoc;
+        editorDoc.setUiWindow(this);
     }
 }

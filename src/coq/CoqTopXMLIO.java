@@ -47,7 +47,7 @@ private  PrintWriter input;
             System.out.println("started coq");
     }
     
-    public CoqRecMesg communicate(CoqSendMesg msg)
+    public synchronized CoqRecMesg communicate(CoqSendMesg msg)
     {
         System.out.println("writing:" +msg.toXML());
         input.write(msg.toXML());
