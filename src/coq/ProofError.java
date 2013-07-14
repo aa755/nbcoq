@@ -6,6 +6,7 @@ package coq;
 
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -22,6 +23,7 @@ public class ProofError extends javax.swing.JPanel {
     private cqDataObject editorDoc;
     private final DefaultTreeModel model;
     nu.xom.Elements allGoals;
+    ProofSubgoal curGoal;
     /**
      * Creates new form ProofError
      */
@@ -90,11 +92,11 @@ public class ProofError extends javax.swing.JPanel {
         proofRootPanel.setLayout(proofRootPanelLayout);
         proofRootPanelLayout.setHorizontalGroup(
             proofRootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 786, Short.MAX_VALUE)
+            .addGap(0, 887, Short.MAX_VALUE)
         );
         proofRootPanelLayout.setVerticalGroup(
             proofRootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 213, Short.MAX_VALUE)
+            .addGap(0, 289, Short.MAX_VALUE)
         );
 
         jScrollPane3.setViewportView(proofRootPanel);
@@ -104,27 +106,24 @@ public class ProofError extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addComponent(downCursorButton)
+                .addGap(18, 18, 18)
+                .addComponent(downButton)
+                .addGap(18, 18, 18)
+                .addComponent(disableRadioBut)
+                .addGap(26, 26, 26)
+                .addComponent(goalButton)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(44, 44, 44)
-                                .addComponent(downCursorButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(downButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(disableRadioBut)
-                                .addGap(26, 26, 26)
-                                .addComponent(goalButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 37, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -136,10 +135,10 @@ public class ProofError extends javax.swing.JPanel {
                     .addComponent(disableRadioBut)
                     .addComponent(goalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -202,18 +201,19 @@ public void resetTree(nu.xom.Document doc) throws Exception {
 }
 void setAllGoals(nu.xom.Document prg)
 {
-    nu.xom.Element root=prg.getRootElement();
-    nu.xom.Element option=root.getFirstChildElement("option");
+//    nu.xom.Element root=prg.getRootElement();
+    nu.xom.Element option=prg.getRootElement().getFirstChildElement("option");
     if(option==null)
         return;
-    nu.xom.Element goals=root.getFirstChildElement("goals");
-    nu.xom.Element list=root.getFirstChildElement("list");
-    allGoals=root.getChildElements("list");    
+    nu.xom.Element list =option.getFirstChildElement("goals").getFirstChildElement("list");
+    allGoals=list.getChildElements("goal");    
 }
+
 
 void displayGoal(int index)
 {
-    //nu.xom.Element=
+    curGoal=new ProofSubgoal(allGoals.get(index));
+    curGoal.showSubgoal(proofRootPanel);
 }
     private void goalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goalButtonActionPerformed
         // TODO add your handling code here:
