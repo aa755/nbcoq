@@ -138,7 +138,8 @@ private  PrintWriter input;
         Document doc;
         boolean success;
      //   Element contents;
-        char [] buf=new char [20480];
+        private static final int BUF_SIZE=4096;
+        char [] buf=new char [BUF_SIZE];
         
         void trySleep(int milis)
         {
@@ -159,11 +160,12 @@ private  PrintWriter input;
                     trySleep(10);
                 //    Thread.sleep(1);
                 while (count < 5) {
-                    trySleep(2*(count+1));
                     while (result.ready()) {
-                        result.read(buf);
-                        answer = answer + new String(buf);
-                     
+                        int numRead=result.read(buf,0,BUF_SIZE);
+                        if(numRead>0)
+                        {
+                           answer = answer + new String(buf,0,numRead);
+                        }
                     }
                     try {
                        System.out.println("trying to parse:"+answer);
@@ -172,11 +174,14 @@ private  PrintWriter input;
                         System.out.println("status="+status);
                         success=(status.equals("good"));
                         break;
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
                         //Exceptions.printStackTrace(ex);
                         System.err.println("parse error count=" + count);
                         count = count + 1;
+                        trySleep(2*(count));
                         continue;
+
                     }
                     /*
                      try {

@@ -21,6 +21,7 @@ public class ProofError extends javax.swing.JPanel {
 
     private cqDataObject editorDoc;
     private final DefaultTreeModel model;
+    nu.xom.Elements allGoals;
     /**
      * Creates new form ProofError
      */
@@ -199,18 +200,29 @@ public void resetTree(nu.xom.Document doc) throws Exception {
       model.nodeStructureChanged((TreeNode) model.getRoot());
              
 }
-void displayGoal(nu.xom.Document prg)
+void setAllGoals(nu.xom.Document prg)
 {
-    //nu.xom.Element
+    nu.xom.Element root=prg.getRootElement();
+    nu.xom.Element option=root.getFirstChildElement("option");
+    if(option==null)
+        return;
+    nu.xom.Element goals=root.getFirstChildElement("goals");
+    nu.xom.Element list=root.getFirstChildElement("list");
+    allGoals=root.getChildElements("list");    
 }
 
+void displayGoal(int index)
+{
+    //nu.xom.Element=
+}
     private void goalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goalButtonActionPerformed
         // TODO add your handling code here:
         editorDoc.updateGoal();
         try {
             //jTextArea1.setText(editorDoc.getGoal());
             resetTree(editorDoc.getGoal());
-            displayGoal(editorDoc.getGoal());
+            setAllGoals(editorDoc.getGoal());
+            displayGoal(0);
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
