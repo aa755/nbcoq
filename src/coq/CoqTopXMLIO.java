@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 //import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -151,8 +150,6 @@ private  PrintWriter input;
         }
         public void parseXMLFromStream(BufferedReader result) {
             try {
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                //  DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 nu.xom.Builder b = new nu.xom.Builder();
                 String answer = "";
                 int count = 0;
@@ -183,22 +180,6 @@ private  PrintWriter input;
                         continue;
 
                     }
-                    /*
-                     try {
-                     System.out.println("trying to parse:"+answer);
-                     doc = dBuilder.parse(new InputSource(new StringReader(answer.trim())));
-                     break;
-                     } catch (SAXException ex) {
-                     //Exceptions.printStackTrace(ex);
-                     System.err.println("parse error count="+count);
-                     count=count+1;
-                     continue;
-                     }catch (ParserConfigurationException ex) {
-                     Exceptions.printStackTrace(ex);
-                     }
-                     }
-                     */
-
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
