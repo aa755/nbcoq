@@ -4,6 +4,8 @@
  */
 package coq;
 
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -25,9 +27,9 @@ public class ProofError extends javax.swing.JPanel {
     public ProofError() {
         initComponents();
         editorDoc=null;
-            model=new DefaultTreeModel(null);
-            jTree1.setModel(model);
-        
+        model=new DefaultTreeModel(null);
+        jTree1.setModel(model);
+        proofRootPanel.setLayout(new GridLayout(0, 1));
     }
 
     void setDebugMesg(String mesg)
@@ -51,6 +53,8 @@ public class ProofError extends javax.swing.JPanel {
         goalButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        proofRootPanel = new javax.swing.JPanel();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -81,44 +85,61 @@ public class ProofError extends javax.swing.JPanel {
 
         jScrollPane2.setViewportView(jTree1);
 
+        javax.swing.GroupLayout proofRootPanelLayout = new javax.swing.GroupLayout(proofRootPanel);
+        proofRootPanel.setLayout(proofRootPanelLayout);
+        proofRootPanelLayout.setHorizontalGroup(
+            proofRootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 786, Short.MAX_VALUE)
+        );
+        proofRootPanelLayout.setVerticalGroup(
+            proofRootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 213, Short.MAX_VALUE)
+        );
+
+        jScrollPane3.setViewportView(proofRootPanel);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(44, 44, 44)
-                        .addComponent(downCursorButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(downButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(disableRadioBut)
-                        .addGap(26, 26, 26)
-                        .addComponent(goalButton))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(44, 44, 44)
+                                .addComponent(downCursorButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(downButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(disableRadioBut)
+                                .addGap(26, 26, 26)
+                                .addComponent(goalButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 37, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(80, 80, 80)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 271, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(downCursorButton)
-                            .addComponent(downButton)
-                            .addComponent(disableRadioBut)
-                            .addComponent(goalButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(downCursorButton)
+                    .addComponent(downButton)
+                    .addComponent(disableRadioBut)
+                    .addComponent(goalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -194,6 +215,10 @@ public void resetTree(nu.xom.Document doc) throws Exception {
        //jt.setModel(new DefaultTreeModel());
              
 }
+void displayGoal(nu.xom.Document prg)
+{
+    //nu.xom.Element
+}
 
     private void goalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goalButtonActionPerformed
         // TODO add your handling code here:
@@ -201,6 +226,7 @@ public void resetTree(nu.xom.Document doc) throws Exception {
         try {
             //jTextArea1.setText(editorDoc.getGoal());
             resetTree(editorDoc.getGoal());
+            displayGoal(editorDoc.getGoal());
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -214,8 +240,10 @@ public void resetTree(nu.xom.Document doc) throws Exception {
     private javax.swing.JButton goalButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTree jTree1;
+    private javax.swing.JPanel proofRootPanel;
     // End of variables declaration//GEN-END:variables
 
     /**
