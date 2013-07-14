@@ -182,37 +182,21 @@ public class ProofError extends javax.swing.JPanel {
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
   
-//    System.out.println("building:"+e);
     nu.xom.Elements children=e.getChildElements();
-//    System.out.println("nodelist"+children);
-//    System.out.println("length:"+children.size());
     
    for(int i=0;i< children.size();i++) {
       nu.xom.Element child =  children.get(i);
-//    System.out.println("child:"+child);
       result.add(buildnu(child));
    }
    return result;         
 }
 
 public void resetTree(nu.xom.Document doc) throws Exception {
-     //SAXReader reader = new SAXReader();
-//       System.out.println("building nu started");
-       //doc.normalizeDocument();
-  //     System.out.println("raw xml:"+doc);
        DefaultMutableTreeNode root=buildnu(doc.getRootElement());
-    //   System.out.println("building completed");
       model.setRoot(root);
- //      System.out.println("setting completed");
        System.out.flush();
       model.reload();
-             
-//      System.out.println("root:" + model.getRoot());
-
-  //     System.out.println("flush in reset tree");
-  //     System.out.flush();
       model.nodeStructureChanged((TreeNode) model.getRoot());
-       //jt.setModel(new DefaultTreeModel());
              
 }
 void displayGoal(nu.xom.Document prg)
