@@ -36,7 +36,7 @@ public class ProofError extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        upButton = new javax.swing.JButton();
+        downCursorButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         disableRadioBut = new javax.swing.JRadioButton();
 
@@ -44,10 +44,10 @@ public class ProofError extends javax.swing.JPanel {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        org.openide.awt.Mnemonics.setLocalizedText(upButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.upButton.text")); // NOI18N
-        upButton.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(downCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downCursorButton.text")); // NOI18N
+        downCursorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upButtonActionPerformed(evt);
+                downCursorButtonActionPerformed(evt);
             }
         });
 
@@ -66,12 +66,12 @@ public class ProofError extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(44, 44, 44)
-                .addComponent(upButton)
+                .addComponent(downCursorButton)
                 .addGap(18, 18, 18)
                 .addComponent(downButton)
                 .addGap(18, 18, 18)
                 .addComponent(disableRadioBut)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 396, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 350, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -83,30 +83,32 @@ public class ProofError extends javax.swing.JPanel {
                 .addContainerGap(30, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(upButton)
+                    .addComponent(downCursorButton)
                     .addComponent(downButton)
                     .addComponent(disableRadioBut))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+    private void downCursorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downCursorButtonActionPerformed
         // TODO add your handling code here:
         if(editorDoc==null)
         {
             setDebugMesg("upButton: no coq document is associated w/ this window. this could be a bug");
         }
-    }//GEN-LAST:event_upButtonActionPerformed
+    }//GEN-LAST:event_downCursorButtonActionPerformed
 
     void disableCompileButtons()
     {
         downButton.setEnabled(false);
-       jTextArea1.setText(editorDoc.getDbugcontents());           
+        downCursorButton.setEnabled(false);
     }
     
     public void enableCompileButtons()
     {
-        downButton.setEnabled(true);
+       downButton.setEnabled(true);
+       downCursorButton.setEnabled(true);
+       jTextArea1.setText(editorDoc.getDbugcontents());           
     }
     
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
@@ -124,9 +126,9 @@ public class ProofError extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton disableRadioBut;
     private javax.swing.JButton downButton;
+    private javax.swing.JButton downCursorButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
 
     /**

@@ -240,18 +240,6 @@ public class cqDataObject extends MultiDataObject {
     {
         initialized=true;
         assignCookie();
-        /*
-         StyleContext sc = StyleContext.getDefaultStyleContext();
-        // StyleConstants.setBackground((MutableAttributeSet)SimpleAttributeSet.EMPTY, Color.red);
-        compiledCodeAttr = sc.addAttribute(
-                SimpleAttributeSet.EMPTY,
-                StyleConstants.CharacterConstants.Background, Color.GREEN);
-        compiledCodeAttr = sc.addAttribute(
-                compiledCodeAttr,
-                StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-                * */
-        //getDocument().set
-       // setHighlighter((MarkHTMLOccurrencesHighlightsLayerFactory) getDocument().getProperty(MarkHTMLOccurrencesHighlightsLayerFactory.class));
         assert(highlighter!=null);
         
      }
@@ -351,45 +339,6 @@ public class cqDataObject extends MultiDataObject {
             
         
     }
-    /*
-    
-     @Override
-     protected Node createNodeDelegate() {
-     return new DataNode(
-     this,
-     Children.create(new AbcChildFactory(this), true),
-     getLookup());
-     }
-
-     private static class AbcChildFactory extends ChildFactory<String> {
-
-     private final cqDataObject dObj;
-
-     public AbcChildFactory(cqDataObject dObj) {
-     this.dObj = dObj;
-     }
-
-     @Override
-     protected boolean createKeys(List list) {
-     FileObject fObj = dObj.getPrimaryFile();
-     try {
-     List<String> dObjContent = fObj.asLines();
-     list.addAll(dObjContent);
-     } catch (IOException ex) {
-     Exceptions.printStackTrace(ex);
-     }
-     return true;
-     }
-
-     @Override
-     protected Node createNodeForKey(String key) {
-     Node childNode = new AbstractNode(Children.LEAF);
-     childNode.setDisplayName(key);
-     return childNode;
-     }
-
-     }
-     */
     @MultiViewElement.Registration(
             displayName = "#LBL_cq_EDITOR",
             iconBase = "coq/1372847281_ok_16x16.gif",
@@ -409,7 +358,4 @@ public class cqDataObject extends MultiDataObject {
         this.highlighter = highlighter;
     }
 
-    /**
-     * @return the compiledArea
-     */
 }
