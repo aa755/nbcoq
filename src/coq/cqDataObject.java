@@ -139,6 +139,20 @@ public class cqDataObject extends MultiDataObject {
         return editor;
     }
 
+    /**
+     * @return the goal
+     */
+    public nu.xom.Document getGoal() {
+        return goal;
+    }
+
+    /**
+     * @param goal the goal to set
+     */
+    public void setGoal(nu.xom.Document goal) {
+        this.goal = goal;
+    }
+
     class BatchCompile implements Runnable{
         private AtomicInteger targetOffset;
         private AtomicInteger pendingSteps;
@@ -217,6 +231,7 @@ public class cqDataObject extends MultiDataObject {
     private static final Pattern coqComment=Pattern.compile("(\\(\\*)|(\\*\\))");
     private BatchCompile batchCompile;
     private ProofError uiWindow;
+    private nu.xom.Document goal;
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader); 
         initialized=false;
@@ -257,6 +272,11 @@ public class cqDataObject extends MultiDataObject {
     {
         return getEditor().getDocument();
     }
+    void updateGoal()
+    {
+        setGoal(coqtop.getGoal());
+    }
+    
     int getOffsetToSend() {
 
         int offset = 0;

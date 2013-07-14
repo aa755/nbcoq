@@ -183,21 +183,6 @@ public DefaultMutableTreeNode build(Node e, int depth) {
    return result;         
 }
 
-public DefaultMutableTreeNode buildnu(nu.xom.Element e) {
-   DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
-  
-    System.out.println("building:"+e);
-    nu.xom.Elements children=e.getChildElements();
-    System.out.println("nodelist"+children);
-    System.out.println("length:"+children.size());
-    
-   for(int i=0;i< children.size();i++) {
-      nu.xom.Element child =  children.get(i);
-//    System.out.println("child:"+child);
-      result.add(buildnu(child));
-   }
-   return result;         
-}
    public void resetTree(JTree jt,Document doc) throws Exception {
      //SAXReader reader = new SAXReader();
        System.out.println("building started");
@@ -219,7 +204,23 @@ public DefaultMutableTreeNode buildnu(nu.xom.Element e) {
              
 }
 
- public void resetTree(JTree jt,nu.xom.Document doc) throws Exception {
+public DefaultMutableTreeNode buildnu(nu.xom.Element e) {
+   DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
+  
+    System.out.println("building:"+e);
+    nu.xom.Elements children=e.getChildElements();
+    System.out.println("nodelist"+children);
+    System.out.println("length:"+children.size());
+    
+   for(int i=0;i< children.size();i++) {
+      nu.xom.Element child =  children.get(i);
+//    System.out.println("child:"+child);
+      result.add(buildnu(child));
+   }
+   return result;         
+}
+
+public void resetTree(JTree jt,nu.xom.Document doc) throws Exception {
      //SAXReader reader = new SAXReader();
        System.out.println("building nu started");
        //doc.normalizeDocument();

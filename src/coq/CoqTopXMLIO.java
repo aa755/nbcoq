@@ -73,6 +73,15 @@ private  PrintWriter input;
             return rec.nuDoc.toXML();
     }
     
+    public nu.xom.Document getGoal()
+    {
+        CoqRecMesg rec=communicate(CoqSendMesg.goalMessage());
+        if(!rec.success)
+            return null;
+        else
+            return rec.nuDoc;
+    }
+
     public static class CoqSendMesg{
         public String mesg;
         public String type;
@@ -93,6 +102,10 @@ private  PrintWriter input;
             this.type= "interp";
         }
         
+        public static CoqSendMesg goalMessage()
+        {
+            return new CoqSendMesg("", "goal");
+        }
         public String toXML()
         {            
             return "<call val=\""+ type +"\">"+ StringEscapeUtils.escapeXml(mesg)+"</call>";
@@ -125,9 +138,16 @@ private  PrintWriter input;
         Document doc;
         boolean success;
      //   Element contents;
-        char [] buf=new char [256];
+        char [] buf=new char [20480];
         
-        
+        void trySleep(int milis)
+        {
+           try {
+               Thread.sleep(milis);
+           } catch (InterruptedException ex) {
+               Exceptions.printStackTrace(ex);
+           }
+        }
         public void parseXMLFromStream(BufferedReader result) {
             try {
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -135,9 +155,11 @@ private  PrintWriter input;
                 nu.xom.Builder b = new nu.xom.Builder();
                 String answer = "";
                 int count = 0;
-                while (!result.ready());
+                while (!result.ready())
+                    trySleep(10);
                 //    Thread.sleep(1);
-                while (count < 10) {
+                while (count < 5) {
+                    trySleep(2*(count+1));
                     while (result.ready()) {
                         result.read(buf);
                         answer = answer + new String(buf);

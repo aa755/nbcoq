@@ -4,6 +4,12 @@
  */
 package coq;
 
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import org.openide.util.Exceptions;
+
 
 /**
  *
@@ -12,12 +18,16 @@ package coq;
 public class ProofError extends javax.swing.JPanel {
 
     private cqDataObject editorDoc;
+    private final DefaultTreeModel model;
     /**
      * Creates new form ProofError
      */
     public ProofError() {
         initComponents();
         editorDoc=null;
+            model=new DefaultTreeModel(null);
+            jTree1.setModel(model);
+        
     }
 
     void setDebugMesg(String mesg)
@@ -38,6 +48,9 @@ public class ProofError extends javax.swing.JPanel {
         downCursorButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         disableRadioBut = new javax.swing.JRadioButton();
+        goalButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTree1 = new javax.swing.JTree();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -59,33 +72,53 @@ public class ProofError extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(disableRadioBut, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.disableRadioBut.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(goalButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goalButton.text")); // NOI18N
+        goalButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                goalButtonActionPerformed(evt);
+            }
+        });
+
+        jScrollPane2.setViewportView(jTree1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addComponent(downCursorButton)
-                .addGap(18, 18, 18)
-                .addComponent(downButton)
-                .addGap(18, 18, 18)
-                .addComponent(disableRadioBut)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 350, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addComponent(downCursorButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(downButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(disableRadioBut)
+                        .addGap(26, 26, 26)
+                        .addComponent(goalButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(80, 80, 80)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 271, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(downCursorButton)
-                    .addComponent(downButton)
-                    .addComponent(disableRadioBut))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(downCursorButton)
+                            .addComponent(downButton)
+                            .addComponent(disableRadioBut)
+                            .addComponent(goalButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -125,12 +158,64 @@ public class ProofError extends javax.swing.JPanel {
        editorDoc.handleDownButton();
     }//GEN-LAST:event_downButtonActionPerformed
 
+    public DefaultMutableTreeNode buildnu(nu.xom.Element e) {
+   DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
+  
+//    System.out.println("building:"+e);
+    nu.xom.Elements children=e.getChildElements();
+//    System.out.println("nodelist"+children);
+//    System.out.println("length:"+children.size());
+    
+   for(int i=0;i< children.size();i++) {
+      nu.xom.Element child =  children.get(i);
+//    System.out.println("child:"+child);
+      result.add(buildnu(child));
+   }
+   return result;         
+}
+
+public void resetTree(nu.xom.Document doc) throws Exception {
+     //SAXReader reader = new SAXReader();
+//       System.out.println("building nu started");
+       //doc.normalizeDocument();
+  //     System.out.println("raw xml:"+doc);
+       DefaultMutableTreeNode root=buildnu(doc.getRootElement());
+    //   System.out.println("building completed");
+      model.setRoot(root);
+ //      System.out.println("setting completed");
+       System.out.flush();
+      model.reload();
+             
+//      System.out.println("root:" + model.getRoot());
+
+  //     System.out.println("flush in reset tree");
+  //     System.out.flush();
+      model.nodeStructureChanged((TreeNode) model.getRoot());
+       //jt.setModel(new DefaultTreeModel());
+             
+}
+
+    private void goalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goalButtonActionPerformed
+        // TODO add your handling code here:
+        editorDoc.updateGoal();
+        try {
+            //jTextArea1.setText(editorDoc.getGoal());
+            resetTree(editorDoc.getGoal());
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+    }//GEN-LAST:event_goalButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton disableRadioBut;
     private javax.swing.JButton downButton;
     private javax.swing.JButton downCursorButton;
+    private javax.swing.JButton goalButton;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 
     /**
