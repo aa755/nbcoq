@@ -148,57 +148,47 @@ public class cqDataObject extends MultiDataObject {
     {
         return editor.getDocument();
     }
-    int getOffsetToSend()
-    {
+    int getOffsetToSend() {
+
+        int offset = 0;
+        int endPos = getDocument().getEndPosition().getOffset();
+        String code="";
         try {
-            int offset=0;
-            int endPos=getDocument().getEndPosition().getOffset();        
-            String code=getDocument().getText(compiledOffset, endPos-compiledOffset);
-            Matcher commandEndMatcher = coqStart.matcher(code);
-            if(commandEndMatcher.find())
-            {
-                int cstart=commandEndMatcher.group().indexOf("(*");
-                if(cstart!=-1)
-                {  /* the next segment is a pure comment*/
-                    offset=code.indexOf("*)", endPos)+1;
-                    //char at offset is )
-                }
-                else
-                {
-                    boolean done=false;
-                    int unmatchedComLeft=0;
-                    int unmatchedStrLift=0;
-                        commandEndMatcher=coqCommandEnd.matcher(code);
-                        while (commandEndMatcher.find())
-                        {
-                            Matcher comments=coqComment.matcher(code.substring(0, commandEndMatcher.end()));
-                            while (comments.find())
-                            {
-                                if(comments.group().equals("*)"))
-                                    unmatchedComLeft=unmatchedComLeft-1;
-                                    
-                                if(comments.group().equals("(*"))
-                                    unmatchedComLeft=unmatchedComLeft+1;
-                            }
-                            if(unmatchedComLeft==0)
-                            {
-                                offset=commandEndMatcher.end()-1;
-                                // code[offset]='.'
-                                break;
-                            }
-                        }
-                }
-            }
-            
-            
-            return offset;
+            code = getDocument().getText(compiledOffset, endPos - compiledOffset);
         } catch (BadLocationException ex) {
             Exceptions.printStackTrace(ex);
             assert(false);
-            return -1;
         }
-        
-        
+        boolean done = false;
+        int unmatchedComLeft = 0;
+        //int unmatchedStrLift = 0;
+        Matcher commandEndMatcher = coqCommandEnd.matcher(code);
+        int start=0;
+        while (commandEndMatcher.find()) {
+            Matcher comments = coqComment.matcher(code.substring(start, commandEndMatcher.end()));
+            start=commandEndMatcher.end();
+            while (comments.find()) {
+                if (comments.group().equals("*)")) {
+                    unmatchedComLeft = unmatchedComLeft - 1;
+                }
+
+                if (comments.group().equals("(*")) {
+                    unmatchedComLeft = unmatchedComLeft + 1;
+                }
+            }
+            if (unmatchedComLeft == 0) {
+                offset = commandEndMatcher.end() - 1;
+                // code[offset]='.'
+                break;
+            }
+        }
+
+
+
+
+        return offset;
+
+
     }
     
     synchronized void  handleDownButton() {
