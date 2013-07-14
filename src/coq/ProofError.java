@@ -4,7 +4,6 @@
  */
 package coq;
 
-import org.openide.util.RequestProcessor;
 
 /**
  *
@@ -96,6 +95,9 @@ public class ProofError extends javax.swing.JPanel {
         {
             setDebugMesg("upButton: no coq document is associated w/ this window. this could be a bug");
         }
+       disableCompileButtons();
+       editorDoc.handleDownToCursor();
+        
     }//GEN-LAST:event_downCursorButtonActionPerformed
 
     void disableCompileButtons()

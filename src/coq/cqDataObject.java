@@ -130,6 +130,15 @@ public class cqDataObject extends MultiDataObject {
         this.dbugcontents = dbugcontents;
     }
 
+    /**
+     * @return the editor
+     */
+    public EditorCookie getEditor() {
+        if(!initialized)
+            initialize();
+        return editor;
+    }
+
     class BatchCompile implements Runnable{
         private AtomicInteger targetOffset;
         private AtomicInteger pendingSteps;
@@ -246,7 +255,7 @@ public class cqDataObject extends MultiDataObject {
     
     private StyledDocument getDocument()
     {
-        return editor.getDocument();
+        return getEditor().getDocument();
     }
     int getOffsetToSend() {
 
@@ -319,13 +328,20 @@ public class cqDataObject extends MultiDataObject {
         batchCompile.incrementPendingSteps();
         scheduleCompilation();
     }
+    
+    void handleDownToCursor()
+    {
+        int curPos=getEditor().getOpenedPanes()[0].getCaretPosition();
+        batchCompile.setTargetOffset(curPos);
+        scheduleCompilation();
+    }
     /**
      * final because it is called in the constructor
      */
     final void assignCookie()
     {
         editor=getLookup().lookup(EditorCookie.class);
-        assert(editor!=null);
+        assert(getEditor()!=null);
     }
     
     @Override
