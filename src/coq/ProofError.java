@@ -4,10 +4,15 @@
  */
 package coq;
 
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -24,6 +29,7 @@ public class ProofError extends javax.swing.JPanel {
     private final DefaultTreeModel model;
     nu.xom.Elements allGoals;
     ProofSubgoal curGoal;
+    private final JPanel proofRootPanel;
     /**
      * Creates new form ProofError
      */
@@ -32,9 +38,19 @@ public class ProofError extends javax.swing.JPanel {
         editorDoc=null;
         model=new DefaultTreeModel(null);
         jTree1.setModel(model);
-        proofRootPanel.setLayout(new GridLayout(0, 1));
+        proofRootPanel=new JPanel();
+        BoxLayout bl=new BoxLayout(proofRootPanel, BoxLayout.Y_AXIS);
+        proofScroll.getViewport().add(proofRootPanel);
+        proofScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        proofRootPanel.setLayout(bl);
+        //proofRootPanel.setMaximumSize(new Dimension(this.getWidth(),Integer.MAX_VALUE ));
     }
 
+    void validateScroll()
+    {
+        proofScroll.validate();
+    }
+    
     void setDebugMesg(String mesg)
     {
         jTextArea1.setText(mesg);
@@ -48,20 +64,16 @@ public class ProofError extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         downCursorButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         disableRadioBut = new javax.swing.JRadioButton();
-        goalButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        proofRootPanel = new javax.swing.JPanel();
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        jSplitPane1 = new javax.swing.JSplitPane();
+        proofScroll = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        goalOption = new javax.swing.JRadioButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(downCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downCursorButton.text")); // NOI18N
         downCursorButton.addActionListener(new java.awt.event.ActionListener() {
@@ -79,27 +91,18 @@ public class ProofError extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(disableRadioBut, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.disableRadioBut.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(goalButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goalButton.text")); // NOI18N
-        goalButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                goalButtonActionPerformed(evt);
-            }
-        });
-
         jScrollPane2.setViewportView(jTree1);
 
-        javax.swing.GroupLayout proofRootPanelLayout = new javax.swing.GroupLayout(proofRootPanel);
-        proofRootPanel.setLayout(proofRootPanelLayout);
-        proofRootPanelLayout.setHorizontalGroup(
-            proofRootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 887, Short.MAX_VALUE)
-        );
-        proofRootPanelLayout.setVerticalGroup(
-            proofRootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 289, Short.MAX_VALUE)
-        );
+        jSplitPane1.setDividerLocation(700);
+        jSplitPane1.setLeftComponent(proofScroll);
 
-        jScrollPane3.setViewportView(proofRootPanel);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        jSplitPane1.setRightComponent(jScrollPane1);
+
+        org.openide.awt.Mnemonics.setLocalizedText(goalOption, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goalOption.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -112,19 +115,16 @@ public class ProofError extends javax.swing.JPanel {
                 .addComponent(downButton)
                 .addGap(18, 18, 18)
                 .addComponent(disableRadioBut)
-                .addGap(26, 26, 26)
-                .addComponent(goalButton)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(goalOption)
+                .addGap(0, 614, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jSplitPane1)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,13 +133,12 @@ public class ProofError extends javax.swing.JPanel {
                     .addComponent(downCursorButton)
                     .addComponent(downButton)
                     .addComponent(disableRadioBut)
-                    .addComponent(goalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(goalOption))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(8, 8, 8)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -201,6 +200,7 @@ public void resetTree(nu.xom.Document doc) throws Exception {
 }
 void setAllGoals(nu.xom.Document prg)
 {
+    allGoals=null;
 //    nu.xom.Element root=prg.getRootElement();
     nu.xom.Element option=prg.getRootElement().getFirstChildElement("option");
     if(option==null)
@@ -212,34 +212,43 @@ void setAllGoals(nu.xom.Document prg)
 
 void displayGoal(int index)
 {
+    if(allGoals==null || allGoals.size()==0)
+    {
+        proofRootPanel.removeAll();
+        return;
+    }
     curGoal=new ProofSubgoal(allGoals.get(index));
     curGoal.showSubgoal(proofRootPanel);
 }
-    private void goalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goalButtonActionPerformed
-        // TODO add your handling code here:
-        editorDoc.updateGoal();
-        try {
+
+public boolean isShowGoalChecked()
+{
+    return goalOption.isSelected();
+}
+
+void showGoal()
+{
+try {
             //jTextArea1.setText(editorDoc.getGoal());
             resetTree(editorDoc.getGoal());
             setAllGoals(editorDoc.getGoal());
             displayGoal(0);
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
-        }
-        
-    }//GEN-LAST:event_goalButtonActionPerformed
+        }    
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton disableRadioBut;
     private javax.swing.JButton downButton;
     private javax.swing.JButton downCursorButton;
-    private javax.swing.JButton goalButton;
+    private javax.swing.JRadioButton goalOption;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTree jTree1;
-    private javax.swing.JPanel proofRootPanel;
+    private javax.swing.JScrollPane proofScroll;
     // End of variables declaration//GEN-END:variables
 
     /**

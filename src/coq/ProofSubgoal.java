@@ -5,8 +5,11 @@
 package coq;
 
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.util.ArrayList;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -15,6 +18,12 @@ import javax.swing.JTextArea;
  * @author Abhishek
  */
 public class ProofSubgoal {
+    
+    public static JLabel getLabelOfWidth(String text, int width)
+    {
+        String html="<html> <body width='"+width+"px'> "+org.apache.commons.lang3.StringEscapeUtils.escapeHtml3(text)+"</body></html>";
+        return new JLabel(html);        
+    }
     
     static class Hypothesis
     {
@@ -41,15 +50,24 @@ public class ProofSubgoal {
             initFromVar(coqLine.substring(0, splitIndex), coqLine.substring(splitIndex+2));
         }
         
-        JPanel getPanel()
+        JPanel getPanel(JPanel parent)
         {
             JPanel ret=new JPanel();
-            ret.setLayout(new FlowLayout(FlowLayout.LEFT));
+           // FlowLayout fl=new FlowLayout(FlowLayout.LEFT,0,0);
+            BoxLayout gl=new BoxLayout(ret, BoxLayout.X_AXIS);
+            //
+            ret.setLayout(gl);
+            JPanel buttonPanel=new JPanel(new FlowLayout());
             for(int i=0;i<vars.size();i++)
-               ret.add(new JButton(vars.get(i)));
+               buttonPanel.add(new JButton(vars.get(i)));
+            ret.add(buttonPanel);
+            
+            
             JTextArea typeAr=new JTextArea(type);
+            //typeAr.setPreferredSize();
             typeAr.setWrapStyleWord(true);
             typeAr.setEditable(false);                    
+           
             ret.add(typeAr);
             return ret;            
         }
@@ -64,13 +82,17 @@ public class ProofSubgoal {
             this.type = type;
         }        
         
-        JPanel getPanel()
+        JPanel getPanel(JPanel container)
         {
             JPanel ret=new JPanel();
-            ret.setLayout(new FlowLayout(FlowLayout.LEFT));
+            ret.setLayout(new GridLayout(1,1));
+            
+            
             JTextArea typeAr=new JTextArea(type);
             typeAr.setWrapStyleWord(true);
-            typeAr.setEditable(false);                    
+            typeAr.setEditable(false);
+            //typeAr.setRows(1);
+            //typeAr.setColumns(container.getWidth()/typeAr.getC);           
             ret.add(typeAr);
             return ret;            
         }
@@ -95,11 +117,12 @@ public class ProofSubgoal {
     
     void showSubgoal(JPanel jp)
     {
+        jp.removeAll();
         for(int i=0;i<hypothesis.size();i++)
         {
-            jp.add(hypothesis.get(i).getPanel());
+            jp.add(hypothesis.get(i).getPanel(jp));
         }
-        jp.add(concl.getPanel());
+        jp.add(concl.getPanel(jp));
         jp.validate();
     }
 }

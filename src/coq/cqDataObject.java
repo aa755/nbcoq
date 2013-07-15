@@ -183,35 +183,55 @@ public class cqDataObject extends MultiDataObject {
         
         @Override
         public void run() {
+            boolean change=false;
             if(getCompiledOffset()<targetOffset.intValue())
-                handleCompileToTargetPos();
+                change=handleCompileToTargetPos();
             else
-                handleSteps();
+                change=handleSteps();
+            
             getUiWindow().enableCompileButtons();
+            if(change&&uiWindow.isShowGoalChecked())
+            {
+                updateGoal();
+                uiWindow.showGoal();
+            }
         }
 
-        void handleSteps()
+        boolean handleSteps()
         {
+                boolean change=false;
             while(pendingSteps.intValue()>0)
             {
                 if(compileStep())
+                {
                    pendingSteps.decrementAndGet();
+                   change=true;
+                }
                 else
                 {
                     pendingSteps.set(0);
                     break;
                 }
             }
+            return change;
         }
         
-        void handleCompileToTargetPos()
+        boolean handleCompileToTargetPos()
         {
+            boolean change=false;
             while(getCompiledOffset()<targetOffset.intValue()&&(!stopRequest.get()))
             {
-                if(!compileStep())
+                if(compileStep())
+                {
+                    change=true;
+                }
+                else
+                {
                     break;
+                }
             }
             stopRequest.set(false);            
+            return change;
         }
         
         public synchronized void setTargetOffset(int targetOffset) {
@@ -272,7 +292,7 @@ public class cqDataObject extends MultiDataObject {
     {
         return getEditor().getDocument();
     }
-    void updateGoal()
+    synchronized void updateGoal()
     {
         setGoal(coqtop.getGoal());
     }
