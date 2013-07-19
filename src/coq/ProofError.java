@@ -205,7 +205,10 @@ void setAllGoals(nu.xom.Document prg)
     nu.xom.Element option=prg.getRootElement().getFirstChildElement("option");
     if(option==null)
         return;
-    nu.xom.Element list =option.getFirstChildElement("goals").getFirstChildElement("list");
+    nu.xom.Element goals =option.getFirstChildElement("goals");
+    if(goals==null)
+        return;
+    nu.xom.Element list=goals.getFirstChildElement("list");
     allGoals=list.getChildElements("goal");    
 }
 
@@ -215,6 +218,8 @@ void displayGoal(int index)
     if(allGoals==null || allGoals.size()==0)
     {
         proofRootPanel.removeAll();
+        proofRootPanel.validate();
+        proofRootPanel.repaint();
         return;
     }
     curGoal=new ProofSubgoal(allGoals.get(index));
