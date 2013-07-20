@@ -94,6 +94,7 @@ public class ProofError extends javax.swing.JPanel {
         jScrollPane2.setViewportView(jTree1);
 
         jSplitPane1.setDividerLocation(700);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setLeftComponent(proofScroll);
 
         jTextArea1.setColumns(20);
@@ -102,6 +103,7 @@ public class ProofError extends javax.swing.JPanel {
 
         jSplitPane1.setRightComponent(jScrollPane1);
 
+        goalOption.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(goalOption, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goalOption.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -135,9 +137,9 @@ public class ProofError extends javax.swing.JPanel {
                     .addComponent(disableRadioBut)
                     .addComponent(goalOption))
                 .addGap(18, 18, 18)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -215,15 +217,22 @@ void setAllGoals(nu.xom.Document prg)
 
 void displayGoal(int index)
 {
+     proofRootPanel.removeAll();
     if(allGoals==null || allGoals.size()==0)
     {
-        proofRootPanel.removeAll();
         proofRootPanel.validate();
         proofRootPanel.repaint();
         return;
     }
     curGoal=new ProofSubgoal(allGoals.get(index));
-    curGoal.showSubgoal(proofRootPanel);
+    int maxWidth=proofScroll.getViewport().getWidth();
+    Dimension dim=proofRootPanel.getMaximumSize();
+    dim.width=maxWidth;
+    proofRootPanel.setMaximumSize(dim);
+    validateScroll();
+    curGoal.showSubgoal(proofRootPanel,maxWidth);
+    proofRootPanel.revalidate();
+    proofRootPanel.repaint();
 }
 
 public boolean isShowGoalChecked()

@@ -4,14 +4,19 @@
  */
 package coq;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
 
 /**
  *
@@ -50,25 +55,52 @@ public class ProofSubgoal {
             initFromVar(coqLine.substring(0, splitIndex), coqLine.substring(splitIndex+2));
         }
         
-        JPanel getPanel(JPanel parent)
+        JPanel getPanel(int viewPortWidth)
         {
             JPanel ret=new JPanel();
            // FlowLayout fl=new FlowLayout(FlowLayout.LEFT,0,0);
             BoxLayout gl=new BoxLayout(ret, BoxLayout.X_AXIS);
+            Dimension dim=ret.getMaximumSize();
+            dim.width=viewPortWidth;
+            dim=ret.getMinimumSize();
+            dim.width=viewPortWidth;
+            ret.setMinimumSize(dim);
+            ret.validate();
+            
+            ret.setBorder(BorderFactory.createLineBorder(Color.RED));
             //
             ret.setLayout(gl);
-            JPanel buttonPanel=new JPanel(new FlowLayout());
+            int usedWidth=0;
+          //  JPanel buttonPanel=new JPanel(new FlowLayout());
             for(int i=0;i<vars.size();i++)
-               buttonPanel.add(new JButton(vars.get(i)));
-            ret.add(buttonPanel);
+            {
+                JButton but=new JButton(vars.get(i));
+                but.setMaximumSize(but.getMinimumSize());
+                usedWidth=usedWidth+but.getMinimumSize().width;
+                but.setAlignmentX(Component.LEFT_ALIGNMENT);
+                ret.add(but);
+            }
+            //ret.add(buttonPanel);
             
+//               buttonPanel.add(new JButton(vars.get(i)));
+//            ret.add(buttonPanel);
             
             JTextArea typeAr=new JTextArea(type);
             //typeAr.setPreferredSize();
             typeAr.setWrapStyleWord(true);
             typeAr.setEditable(false);                    
-           
+            int availableWidth=viewPortWidth - usedWidth;
+            Dimension maxSize=typeAr.getMaximumSize();
+         //   maxSize.width=availableWidth;
+            Dimension minSize=typeAr.getMinimumSize();
+           // minSize.width=availableWidth;
+            maxSize.height=minSize.height;
+            typeAr.setMaximumSize(maxSize);
+           // typeAr.setMinimumSize(minSize);
             ret.add(typeAr);
+            ret.setAlignmentX(Component.LEFT_ALIGNMENT);
+            typeAr.setAlignmentX(Component.LEFT_ALIGNMENT);
+            
             return ret;            
         }
         
@@ -82,18 +114,20 @@ public class ProofSubgoal {
             this.type = type;
         }        
         
-        JPanel getPanel(JPanel container)
+        JPanel getPanel(int viewPortWidth)
         {
             JPanel ret=new JPanel();
             ret.setLayout(new GridLayout(1,1));
             
             
             JTextArea typeAr=new JTextArea(type);
-            typeAr.setWrapStyleWord(true);
+//            typeAr.setWrapStyleWord(true);
+            typeAr.setWrapStyleWord(false);
             typeAr.setEditable(false);
             //typeAr.setRows(1);
             //typeAr.setColumns(container.getWidth()/typeAr.getC);           
             ret.add(typeAr);
+            ret.setAlignmentX(Component.LEFT_ALIGNMENT);
             return ret;            
         }
     }
@@ -115,14 +149,13 @@ public class ProofSubgoal {
          hypothesis.add(new Hypothesis(hyps.get(i).getValue()));
     }
     
-    void showSubgoal(JPanel jp)
+    void showSubgoal(JPanel jp,int viewPortWidth)
     {
-        jp.removeAll();
         for(int i=0;i<hypothesis.size();i++)
         {
-            jp.add(hypothesis.get(i).getPanel(jp));
+            jp.add(hypothesis.get(i).getPanel(viewPortWidth));           
         }
-        jp.add(concl.getPanel(jp));
-        jp.validate();
+        jp.add(concl.getPanel(viewPortWidth));
+        //jp.validate();
     }
 }
