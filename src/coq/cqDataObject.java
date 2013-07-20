@@ -210,6 +210,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         private AtomicInteger targetOffset;
         private AtomicInteger pendingSteps;
         private AtomicBoolean stopRequest; // flag to request it to stop
+        private AtomicInteger lastActionRequest;
+        
+        public static final int NOP_ACTION=0; 
+        public static final int MOVE_TO_CURSOR_ACTION=1; 
+        public static final int UP_DOWN_ACTION=2; 
+        public static final int QUERY_ACTION=3; 
         
         
         public void resetPendingSteps()
@@ -221,11 +227,13 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         void decrementPendingSteps(int n)
         {
             pendingSteps.addAndGet(0-n);
+            lastActionRequest.set(UP_DOWN_ACTION);
         }
         
         public void incrementPendingSteps()
         {
             pendingSteps.incrementAndGet();
+            lastActionRequest.set(UP_DOWN_ACTION);
         }
                 
         public void requestStopping()
@@ -237,15 +245,20 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             pendingSteps=new AtomicInteger(0);
             this.targetOffset=new AtomicInteger(targetOffset);
             stopRequest=new AtomicBoolean(false);
+            lastActionRequest=new AtomicInteger(NOP_ACTION);
         }
         
         @Override
         public void run() {
-            boolean change;
-            if(getCompiledOffset()<targetOffset.intValue())
-                change=handleCompileToTargetPos();
-            else
+            int lastAc=lastActionRequest.intValue();
+            lastActionRequest.set(NOP_ACTION); // actions take time to execute
+            
+            
+            boolean change=false;
+            if(lastAc==UP_DOWN_ACTION)
                 change=handleSteps();
+            else if(lastAc==MOVE_TO_CURSOR_ACTION)
+                change=handleCompileToTargetPos();
             
             getUiWindow().enableCompileButtons();
             if(change)
@@ -289,18 +302,37 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
               
         }
         
+        boolean handleUpCursor()
+        {
+            int curOffset=compiledOffset.intValue();
+            int countPops=0;
+            int lastElem=offsets.size()-1;
+            while(targetOffset.intValue()<curOffset)
+            {
+                //offsets.
+                curOffset=offsets.get(lastElem-countPops); // binary search can be done here
+                // do not pop here. handleRewind does that.
+                countPops=countPops+1;
+            }
+            if(countPops>0)
+                return handleRewind(countPops);
+            else 
+                return false;
+        }
+        
         boolean handleCompileToTargetPos()
         {
-            boolean change=false;
-            while(getCompiledOffset()<targetOffset.intValue()&&(!stopRequest.get()))
-            {
-                if(compileStep())
-                {
-                    change=true;
-                }
-                else
-                {
-                    break;
+            boolean change = false;
+            if (getCompiledOffset() > targetOffset.intValue()) {
+                change = handleUpCursor();
+            } 
+            else {
+                while (getCompiledOffset() < targetOffset.intValue() && (!stopRequest.get())) {
+                    if (compileStep()) {
+                        change = true;
+                    } else {
+                        break;
+                    }
                 }
             }
             stopRequest.set(false);
@@ -310,6 +342,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         
         public synchronized void setTargetOffset(int targetOffset) {
             this.targetOffset.set(targetOffset);
+            lastActionRequest.set(MOVE_TO_CURSOR_ACTION);
+            
         }
     }
     

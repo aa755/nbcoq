@@ -89,6 +89,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         topButton = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         subGoalsList = new javax.swing.JList();
+        queryField = new javax.swing.JTextField();
+        queryExecuteButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(downCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downCursorButton.text")); // NOI18N
         downCursorButton.addActionListener(new java.awt.event.ActionListener() {
@@ -150,6 +152,15 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         subGoalsList.setModel(assignListModel());
         jScrollPane3.setViewportView(subGoalsList);
 
+        queryField.setText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.queryField.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(queryExecuteButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.queryExecuteButton.text")); // NOI18N
+        queryExecuteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                queryExecuteButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -172,12 +183,17 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                                 .addComponent(topButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jumpButton))
-                            .addComponent(goalOption))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(goalOption)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(queryField, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(queryExecuteButton)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(followCompile)
-                        .addGap(0, 159, Short.MAX_VALUE)))
+                        .addGap(0, 178, Short.MAX_VALUE)))
                 .addContainerGap())
             .addComponent(jSplitPane1)
         );
@@ -197,9 +213,12 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                                 .addComponent(upButton)
                                 .addComponent(topButton)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(goalOption)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(goalOption)
+                            .addComponent(queryField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(queryExecuteButton))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -259,6 +278,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         // TODO add your handling code here:
         editorDoc.handleUppButton();
     }//GEN-LAST:event_topButtonActionPerformed
+
+    private void queryExecuteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryExecuteButtonActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_queryExecuteButtonActionPerformed
 
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
@@ -356,6 +380,8 @@ try {
     private javax.swing.JTree jTree1;
     private javax.swing.JButton jumpButton;
     private javax.swing.JScrollPane proofScroll;
+    private javax.swing.JButton queryExecuteButton;
+    private javax.swing.JTextField queryField;
     private javax.swing.JList subGoalsList;
     private javax.swing.JButton topButton;
     private javax.swing.JButton upButton;
