@@ -66,7 +66,7 @@ public class ProofError extends javax.swing.JPanel {
 
         downCursorButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
-        disableRadioBut = new javax.swing.JRadioButton();
+        followCompile = new javax.swing.JRadioButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -74,6 +74,7 @@ public class ProofError extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         goalOption = new javax.swing.JRadioButton();
+        jumpButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(downCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downCursorButton.text")); // NOI18N
         downCursorButton.addActionListener(new java.awt.event.ActionListener() {
@@ -89,7 +90,12 @@ public class ProofError extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(disableRadioBut, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.disableRadioBut.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(followCompile, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.followCompile.text")); // NOI18N
+        followCompile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                followCompileActionPerformed(evt);
+            }
+        });
 
         jScrollPane2.setViewportView(jTree1);
 
@@ -106,6 +112,13 @@ public class ProofError extends javax.swing.JPanel {
         goalOption.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(goalOption, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goalOption.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(jumpButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.jumpButton.text")); // NOI18N
+        jumpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jumpButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -115,32 +128,38 @@ public class ProofError extends javax.swing.JPanel {
                 .addComponent(downCursorButton)
                 .addGap(18, 18, 18)
                 .addComponent(downButton)
-                .addGap(18, 18, 18)
-                .addComponent(disableRadioBut)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jumpButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(goalOption)
-                .addGap(0, 614, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(followCompile)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jSplitPane1)
-                        .addContainerGap())))
+                        .addGap(18, 18, 18)
+                        .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)
+                        .addGap(93, 93, 93))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(downCursorButton)
                     .addComponent(downButton)
-                    .addComponent(disableRadioBut)
-                    .addComponent(goalOption))
+                    .addComponent(jumpButton)
+                    .addComponent(goalOption)
+                    .addComponent(followCompile))
                 .addGap(18, 18, 18)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -180,7 +199,16 @@ public class ProofError extends javax.swing.JPanel {
        editorDoc.handleDownButton();
     }//GEN-LAST:event_downButtonActionPerformed
 
-    public DefaultMutableTreeNode buildnu(nu.xom.Element e) {
+    private void followCompileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followCompileActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_followCompileActionPerformed
+
+    private void jumpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumpButtonActionPerformed
+        // TODO add your handling code here:
+        editorDoc.jumpToCompileOffest();
+    }//GEN-LAST:event_jumpButtonActionPerformed
+
+    public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
   
     nu.xom.Elements children=e.getChildElements();
@@ -239,6 +267,10 @@ public boolean isShowGoalChecked()
 {
     return goalOption.isSelected();
 }
+public boolean isFollowCursorChecked()
+{
+    return followCompile.isSelected();
+}
 
 void showGoal()
 {
@@ -253,15 +285,16 @@ try {
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton disableRadioBut;
     private javax.swing.JButton downButton;
     private javax.swing.JButton downCursorButton;
+    private javax.swing.JRadioButton followCompile;
     private javax.swing.JRadioButton goalOption;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTree jTree1;
+    private javax.swing.JButton jumpButton;
     private javax.swing.JScrollPane proofScroll;
     // End of variables declaration//GEN-END:variables
 

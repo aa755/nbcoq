@@ -190,10 +190,13 @@ public class cqDataObject extends MultiDataObject {
                 change=handleSteps();
             
             getUiWindow().enableCompileButtons();
-            if(change&&uiWindow.isShowGoalChecked())
+            if(change)
             {
-                updateGoal();
-                uiWindow.showGoal();
+                if(uiWindow.isShowGoalChecked())
+                {
+                    updateGoal();
+                    uiWindow.showGoal();                    
+                }
             }
         }
 
@@ -279,6 +282,10 @@ public class cqDataObject extends MultiDataObject {
         compiledOffset.addAndGet(change);
         highlighter.setHighlight(0, getCompiledOffset());
     }
+    void jumpToCompileOffest()
+    {        
+         getEditor().getOpenedPanes()[0].getCaret().setDot(compiledOffset.intValue());
+    }    
     
     final void initialize()
     {
