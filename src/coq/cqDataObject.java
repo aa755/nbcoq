@@ -4,6 +4,7 @@
  */
 package coq;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -13,10 +14,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
+import org.netbeans.spi.editor.highlighting.support.OffsetsBag;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -173,6 +178,26 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
     public void keyReleased(KeyEvent ke) {
     }
 
+    /**
+     * @return the retb
+     */
+    public OffsetsBag getRetb() {
+        return retb;
+    }
+
+    /**
+     * @param retb the retb to set
+     */
+    public void setRetb(OffsetsBag retb) {
+        this.retb = retb;
+    }
+
+        public void setHighlight(int start, int end)
+    {
+        retb.clear();
+        retb.addHighlight(start, end, compiledCodeAttr);
+    }
+
     class BatchCompile implements Runnable{
         private AtomicInteger targetOffset;
         private AtomicInteger pendingSteps;
@@ -286,7 +311,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
     private AtomicInteger compiledOffset;
     private EditorCookie editor;
     private boolean initialized;   
-    private CoqHighlighter highlighter;
+    //private CoqHighlighter highlighter;
     private final RequestProcessor rp;
     private static final Pattern coqCommandEnd=Pattern.compile("(\\.[\\s])");
     private static final Pattern coqComment=Pattern.compile("(\\(\\*)|(\\*\\))");
@@ -294,6 +319,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
     private ProofError uiWindow;
     private nu.xom.Document goal;
     private Stack<Integer> offsets;
+    private OffsetsBag retb;
+    private static final AttributeSet compiledCodeAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Background,
+            new Color(200, 255, 200));
+
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader); 
         initialized=false;
@@ -304,6 +334,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
         batchCompile=new BatchCompile(0);
         batchCompileTask=rp.create(batchCompile, true);
         offsets=new Stack<Integer>();
+        retb=null;
     //    initialize();
     }
 
@@ -314,8 +345,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
 
     void handleCompileOffsetChange()
     {
-        highlighter.setHighlight(0, getCompiledOffset());
-        
+        setHighlight(0, getCompiledOffset());        
     }
     /**
      * this should only be called after coq compilation/rewind.
@@ -350,7 +380,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
     {
         initialized=true;
         assignCookie();
-        assert(highlighter!=null);
+//        assert(highlighter!=null);
         
      }
     
@@ -508,8 +538,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
     /**
      * @param highlighter the highlighter to set
      */
-    public void setHighlighter(CoqHighlighter highlighter) {
-        this.highlighter = highlighter;
-    }
+//    public void setHighlighter(CoqHighlighter highlighter) {
+//        this.highlighter = highlighter;
+//    }
 
 }
