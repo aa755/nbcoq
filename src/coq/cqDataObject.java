@@ -251,7 +251,8 @@ public class cqDataObject extends MultiDataObject {
                     break;
                 }
             }
-            stopRequest.set(false);            
+            stopRequest.set(false);
+            targetOffset.set(0);
             return change;
         }
         
@@ -425,6 +426,11 @@ public class cqDataObject extends MultiDataObject {
     void handleUpButton()
     {
         batchCompile.decrementPendingSteps(1);
+        scheduleCompilation();
+    }
+    void handleUppButton()
+    {
+        batchCompile.decrementPendingSteps(offsets.size());
         scheduleCompilation();
     }
     /**

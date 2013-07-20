@@ -76,6 +76,7 @@ public class ProofError extends javax.swing.JPanel {
         goalOption = new javax.swing.JRadioButton();
         jumpButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
+        topButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(downCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downCursorButton.text")); // NOI18N
         downCursorButton.addActionListener(new java.awt.event.ActionListener() {
@@ -127,6 +128,13 @@ public class ProofError extends javax.swing.JPanel {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(topButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.topButton.text")); // NOI18N
+        topButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                topButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -143,13 +151,15 @@ public class ProofError extends javax.swing.JPanel {
                         .addComponent(downButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(upButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(topButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jumpButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(goalOption)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(followCompile)
-                        .addGap(0, 216, Short.MAX_VALUE)))
+                        .addGap(0, 159, Short.MAX_VALUE)))
                 .addContainerGap())
             .addComponent(jSplitPane1)
         );
@@ -161,9 +171,10 @@ public class ProofError extends javax.swing.JPanel {
                     .addComponent(downCursorButton)
                     .addComponent(downButton)
                     .addComponent(jumpButton)
-                    .addComponent(goalOption)
                     .addComponent(followCompile)
-                    .addComponent(upButton))
+                    .addComponent(upButton)
+                    .addComponent(topButton)
+                    .addComponent(goalOption))
                 .addGap(18, 18, 18)
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -220,6 +231,11 @@ public class ProofError extends javax.swing.JPanel {
         // TODO add your handling code here:
         editorDoc.handleUpButton();
     }//GEN-LAST:event_upButtonActionPerformed
+
+    private void topButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_topButtonActionPerformed
+        // TODO add your handling code here:
+        editorDoc.handleUppButton();
+    }//GEN-LAST:event_topButtonActionPerformed
 
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
@@ -309,6 +325,7 @@ try {
     private javax.swing.JTree jTree1;
     private javax.swing.JButton jumpButton;
     private javax.swing.JScrollPane proofScroll;
+    private javax.swing.JButton topButton;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
 

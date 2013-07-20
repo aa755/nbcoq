@@ -29,13 +29,15 @@
                       <Component id="downButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="upButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="topButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jumpButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="goalOption" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="followCompile" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="216" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="159" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -51,9 +53,10 @@
                   <Component id="downCursorButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="downButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jumpButton" alignment="1" min="-2" max="-2" attributes="0"/>
-                  <Component id="goalOption" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="followCompile" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="upButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="topButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="goalOption" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jSplitPane1" pref="263" max="32767" attributes="0"/>
@@ -170,6 +173,16 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="upButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="topButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="coq/Bundle.properties" key="ProofError.topButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="topButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
