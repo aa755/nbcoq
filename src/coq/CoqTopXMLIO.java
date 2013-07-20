@@ -63,6 +63,11 @@ private  PrintWriter input;
         return communicate(new CoqSendMesg(code));
     }
     
+    public CoqRecMesg rewind(int steps)
+    {
+        return communicate(new CoqSendRewindMeg(steps));
+    }
+    
     public String getVersion()
     {
         CoqRecMesg rec=communicate(CoqSendMesg.getVersionMesg());
@@ -116,25 +121,26 @@ private  PrintWriter input;
 
         int numSteps;
         
-        public CoqSendRewindMeg(String mesg) {
-            super(mesg, "rewind");
+        public CoqSendRewindMeg() {
+            super("", "rewind");
             numSteps=1;
         }
 
-        public CoqSendRewindMeg( String mesg, int numSteps) {
-            super(mesg, "rewind");
+        public CoqSendRewindMeg( int numSteps) {
+            super("", "rewind");
             this.numSteps = numSteps;
         }
                
+        @Override
         public String toXML()
         {            
-            return "<call val=\"rewind\" steps="+numSteps+"/>";
+            return "<call val=\"rewind\" steps=\""+numSteps+"\"/>";
         }        
     }
     
     public static class CoqRecMesg{
        nu.xom.Document nuDoc;
-        Document doc;
+        //Document doc;
         boolean success;
      //   Element contents;
         private static final int BUF_SIZE=4096;
@@ -148,6 +154,13 @@ private  PrintWriter input;
                Exceptions.printStackTrace(ex);
            }
         }
+        
+        int getExtraRewoudSteps()
+        {
+            nu.xom.Element intStr=nuDoc.getRootElement().getFirstChildElement("int");
+            return Integer.parseInt(intStr.getValue());
+        }
+        
         public void parseXMLFromStream(BufferedReader result) {
             try {
                 nu.xom.Builder b = new nu.xom.Builder();

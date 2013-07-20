@@ -5,6 +5,7 @@
 package coq;
 
 import java.io.IOException;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -165,6 +166,11 @@ public class cqDataObject extends MultiDataObject {
             pendingSteps.set(0);
         }
 
+        void decrementPendingSteps(int n)
+        {
+            pendingSteps.addAndGet(0-n);
+        }
+        
         public void incrementPendingSteps()
         {
             pendingSteps.incrementAndGet();
@@ -183,7 +189,7 @@ public class cqDataObject extends MultiDataObject {
         
         @Override
         public void run() {
-            boolean change=false;
+            boolean change;
             if(getCompiledOffset()<targetOffset.intValue())
                 change=handleCompileToTargetPos();
             else
@@ -202,6 +208,9 @@ public class cqDataObject extends MultiDataObject {
 
         boolean handleSteps()
         {
+            if(pendingSteps.intValue()<0)
+                return handleRewind(0-pendingSteps.intValue());
+            
                 boolean change=false;
             while(pendingSteps.intValue()>0)
             {
@@ -217,6 +226,15 @@ public class cqDataObject extends MultiDataObject {
                 }
             }
             return change;
+        }
+        
+        boolean handleRewind(int nofSteps)
+        {
+            
+             int rewSteps=(rewindCoqtop(nofSteps));
+             resetPendingSteps();
+             return rewSteps>0;
+              
         }
         
         boolean handleCompileToTargetPos()
@@ -255,6 +273,7 @@ public class cqDataObject extends MultiDataObject {
     private BatchCompile batchCompile;
     private ProofError uiWindow;
     private nu.xom.Document goal;
+    private Stack<Integer> offsets;
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader); 
         initialized=false;
@@ -264,6 +283,7 @@ public class cqDataObject extends MultiDataObject {
         rp = new RequestProcessor(cqDataObject.class);
         batchCompile=new BatchCompile(0);
         batchCompileTask=rp.create(batchCompile, true);
+        offsets=new Stack<Integer>();
     //    initialize();
     }
 
@@ -271,17 +291,36 @@ public class cqDataObject extends MultiDataObject {
     {
         batchCompileTask.schedule(10);
     }
-    
+
+    void handleCompileOffsetChange()
+    {
+        highlighter.setHighlight(0, getCompiledOffset());
+        
+    }
     /**
      * this should only be called after coq compilation/rewind.
      * else it can cause inconsistency between coqtop's and editor's state
      * @param change 
      */
-    synchronized void updateCompiledOffset(int change)
+    synchronized void addToCompiledOffset(int change)
     {
+        assert(change>0);
+        offsets.push(compiledOffset.intValue());
         compiledOffset.addAndGet(change);
-        highlighter.setHighlight(0, getCompiledOffset());
+        handleCompileOffsetChange();
     }
+    
+    synchronized void unwindOffsets(int n)
+    {
+        int newOffset=compiledOffset.intValue();
+        for(int i=0;i<n;i++)
+        {
+            newOffset=offsets.pop();
+        }
+        compiledOffset.set(newOffset);
+        handleCompileOffsetChange();
+    }
+    
     void jumpToCompileOffest()
     {        
          getEditor().getOpenedPanes()[0].getCaret().setDot(compiledOffset.intValue());
@@ -365,7 +404,7 @@ public class cqDataObject extends MultiDataObject {
         
         if(rec.success)
         {
-                updateCompiledOffset (dotOffset+1);
+                addToCompiledOffset (dotOffset+1);
         }  
         return rec.success;
     }
@@ -381,6 +420,31 @@ public class cqDataObject extends MultiDataObject {
         int curPos=getEditor().getOpenedPanes()[0].getCaretPosition();
         batchCompile.setTargetOffset(curPos);
         scheduleCompilation();
+    }
+    
+    void handleUpButton()
+    {
+        batchCompile.decrementPendingSteps(1);
+        scheduleCompilation();
+    }
+    /**
+     * 
+     * @param nofSteps
+     * @return the number of steps actually rewound
+     *  INCLUDING the ones asked for(and extra steps)
+     */
+    int rewindCoqtop (int nofSteps)
+    {
+        CoqTopXMLIO.CoqRecMesg rec=coqtop.rewind(nofSteps);
+        if(rec.success)
+        {
+            int actualSteps= rec.getExtraRewoudSteps()+nofSteps;
+            unwindOffsets(actualSteps);
+            return actualSteps;
+                    
+        }
+        else
+            return 0;
     }
     /**
      * final because it is called in the constructor
