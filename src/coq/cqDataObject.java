@@ -4,12 +4,15 @@
  */
 package coq;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -94,7 +97,7 @@ import org.openide.windows.TopComponent;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class cqDataObject extends MultiDataObject {
+public class cqDataObject extends MultiDataObject implements KeyListener{
 
     /**
      * @return the compiledOffset
@@ -152,6 +155,22 @@ public class cqDataObject extends MultiDataObject {
      */
     public void setGoal(nu.xom.Document goal) {
         this.goal = goal;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent ke) {
+        //JOptionPane.showMessageDialog(null, "NSA you edited!");
+              //  highlighter.setHighlight(0, getCompiledOffset());
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent ke) {
+        //keyboard shortcuts?
+    }
+
+    @Override
+    public void keyReleased(KeyEvent ke) {
     }
 
     class BatchCompile implements Runnable{
@@ -459,6 +478,8 @@ public class cqDataObject extends MultiDataObject {
     {
         editor=getLookup().lookup(EditorCookie.class);
         assert(getEditor()!=null);
+        assert(getEditor().getDocument()!=null);
+        //getEditor().getOpenedPanes()[0].addKeyListener(this);
     }
     
     @Override

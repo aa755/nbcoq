@@ -167,18 +167,19 @@ public class ProofError extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(downCursorButton)
-                    .addComponent(downButton)
-                    .addComponent(jumpButton)
-                    .addComponent(followCompile)
-                    .addComponent(upButton)
-                    .addComponent(topButton)
-                    .addComponent(goalOption))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jumpButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(downCursorButton)
+                        .addComponent(downButton)
+                        .addComponent(followCompile)
+                        .addComponent(upButton)
+                        .addComponent(topButton)
+                        .addComponent(goalOption)))
                 .addGap(18, 18, 18)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -250,6 +251,8 @@ public class ProofError extends javax.swing.JPanel {
 }
 
 public void resetTree(nu.xom.Document doc) throws Exception {
+    if(doc==null)
+        return;
        DefaultMutableTreeNode root=buildnu(doc.getRootElement());
       model.setRoot(root);
        System.out.flush();
@@ -259,7 +262,10 @@ public void resetTree(nu.xom.Document doc) throws Exception {
 }
 void setAllGoals(nu.xom.Document prg)
 {
+   
     allGoals=null;
+    if(prg==null)
+        return;
 //    nu.xom.Element root=prg.getRootElement();
     nu.xom.Element option=prg.getRootElement().getFirstChildElement("option");
     if(option==null)

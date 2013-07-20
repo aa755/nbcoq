@@ -54,6 +54,7 @@ package coq;
 
 import java.util.Collection;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import org.netbeans.spi.navigator.NavigatorPanel;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
@@ -104,7 +105,7 @@ public class CoqNavPanelImpl implements NavigatorPanel {
         curContext.addLookupListener(getContextListener());
         // get actual data and recompute content
         Collection data = curContext.allInstances();
-     //   JOptionPane.showMessageDialog(null, "found "+data.size() +" objects");
+//        JOptionPane.showMessageDialog(null, "found "+data.size() +" objects");
         setNewContent(data);
     }
 
@@ -132,9 +133,9 @@ public class CoqNavPanelImpl implements NavigatorPanel {
         //cdt.
        
         panelUI.setEditorDoc(cdt);
-        cdt.getContents();
+     //   cdt.getContents();
         panelUI.setDebugMesg(cdt.getDbugcontents());        
-        
+        panelUI.showGoal();
     }
     
     /** Accessor for listener to context */

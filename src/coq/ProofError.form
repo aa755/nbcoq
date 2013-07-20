@@ -49,19 +49,21 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="downCursorButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="downButton" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jumpButton" alignment="1" min="-2" max="-2" attributes="0"/>
-                  <Component id="followCompile" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="upButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="topButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="goalOption" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="downCursorButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="downButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="followCompile" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="upButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="topButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="goalOption" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jSplitPane1" pref="263" max="32767" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jScrollPane2" min="-2" pref="80" max="-2" attributes="0"/>
+              <Component id="jSplitPane1" pref="288" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane2" min="-2" pref="60" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
