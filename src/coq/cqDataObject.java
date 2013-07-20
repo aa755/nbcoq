@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
@@ -102,7 +104,7 @@ import org.openide.windows.TopComponent;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class cqDataObject extends MultiDataObject implements KeyListener{
+public class cqDataObject extends MultiDataObject implements KeyListener, UndoableEditListener{
 
     /**
      * @return the compiledOffset
@@ -196,6 +198,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
     {
         retb.clear();
         retb.addHighlight(start, end, compiledCodeAttr);
+    }
+
+    @Override
+    public void undoableEditHappened(UndoableEditEvent uee) {
+        //JOptionPane.showMessageDialog(null, "NSA you edited!");
+        setHighlight(0, getCompiledOffset());
     }
 
     class BatchCompile implements Runnable{
@@ -509,6 +517,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener{
         editor=getLookup().lookup(EditorCookie.class);
         assert(getEditor()!=null);
         assert(getEditor().getDocument()!=null);
+        getEditor().getDocument().addUndoableEditListener(this);
         //getEditor().getOpenedPanes()[0].addKeyListener(this);
     }
     
