@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -23,13 +25,20 @@ import org.openide.util.Exceptions;
  *
  * @author Abhishek
  */
-public class ProofError extends javax.swing.JPanel {
+public class ProofError extends javax.swing.JPanel implements ListSelectionListener{
 
     private cqDataObject editorDoc;
     private final DefaultTreeModel model;
     nu.xom.Elements allGoals;
     ProofSubgoal curGoal;
     private final JPanel proofRootPanel;
+    SubGoalListModel slist;
+    
+    final SubGoalListModel assignListModel()
+    {
+        slist=new SubGoalListModel();
+        return slist;
+    }
     /**
      * Creates new form ProofError
      */
@@ -43,6 +52,7 @@ public class ProofError extends javax.swing.JPanel {
         proofScroll.getViewport().add(proofRootPanel);
         proofScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         proofRootPanel.setLayout(bl);
+        subGoalsList.getSelectionModel().addListSelectionListener(this);
         //proofRootPanel.setMaximumSize(new Dimension(this.getWidth(),Integer.MAX_VALUE ));
     }
 
@@ -77,6 +87,8 @@ public class ProofError extends javax.swing.JPanel {
         jumpButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
         topButton = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        subGoalsList = new javax.swing.JList();
 
         org.openide.awt.Mnemonics.setLocalizedText(downCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downCursorButton.text")); // NOI18N
         downCursorButton.addActionListener(new java.awt.event.ActionListener() {
@@ -135,6 +147,9 @@ public class ProofError extends javax.swing.JPanel {
             }
         });
 
+        subGoalsList.setModel(assignListModel());
+        jScrollPane3.setViewportView(subGoalsList);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -146,18 +161,21 @@ public class ProofError extends javax.swing.JPanel {
                         .addComponent(jScrollPane2))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(downCursorButton)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(downCursorButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(downButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(upButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(topButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jumpButton))
+                            .addComponent(goalOption))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(downButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(upButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(topButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jumpButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(goalOption)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(followCompile)
                         .addGap(0, 159, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -168,18 +186,22 @@ public class ProofError extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jumpButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(downCursorButton)
-                        .addComponent(downButton)
-                        .addComponent(followCompile)
-                        .addComponent(upButton)
-                        .addComponent(topButton)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jumpButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(downCursorButton)
+                                .addComponent(downButton)
+                                .addComponent(followCompile)
+                                .addComponent(upButton)
+                                .addComponent(topButton)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(goalOption)))
-                .addGap(18, 18, 18)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -281,6 +303,8 @@ void setAllGoals(nu.xom.Document prg)
 void displayGoal(int index)
 {
      proofRootPanel.removeAll();
+         slist.setValues(allGoals);
+
     if(allGoals==null || allGoals.size()==0)
     {
         proofRootPanel.validate();
@@ -326,11 +350,13 @@ try {
     private javax.swing.JRadioButton goalOption;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTree jTree1;
     private javax.swing.JButton jumpButton;
     private javax.swing.JScrollPane proofScroll;
+    private javax.swing.JList subGoalsList;
     private javax.swing.JButton topButton;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
@@ -341,5 +367,10 @@ try {
     public void setEditorDoc(cqDataObject editorDoc) {
         this.editorDoc = editorDoc;
         editorDoc.setUiWindow(this);
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent lse) {
+        displayGoal(subGoalsList.getSelectedIndex());
     }
 }
