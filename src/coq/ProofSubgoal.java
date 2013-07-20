@@ -67,16 +67,16 @@ public class ProofSubgoal {
             ret.setMinimumSize(dim);
             ret.validate();
             
-            ret.setBorder(BorderFactory.createLineBorder(Color.RED));
+       //     ret.setBorder(BorderFactory.createLineBorder(Color.RED));
             //
             ret.setLayout(gl);
-            int usedWidth=0;
+         //   int usedWidth=0;
           //  JPanel buttonPanel=new JPanel(new FlowLayout());
             for(int i=0;i<vars.size();i++)
             {
                 JButton but=new JButton(vars.get(i));
                 but.setMaximumSize(but.getMinimumSize());
-                usedWidth=usedWidth+but.getMinimumSize().width;
+       //         usedWidth=usedWidth+but.getMinimumSize().width;
                 but.setAlignmentX(Component.LEFT_ALIGNMENT);
                 ret.add(but);
             }
@@ -89,7 +89,7 @@ public class ProofSubgoal {
             //typeAr.setPreferredSize();
             typeAr.setWrapStyleWord(true);
             typeAr.setEditable(false);                    
-            int availableWidth=viewPortWidth - usedWidth;
+         //   int availableWidth=viewPortWidth - usedWidth;
             Dimension maxSize=typeAr.getMaximumSize();
          //   maxSize.width=availableWidth;
             Dimension minSize=typeAr.getMinimumSize();

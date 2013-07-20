@@ -29,7 +29,7 @@ import org.netbeans.spi.editor.highlighting.support.OffsetsBag;
 public class CoqHighlighter implements HighlightsLayerFactory {
     private static final AttributeSet compiledCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
-            new Color(50, 255, 50));
+            new Color(200, 255, 200));
     /*
     public static MarkHTMLOccurrencesHighlighter getMarkOccurrencesHighlighter(Document doc) {
         MarkHTMLOccurrencesHighlighter highlighter =
