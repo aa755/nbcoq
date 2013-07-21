@@ -210,16 +210,32 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     @Override
     public void insertUpdate(DocumentEvent de) {
        // JOptionPane.showMessageDialog(null, "you inserted text");
-        setHighlight(0, getCompiledOffset());         
+        
+        int offset=de.getOffset();
+        if(offset<getCompiledOffset())
+        {
+            handleCompileToOffset(offset);
+        }
+        else
+        {
+            setHighlight(0, getCompiledOffset());
+        }
+        
         
     }
 
     @Override
     public void removeUpdate(DocumentEvent de) {
+        int offset=de.getOffset();
+        if(offset<getCompiledOffset())
+        {
+            handleCompileToOffset(offset);
+        }
     }
 
     @Override
     public void changedUpdate(DocumentEvent de) {
+        de.getType(); // just to find out when it gets triggered
     }
 
     class BatchCompile implements Runnable{
@@ -555,11 +571,16 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         scheduleCompilation();
     }
     
+    void handleCompileToOffset(int offset)
+    {
+        batchCompile.setTargetOffset(offset);
+        scheduleCompilation();
+    }
+    
     void handleDownToCursor()
     {
         int curPos=getEditor().getOpenedPanes()[0].getCaretPosition();
-        batchCompile.setTargetOffset(curPos);
-        scheduleCompilation();
+        handleCompileToOffset(curPos);
     }
     
     void handleUpButton()
