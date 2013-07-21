@@ -259,8 +259,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 change=handleSteps();
             else if(lastAc==MOVE_TO_CURSOR_ACTION)
                 change=handleCompileToTargetPos();
-            
-            getUiWindow().enableCompileButtons();
+            else if(lastAc==QUERY_ACTION)
+                handleQuery();
+            getUiWindow().enableCompileButtonsAndShowDbug();
             if(change)
             {
                 if(uiWindow.isShowGoalChecked())
@@ -338,6 +339,26 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             stopRequest.set(false);
             targetOffset.set(0);
             return change;
+        }
+        
+        void handleQuery() {
+            String sendtocoq = uiWindow.getQuery();
+            CoqTopXMLIO.CoqRecMesg rec = coqtop.interpret(sendtocoq);
+            if (rec.success) {
+                String reply=rec.nuDoc.getRootElement().getFirstChildElement("string").getValue();
+                if(!reply.startsWith("Warning: query commands should not be inserted in scripts"))
+                    JOptionPane.showMessageDialog(null, "you probably executed a non-quety command as a query"
+                            + "this might make IDE's estimation of coqtop's state inconsistent."
+                            + "you might want to save the file and restart the IDE");
+                setDbugcontents(reply);
+            } else {
+                setDbugcontents("sent: " + sendtocoq + " received " + rec.nuDoc.toXML());
+            }
+        }
+       
+        public void requestQuery()
+        {
+            lastActionRequest.set(QUERY_ACTION);
         }
         
         public synchronized void setTargetOffset(int targetOffset) {
@@ -491,8 +512,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         
         CoqTopXMLIO.CoqRecMesg rec=coqtop.interpret(sendtocoq);
-        
-        setDbugcontents("sent: "+sendtocoq+" received "+rec.nuDoc.toXML());
+        if(rec.success)
+                setDbugcontents(""+rec.nuDoc.toXML());
+        else
+            setDbugcontents("sent: "+sendtocoq+" received "+rec.nuDoc.toXML());
         
         if(rec.success)
         {
@@ -504,6 +527,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     void handleDownButton()
     {
         batchCompile.incrementPendingSteps();
+        scheduleCompilation();
+    }
+    
+    void handleQuery()
+    {
+        batchCompile.requestQuery();
         scheduleCompilation();
     }
     

@@ -74,7 +74,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        downCursorButton = new javax.swing.JButton();
+        goToCursorButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         followCompile = new javax.swing.JRadioButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -92,10 +92,10 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         queryField = new javax.swing.JTextField();
         queryExecuteButton = new javax.swing.JButton();
 
-        org.openide.awt.Mnemonics.setLocalizedText(downCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downCursorButton.text")); // NOI18N
-        downCursorButton.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
+        goToCursorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downCursorButtonActionPerformed(evt);
+                goToCursorButtonActionPerformed(evt);
             }
         });
 
@@ -174,7 +174,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(downCursorButton)
+                                .addComponent(goToCursorButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(downButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -207,7 +207,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jumpButton, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(downCursorButton)
+                                .addComponent(goToCursorButton)
                                 .addComponent(downButton)
                                 .addComponent(followCompile)
                                 .addComponent(upButton)
@@ -224,7 +224,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void downCursorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downCursorButtonActionPerformed
+    private void goToCursorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goToCursorButtonActionPerformed
         // TODO add your handling code here:
         if(editorDoc==null)
         {
@@ -233,18 +233,18 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
        disableCompileButtons();
        editorDoc.handleDownToCursor();
         
-    }//GEN-LAST:event_downCursorButtonActionPerformed
+    }//GEN-LAST:event_goToCursorButtonActionPerformed
 
     void disableCompileButtons()
     {
         downButton.setEnabled(false);
-        downCursorButton.setEnabled(false);
+        goToCursorButton.setEnabled(false);
     }
     
-    public void enableCompileButtons()
+    public void enableCompileButtonsAndShowDbug()
     {
        downButton.setEnabled(true);
-       downCursorButton.setEnabled(true);
+       goToCursorButton.setEnabled(true);
        jTextArea1.setText(editorDoc.getDbugcontents());           
     }
     
@@ -284,6 +284,10 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         
     }//GEN-LAST:event_queryExecuteButtonActionPerformed
 
+    public String getQuery()
+    {
+        return queryField.getText();
+    }
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
   
@@ -369,8 +373,8 @@ try {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton downButton;
-    private javax.swing.JButton downCursorButton;
     private javax.swing.JRadioButton followCompile;
+    private javax.swing.JButton goToCursorButton;
     private javax.swing.JRadioButton goalOption;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
