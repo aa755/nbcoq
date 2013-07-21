@@ -175,13 +175,27 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     boolean isCompileToCursorShortcut(KeyEvent ke)
     {
-        return (ke.isControlDown()&&ke.getKeyChar()=='.');
+        return (ke.isControlDown()&&ke.getKeyCode()==KeyEvent.VK_RIGHT);
+    }
+    
+    boolean isUpShortcut(KeyEvent ke)
+    {
+        return (ke.isControlDown()&&ke.getKeyCode()==KeyEvent.VK_UP);
+    }
+
+    boolean isDownShortcut(KeyEvent ke)
+    {
+        return (ke.isControlDown()&&ke.getKeyCode()==KeyEvent.VK_DOWN);
     }
     @Override
     public void keyPressed(KeyEvent ke) {
         //keyboard shortcuts?
         if(isCompileToCursorShortcut(ke))
             handleDownToCursor();
+        else if(isUpShortcut(ke))
+            handleUpButton();
+        else if(isDownShortcut(ke))
+            handleDownButton();
     }
 
     @Override
@@ -462,6 +476,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     //    initialize();
     }
 
+    void setKeyboardListener()
+    {
+        if(!keyListenerAssigned)
+            getEditor().getOpenedPanes()[0].addKeyListener(this);
+        keyListenerAssigned=true;
+    }
     void scheduleCompilation()
     {
         batchCompileTask.schedule(10);
@@ -587,6 +607,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     void handleDownButton()
     {
+        setKeyboardListener();
         batchCompile.incrementPendingSteps();
         scheduleCompilation();
     }
@@ -599,6 +620,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     
     void handleCompileToOffset(int offset)
     {
+        setKeyboardListener();
         batchCompile.setTargetOffset(offset);
         scheduleCompilation();
     }
