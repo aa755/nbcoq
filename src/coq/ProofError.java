@@ -281,7 +281,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
 
     private void queryExecuteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryExecuteButtonActionPerformed
         // TODO add your handling code here:
-        
+        editorDoc.handleQuery();
     }//GEN-LAST:event_queryExecuteButtonActionPerformed
 
     public String getQuery()

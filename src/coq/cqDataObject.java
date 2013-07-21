@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
@@ -104,7 +106,7 @@ import org.openide.windows.TopComponent;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class cqDataObject extends MultiDataObject implements KeyListener, UndoableEditListener{
+public class cqDataObject extends MultiDataObject implements KeyListener, UndoableEditListener, DocumentListener{
 
     /**
      * @return the compiledOffset
@@ -202,8 +204,22 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     @Override
     public void undoableEditHappened(UndoableEditEvent uee) {
-        //JOptionPane.showMessageDialog(null, "NSA you edited!");
-        setHighlight(0, getCompiledOffset());
+       // setHighlight(0, getCompiledOffset());
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent de) {
+       // JOptionPane.showMessageDialog(null, "you inserted text");
+        setHighlight(0, getCompiledOffset());         
+        
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent de) {
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent de) {
     }
 
     class BatchCompile implements Runnable{
@@ -346,11 +362,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             CoqTopXMLIO.CoqRecMesg rec = coqtop.interpret(sendtocoq);
             if (rec.success) {
                 String reply=rec.nuDoc.getRootElement().getFirstChildElement("string").getValue();
-                if(!reply.startsWith("Warning: query commands should not be inserted in scripts"))
+                String warnMesg="Warning: query commands should not be inserted in scripts";
+                if(!reply.startsWith(warnMesg))
                     JOptionPane.showMessageDialog(null, "you probably executed a non-quety command as a query"
                             + "this might make IDE's estimation of coqtop's state inconsistent."
                             + "you might want to save the file and restart the IDE");
-                setDbugcontents(reply);
+                setDbugcontents(reply.substring(warnMesg.length()));
             } else {
                 setDbugcontents("sent: " + sendtocoq + " received " + rec.nuDoc.toXML());
             }
@@ -386,6 +403,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private static final AttributeSet compiledCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(200, 255, 200));
+    boolean lastCharIsDot;
 
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader); 
@@ -398,6 +416,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         batchCompileTask=rp.create(batchCompile, true);
         offsets=new Stack<Integer>();
         retb=null;
+        lastCharIsDot=false;
     //    initialize();
     }
 
@@ -580,7 +599,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         editor=getLookup().lookup(EditorCookie.class);
         assert(getEditor()!=null);
         assert(getEditor().getDocument()!=null);
-        getEditor().getDocument().addUndoableEditListener(this);
+        getEditor().getDocument().addDocumentListener(this);
+        //getEditor().getDocument().addUndoableEditListener(this);
+        //getEditor().getDocument().add
         //getEditor().getOpenedPanes()[0].addKeyListener(this);
     }
     
