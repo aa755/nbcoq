@@ -210,15 +210,33 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     @Override
     public void insertUpdate(DocumentEvent de) {
        // JOptionPane.showMessageDialog(null, "you inserted text");
-        
         int offset=de.getOffset();
         if(offset<getCompiledOffset())
         {
             handleCompileToOffset(offset);
+            lastCharIsDot=false;
         }
         else
         {
-            setHighlight(0, getCompiledOffset());
+            try {
+                String insert=getDocument().getText(offset, de.getLength());
+                if(lastCharIsDot&&insert.equals(" "))
+                {
+                    handleCompileToOffset(offset);                    
+                }
+                else
+                {
+                    setHighlight(0, getCompiledOffset());                    
+                }
+                if(insert.equals("."))
+                    lastCharIsDot=true;
+                else
+                    lastCharIsDot=false;
+            } catch (BadLocationException ex) {
+                setHighlight(0, getCompiledOffset());
+                lastCharIsDot=false;
+                Exceptions.printStackTrace(ex);
+            }
         }
         
         
@@ -227,6 +245,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     @Override
     public void removeUpdate(DocumentEvent de) {
         int offset=de.getOffset();
+        lastCharIsDot=false;
         if(offset<getCompiledOffset())
         {
             handleCompileToOffset(offset);
