@@ -344,10 +344,14 @@ void displayGoal(int index)
     Dimension dim=proofRootPanel.getMaximumSize();
     dim.width=maxWidth;
     proofRootPanel.setMaximumSize(dim);
+    JPanel concl=curGoal.showSubgoal(proofRootPanel,maxWidth);
     validateScroll();
-    curGoal.showSubgoal(proofRootPanel,maxWidth);
-    proofRootPanel.revalidate();
-    proofRootPanel.repaint();
+  //  proofRootPanel.revalidate();
+//    proofRootPanel.repaint();
+    JScrollBar vs=proofScroll.getVerticalScrollBar();
+    vs.setValue(vs.getMaximum()-vs.getVisibleAmount()-1);
+    proofScroll.scrollRectToVisible(concl.getBounds());
+   // proofRootPanel.repaint();
 }
 
 public boolean isShowGoalChecked()
@@ -366,6 +370,8 @@ try {
             resetTree(editorDoc.getGoal());
             setAllGoals(editorDoc.getGoal());
             displayGoal(0);
+          // JScrollBar vscr=proofScroll.getVerticalScrollBar();
+           //vscr.setValue(vscr.getMaximum()-vscr.getVisibleAmount());
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }    

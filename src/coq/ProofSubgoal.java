@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -149,13 +150,15 @@ public class ProofSubgoal {
          hypothesis.add(new Hypothesis(hyps.get(i).getValue()));
     }
     
-    void showSubgoal(JPanel jp,int viewPortWidth)
+    JPanel showSubgoal(JPanel jp,int viewPortWidth)
     {
         for(int i=0;i<hypothesis.size();i++)
         {
             jp.add(hypothesis.get(i).getPanel(viewPortWidth));           
         }
-        jp.add(concl.getPanel(viewPortWidth));
+    JPanel conclP=(concl.getPanel(viewPortWidth));
         //jp.validate();
+    jp.add(conclP);
+    return conclP;
     }
 }

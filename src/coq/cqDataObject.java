@@ -173,9 +173,15 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     }
 
+    boolean isCompileToCursorShortcut(KeyEvent ke)
+    {
+        return (ke.isControlDown()&&ke.getKeyChar()=='.');
+    }
     @Override
     public void keyPressed(KeyEvent ke) {
         //keyboard shortcuts?
+        if(isCompileToCursorShortcut(ke))
+            handleDownToCursor();
     }
 
     @Override
@@ -452,6 +458,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         offsets=new Stack<Integer>();
         retb=null;
         lastCharIsDot=false;
+        keyListenerAssigned=false;
     //    initialize();
     }
 
@@ -634,15 +641,16 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     /**
      * final because it is called in the constructor
      */
+    boolean keyListenerAssigned;
     final void assignCookie()
     {
         editor=getLookup().lookup(EditorCookie.class);
         assert(getEditor()!=null);
         assert(getEditor().getDocument()!=null);
         getEditor().getDocument().addDocumentListener(this);
+  //      getEditor().getDocument().add
         //getEditor().getDocument().addUndoableEditListener(this);
         //getEditor().getDocument().add
-        //getEditor().getOpenedPanes()[0].addKeyListener(this);
     }
     
     @Override
