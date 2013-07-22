@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
@@ -127,8 +128,12 @@ public class ProofSubgoal {
             typeAr.setEditable(false);
             //typeAr.setRows(1);
             //typeAr.setColumns(container.getWidth()/typeAr.getC);           
+            Font fnt=typeAr.getFont();
+            Font newF=fnt.deriveFont(13.0F);
+            typeAr.setFont(newF);
             ret.add(typeAr);
             ret.setAlignmentX(Component.LEFT_ALIGNMENT);
+            ret.setBorder(BorderFactory.createLineBorder(Color.GREEN));
             return ret;            
         }
     }
