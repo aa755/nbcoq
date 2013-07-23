@@ -594,9 +594,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         
         CoqTopXMLIO.CoqRecMesg rec=coqtop.interpret(sendtocoq);
         if(rec.success)
-                setDbugcontents(""+rec.nuDoc.toXML());
+        {
+      //          setDbugcontents(""+rec.nuDoc.toXML());
+            setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
+        }
         else
-            setDbugcontents("sent: "+sendtocoq+" received "+rec.nuDoc.toXML());
+            setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
         
         if(rec.success)
         {

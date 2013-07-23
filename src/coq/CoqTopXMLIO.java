@@ -48,10 +48,10 @@ private  PrintWriter input;
     
     public synchronized CoqRecMesg communicate(CoqSendMesg msg)
     {
-        System.out.println("writing:" +msg.toXML());
+   //     System.out.println("writing:" +msg.toXML());
         input.write(msg.toXML());
         input.flush();
-        System.out.println("wrote:" +msg.toXML());
+     //   System.out.println("wrote:" +msg.toXML());
         CoqRecMesg ret= new CoqRecMesg();
         
         ret.parseXMLFromStream(result);
@@ -178,10 +178,10 @@ private  PrintWriter input;
                         }
                     }
                     try {
-                       System.out.println("trying to parse:"+answer);
+                    //   System.out.println("trying to parse:"+answer);
                         nuDoc = b.build(answer.trim(), null);
                         String status=nuDoc.getRootElement().getAttribute("val").getValue();
-                        System.out.println("status="+status);
+                      //  System.out.println("status="+status);
                         success=(status.equals("good"));
                         break;
                     }
