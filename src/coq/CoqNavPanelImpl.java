@@ -129,6 +129,8 @@ public class CoqNavPanelImpl implements NavigatorPanel {
         // Note - be sure to compute the content OUTSIDE event dispatch thread,
         // just final repainting of UI should be done in event dispatch thread.
         // Please use RequestProcessor and Swing.invokeLater to achieve this.
+        if(newData==null || newData.isEmpty())
+            return;
         cqDataObject cdt=(cqDataObject) newData.toArray()[0];
         //cdt.
        

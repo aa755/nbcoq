@@ -635,9 +635,18 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             {
                 setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
                 nu.xom.Element root=rec.nuDoc.getRootElement();
-                lastError=new CoqError();
-                lastError.startLoc= compiledOffset.intValue() + Integer.parseInt(root.getAttributeValue("loc_s"));
-                lastError.endLoc= compiledOffset.intValue() + Integer.parseInt(root.getAttributeValue("loc_e"));
+                try
+                {
+                    int startOffset=Integer.parseInt(root.getAttributeValue("loc_s"));
+                    int endOffset=Integer.parseInt(root.getAttributeValue("loc_e"));
+                    lastError=new CoqError();
+                    lastError.startLoc= compiledOffset.intValue() + startOffset ;
+                    lastError.endLoc= compiledOffset.intValue() + endOffset;
+                }catch(NumberFormatException ex)
+                {
+                    
+                }
+                
             }
             else
             {
