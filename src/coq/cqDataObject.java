@@ -633,7 +633,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             if(rec.nuDoc!=null)
             {
-                setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
+//                setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
+                setDbugcontents(rec.nuDoc.getRootElement().getValue());
                 nu.xom.Element root=rec.nuDoc.getRootElement();
                 try
                 {
@@ -644,6 +645,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                     lastError.endLoc= compiledOffset.intValue() + endOffset;
                 }catch(NumberFormatException ex)
                 {
+                    lastError=new CoqError();
+                    lastError.startLoc= compiledOffset.intValue() ;
+                    lastError.endLoc= compiledOffset.intValue() + dotOffset;
                     
                 }
                 
