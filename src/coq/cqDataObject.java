@@ -599,8 +599,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
         }
         else
-            setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
-        
+        {
+            if(rec.nuDoc!=null)
+                setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
+            else
+                setDbugcontents("received null, sent: "+sendtocoq);                
+        }
         if(rec.success)
         {
                 addToCompiledOffset (dotOffset+1);

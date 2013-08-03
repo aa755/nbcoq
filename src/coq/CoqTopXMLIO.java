@@ -51,7 +51,7 @@ private  PrintWriter input;
    //     System.out.println("writing:" +msg.toXML());
         input.write(msg.toXML());
         input.flush();
-     //   System.out.println("wrote:" +msg.toXML());
+        System.out.println("wrote:" +msg.toXML());
         CoqRecMesg ret= new CoqRecMesg();
         
         ret.parseXMLFromStream(result);
@@ -178,7 +178,7 @@ private  PrintWriter input;
                         }
                     }
                     try {
-                    //   System.out.println("trying to parse:"+answer);
+                       System.out.println("trying to parse:"+answer);
                         nuDoc = b.build(answer.trim(), null);
                         String status=nuDoc.getRootElement().getAttribute("val").getValue();
                       //  System.out.println("status="+status);
