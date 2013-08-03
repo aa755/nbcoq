@@ -216,10 +216,15 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         this.retb = retb;
     }
 
-        public void setHighlight(int start, int end)
+    public synchronized void setHighlight(int start, int end)
     {
         retb.clear();
         retb.addHighlight(start, end, compiledCodeAttr);
+    }
+
+    public synchronized void addErrorHighlight(int start, int end)
+    {
+        retb.addHighlight(start, end, errorCodeAttr);
     }
 
     @Override
@@ -362,6 +367,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                     break;
                 }
             }
+            if(lastError!=null)
+            {
+                lastError.highlight();
+            }
             return change;
         }
         
@@ -406,6 +415,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                         break;
                     }
                 }
+                if(lastError!=null)
+                {
+                    lastError.highlight();
+                }
+
             }
             stopRequest.set(false);
             targetOffset.set(0);
@@ -458,8 +472,23 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private static final AttributeSet compiledCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(200, 255, 200));
+    private static final AttributeSet errorCodeAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Background,
+            new Color(255, 100, 100));
     boolean lastCharIsDot;
+    private CoqError lastError;
 
+    class CoqError{
+        public int startLoc;
+        public int endLoc;
+        public String errorMesg;
+        
+        public void highlight()
+        {
+            addErrorHighlight(startLoc, endLoc);
+        }
+    }
+    
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader); 
         initialized=false;
@@ -597,18 +626,24 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
       //          setDbugcontents(""+rec.nuDoc.toXML());
             setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
+            addToCompiledOffset (dotOffset+1);
+            lastError=null;
         }
         else
         {
             if(rec.nuDoc!=null)
+            {
                 setDbugcontents("received "+rec.nuDoc.toXML()+"sent: "+sendtocoq);
+                nu.xom.Element root=rec.nuDoc.getRootElement();
+                lastError=new CoqError();
+                lastError.startLoc= compiledOffset.intValue() + Integer.parseInt(root.getAttributeValue("loc_s"));
+                lastError.endLoc= compiledOffset.intValue() + Integer.parseInt(root.getAttributeValue("loc_e"));
+            }
             else
-                setDbugcontents("received null, sent: "+sendtocoq);                
+            {
+                setDbugcontents("received null, sent: "+sendtocoq);
+            }
         }
-        if(rec.success)
-        {
-                addToCompiledOffset (dotOffset+1);
-        }  
         return rec.success;
     }
 
