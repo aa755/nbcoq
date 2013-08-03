@@ -11,6 +11,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -131,9 +134,16 @@ public class ProofSubgoal {
             Font fnt=typeAr.getFont();
             Font newF=fnt.deriveFont(13.0F);
             typeAr.setFont(newF);
-            ret.add(typeAr);
             ret.setAlignmentX(Component.LEFT_ALIGNMENT);
             ret.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+            Dimension maxSize=typeAr.getMaximumSize();
+         //   maxSize.width=availableWidth;
+            Dimension minSize=typeAr.getMinimumSize();
+           // minSize.width=availableWidth;
+            maxSize.height=minSize.height;
+            typeAr.setMaximumSize(maxSize);
+
+            ret.add(typeAr);
             return ret;            
         }
     }
@@ -153,17 +163,45 @@ public class ProofSubgoal {
     hypothesis=new ArrayList<Hypothesis>(hyps.size());
     for(int i=0;i<hyps.size();i++)
          hypothesis.add(new Hypothesis(hyps.get(i).getValue()));
+    compactHyps();
     }
     
     JPanel showSubgoal(JPanel jp,int viewPortWidth)
     {
-        for(int i=0;i<hypothesis.size();i++)
+        JPanel conclP=(concl.getPanel(viewPortWidth));
+        jp.add(conclP);
+        for(int i=hypothesis.size()-1; i>=0; i--)
         {
             jp.add(hypothesis.get(i).getPanel(viewPortWidth));           
         }
-    JPanel conclP=(concl.getPanel(viewPortWidth));
         //jp.validate();
-    jp.add(conclP);
     return conclP;
+    }
+    
+    /**
+     * final because it is called in constructor
+     */
+    final void compactHyps()
+    {
+        ConcurrentHashMap<String,Integer> typeLocs=new ConcurrentHashMap<String, Integer>();
+        ArrayList<Hypothesis> compactedList = new ArrayList<Hypothesis>();
+        
+        for(int i=0;i<hypothesis.size();i++)
+        {
+           Hypothesis hyp=hypothesis.get(i);
+           boolean typePresent=typeLocs.containsKey(hyp.type);
+           if(typePresent)
+           {
+               int index=typeLocs.get(hyp.type);
+               assert(hyp.vars.size()==1);
+               compactedList.get(index).vars.add(hyp.vars.get(0));
+           }
+           else
+           {
+               compactedList.add(hyp);
+               typeLocs.put(hyp.type, compactedList.size()-1);
+           }
+        }
+        hypothesis=compactedList;
     }
 }

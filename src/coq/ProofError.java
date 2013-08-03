@@ -115,12 +115,15 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
 
         jScrollPane2.setViewportView(jTree1);
 
-        jSplitPane1.setDividerLocation(700);
+        jSplitPane1.setDividerLocation(300);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setLeftComponent(proofScroll);
 
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(23, 100));
+
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
+        jTextArea1.setMinimumSize(new java.awt.Dimension(4, 100));
         jScrollPane1.setViewportView(jTextArea1);
 
         jSplitPane1.setRightComponent(jScrollPane1);
@@ -348,10 +351,10 @@ void displayGoal(int index)
     validateScroll();
   //  proofRootPanel.revalidate();
 //    proofRootPanel.repaint();
-    JScrollBar vs=proofScroll.getVerticalScrollBar();
-    vs.setValue(vs.getMaximum()-vs.getVisibleAmount()-1);
-    proofScroll.scrollRectToVisible(concl.getBounds());
-   // proofRootPanel.repaint();
+//    JScrollBar vs=proofScroll.getVerticalScrollBar();
+//    vs.setValue(vs.getMaximum()-vs.getVisibleAmount()-1);
+//    proofScroll.scrollRectToVisible(concl.getBounds());
+    proofRootPanel.repaint();
 }
 
 public boolean isShowGoalChecked()
