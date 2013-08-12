@@ -433,10 +433,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 String reply=rec.nuDoc.getRootElement().getFirstChildElement("string").getValue();
                 String warnMesg="Warning: query commands should not be inserted in scripts";
                 if(!reply.startsWith(warnMesg))
-                    JOptionPane.showMessageDialog(null, "you probably executed a non-quety command as a query"
-                            + "this might make IDE's estimation of coqtop's state inconsistent."
-                            + "you might want to save the file and restart the IDE");
+                    JOptionPane.showMessageDialog(null, "you probably executed a non-query command as a query");
+                            //+ "this might make IDE's estimation of coqtop's state inconsistent."
+                            //+ "you might want to save the file and restart the IDE");
                 setDbugcontents(reply.substring(warnMesg.length()));
+                rewindCoqtopForQuery();
             } else {
                 setDbugcontents("sent: " + sendtocoq + " received " + rec.nuDoc.toXML());
             }
@@ -714,6 +715,20 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         else
             return 0;
+    }
+    /**
+     * same as rewindCoqtop, but since it is a query
+     * entered externally(w.r.t the file editor), there
+     * us no need to change editor state(highlighting)
+     * @param nofSteps
+     * @return the number of steps actually rewound
+     *  INCLUDING the ones asked for(and extra steps)
+     */
+    void rewindCoqtopForQuery ()
+    {
+        CoqTopXMLIO.CoqRecMesg rec=coqtop.rewind(1);
+        assert(rec.success);
+        assert(rec.getExtraRewoudSteps()==0);
     }
     /**
      * final because it is called in the constructor
