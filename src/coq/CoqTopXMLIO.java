@@ -144,6 +144,8 @@ private  PrintWriter input;
         boolean success;
      //   Element contents;
         private static final int BUF_SIZE=4096;
+        private static final int NUM_TRIALS=10;
+        
         char [] buf=new char [BUF_SIZE];
         
         void trySleep(int milis)
@@ -169,7 +171,7 @@ private  PrintWriter input;
                 while (!result.ready())
                     trySleep(10);
                 //    Thread.sleep(1);
-                while (count < 5) {
+                while (count < NUM_TRIALS) {
                     while (result.ready()) {
                         int numRead=result.read(buf,0,BUF_SIZE);
                         if(numRead>0)
@@ -187,7 +189,7 @@ private  PrintWriter input;
                     }
                     catch (Exception ex) {
                         //Exceptions.printStackTrace(ex);
-                        System.err.println("parse error count=" + count);
+                        System.err.println("parse error count=" + count +"size o/p:"+answer.length());
                         count = count + 1;
                         trySleep(2*(count));
                         continue;

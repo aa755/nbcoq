@@ -15,6 +15,7 @@ import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.Highlighter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -248,7 +249,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     {
        downButton.setEnabled(true);
        goToCursorButton.setEnabled(true);
-       jTextArea1.setText(editorDoc.getDbugcontents());           
+       jTextArea1.setText(editorDoc.getDbugcontents());   
+     //  Highlighter h=jTextArea1.getHighlighter();
     }
     
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
