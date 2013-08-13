@@ -478,6 +478,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             new Color(255, 100, 100));
     boolean lastCharIsDot;
     private CoqError lastError;
+    private static String indentStrs = "-+*";
 
     class CoqError{
         public int startLoc;
@@ -583,6 +584,21 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         Matcher commandEndMatcher = coqCommandEnd.matcher(code);
         int start=0;
         while (commandEndMatcher.find()) {
+            if ((start==0))
+            {
+                String segment=code.substring(0, commandEndMatcher.end());
+                String seg_trim=segment.trim();
+                for(int i=0;i<indentStrs.length();i++)
+                {
+                    String ich=indentStrs.substring(i, i+1)+" ";
+                    if(seg_trim.startsWith(ich))
+                    {
+                        offset= segment.indexOf(ich)+1;
+                        return offset;
+                    }
+                }
+            }
+            
             Matcher comments = coqComment.matcher(code.substring(start, commandEndMatcher.end()));
             start=commandEndMatcher.end();
             while (comments.find()) {
