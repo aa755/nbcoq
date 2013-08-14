@@ -143,8 +143,8 @@ private  PrintWriter input;
         //Document doc;
         boolean success;
      //   Element contents;
-        private static final int BUF_SIZE=4096;
-        private static final int NUM_TRIALS=10;
+        private static final int BUF_SIZE=262144;
+        private static final int NUM_TRIALS=128;
         
         char [] buf=new char [BUF_SIZE];
         
