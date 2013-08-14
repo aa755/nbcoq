@@ -224,7 +224,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     public synchronized void addErrorHighlight(int start, int end)
     {
-        retb.addHighlight(start, end, errorCodeAttr);
+        if(start<end)
+            retb.addHighlight(start, end, errorCodeAttr);
     }
 
     @Override
