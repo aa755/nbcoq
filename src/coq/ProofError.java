@@ -4,6 +4,7 @@
  */
 package coq;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -38,6 +39,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     ProofSubgoal curGoal;
     private final JPanel proofRootPanel;
     private Matcher regm;
+    public static final boolean DARK=true;
+    public static final Color DarkBack=Color.BLACK;
+    public static final Color DarkFore=Color.GREEN;
     SubGoalListModel slist;
     
     final SubGoalListModel assignListModel()
@@ -59,6 +63,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         proofScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         proofRootPanel.setLayout(bl);
         subGoalsList.getSelectionModel().addListSelectionListener(this);
+        if(DARK)
+        {
+            jTextArea1.setBackground(DarkBack);
+            jTextArea1.setForeground(DarkFore);
+        }
         //proofRootPanel.setMaximumSize(new Dimension(this.getWidth(),Integer.MAX_VALUE ));
     }
 

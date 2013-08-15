@@ -37,6 +37,8 @@ public class ProofSubgoal {
     
     static class Hypothesis
     {
+        private static final Color COLOR=Color.RED;
+        private static final float  FONT_SIZE=18;
         ArrayList<String> vars;
         String type;
 
@@ -94,6 +96,9 @@ public class ProofSubgoal {
             //typeAr.setPreferredSize();
             typeAr.setWrapStyleWord(true);
             typeAr.setEditable(false);                    
+            Font fnt=typeAr.getFont();
+            Font newF=fnt.deriveFont(FONT_SIZE);
+            typeAr.setFont(newF);
          //   int availableWidth=viewPortWidth - usedWidth;
             Dimension maxSize=typeAr.getMaximumSize();
          //   maxSize.width=availableWidth;
@@ -102,6 +107,12 @@ public class ProofSubgoal {
             maxSize.height=minSize.height;
             typeAr.setMaximumSize(maxSize);
            // typeAr.setMinimumSize(minSize);
+            if(ProofError.DARK)
+            {
+                typeAr.setBackground(ProofError.DarkBack);
+                typeAr.setForeground(ProofError.DarkFore);
+            }
+            
             ret.add(typeAr);
             ret.setAlignmentX(Component.LEFT_ALIGNMENT);
             typeAr.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -114,6 +125,8 @@ public class ProofSubgoal {
     static class Conclusion
     {
         String type;
+        //private static final Color COLOR=Color.RED;
+        private static final float  FONT_SIZE=18;
 
         public Conclusion(String type) {
             this.type = type;
@@ -132,7 +145,7 @@ public class ProofSubgoal {
             //typeAr.setRows(1);
             //typeAr.setColumns(container.getWidth()/typeAr.getC);           
             Font fnt=typeAr.getFont();
-            Font newF=fnt.deriveFont(13.0F);
+            Font newF=fnt.deriveFont(FONT_SIZE);
             typeAr.setFont(newF);
             ret.setAlignmentX(Component.LEFT_ALIGNMENT);
             ret.setBorder(BorderFactory.createLineBorder(Color.GREEN));
@@ -142,6 +155,11 @@ public class ProofSubgoal {
            // minSize.width=availableWidth;
             maxSize.height=minSize.height;
             typeAr.setMaximumSize(maxSize);
+            if(ProofError.DARK)
+            {
+                typeAr.setBackground(ProofError.DarkBack);
+                typeAr.setForeground(ProofError.DarkFore);
+            }
 
             ret.add(typeAr);
             return ret;            

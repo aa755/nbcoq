@@ -219,7 +219,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     public synchronized void setHighlight(int start, int end)
     {
         retb.clear();
-        retb.addHighlight(start, end, compiledCodeAttr);
+        if(ProofError.DARK)
+            retb.addHighlight(start, end, compiledCodeAttrDark);
+        else    
+            retb.addHighlight(start, end, compiledCodeAttr);
     }
 
     public synchronized void addErrorHighlight(int start, int end)
@@ -480,6 +483,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private static final AttributeSet compiledCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(200, 255, 200));
+    private static final AttributeSet compiledCodeAttrDark =
+            AttributesUtilities.createImmutable(StyleConstants.Background,
+            new Color(0, 0, 150));
     private static final AttributeSet errorCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(255, 100, 100));
