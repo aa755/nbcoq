@@ -106,6 +106,7 @@ public class ProofSubgoal {
            // minSize.width=availableWidth;
             maxSize.height=minSize.height;
             typeAr.setMaximumSize(maxSize);
+            typeAr.addKeyListener(dobj);
            // typeAr.setMinimumSize(minSize);
             if(ProofError.DARK)
             {
@@ -155,6 +156,7 @@ public class ProofSubgoal {
            // minSize.width=availableWidth;
             maxSize.height=minSize.height;
             typeAr.setMaximumSize(maxSize);
+            typeAr.addKeyListener(dobj);
             if(ProofError.DARK)
             {
                 typeAr.setBackground(ProofError.DarkBack);

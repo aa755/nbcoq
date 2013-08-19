@@ -20,6 +20,7 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.settings.AttributesUtilities;
@@ -190,7 +191,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     boolean isSearchAboutShortcut(KeyEvent ke)
     {
-        return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_S);
+        return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_L);
     }
 
     boolean isPrintShortcut(KeyEvent ke)
@@ -210,6 +211,58 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
     }
     
+    static boolean partOFId(char ch)
+    {
+        return ('a'<=ch && ch<='z') || ('0'<=ch && ch<='9') || (ch=='_');
+    }
+
+    static String getSelectedWord(Object src)
+    {
+        
+        try
+        {
+            JTextComponent comp=(JTextComponent) src;
+            //return comp.getSelectedText()+":"+comp;
+            int start=comp.getCaret().getDot();
+            int pos=start;
+            String ret="";
+            // march forward
+            try
+            {
+                char ch;
+                while( partOFId(ch= comp.getText(pos, 1).toLowerCase().charAt(0)))
+                {
+                    ret=ret+ch;
+                    pos++;
+                }
+            }
+            catch (Exception ex) // illegal position exception
+            {
+            }
+            
+            //march backward
+            pos=start-1;
+            try
+            {
+                char ch;
+                while( partOFId(ch= comp.getText(pos, 1).toLowerCase().charAt(0)))
+                {
+                    ret=ch+ret;
+                    pos--;
+                }
+            }
+            catch (Exception ex) 
+            {
+            }
+            
+            return ret;
+        }
+        catch(Exception ex) // cast exception
+        {
+            return "";
+        }
+    }
+    
     @Override
     public void keyPressed(KeyEvent ke) {
         //keyboard shortcuts?
@@ -223,8 +276,25 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             if(uiWindow!=null) 
             {
-                uiWindow.setQuery("SearchAbout "+getSelectedWord()+".");
-                handleQuery();
+                String word=getSelectedWord(ke.getSource());
+                if(!word.isEmpty())
+                {
+                    uiWindow.setQuery("SearchAbout "+word+".");
+                    handleQuery();
+                }
+            }
+        }            
+        else if(isPrintShortcut(ke))
+        {
+            if(uiWindow!=null) 
+            {
+                
+                String word=getSelectedWord(ke.getSource());
+                if(!word.isEmpty())
+                {
+                    uiWindow.setQuery("Print "+word+".");
+                    handleQuery();
+                }
             }
         }            
     }
