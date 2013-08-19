@@ -335,10 +335,14 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     }//GEN-LAST:event_topButtonActionPerformed
 
     private void queryExecuteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryExecuteButtonActionPerformed
-        // TODO add your handling code here:
+         // TODO add your handling code here:
         editorDoc.handleQuery();
     }//GEN-LAST:event_queryExecuteButtonActionPerformed
 
+    void setQuery(String st)
+    {
+        queryField.setText(st);
+    }
     private void highlightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_highlightButtonActionPerformed
        String regexp=queryRegexp.getText();
        if(!regexp.isEmpty())
@@ -423,7 +427,7 @@ void displayGoal(int index)
 {
      proofRootPanel.removeAll();
          slist.setValues(allGoals);
-
+  
     if(allGoals==null || allGoals.size()==0)
     {
         proofRootPanel.validate();
@@ -435,7 +439,7 @@ void displayGoal(int index)
     Dimension dim=proofRootPanel.getMaximumSize();
     dim.width=maxWidth;
     proofRootPanel.setMaximumSize(dim);
-    JPanel concl=curGoal.showSubgoal(proofRootPanel,maxWidth);
+    JPanel concl=curGoal.showSubgoal(proofRootPanel,editorDoc, maxWidth);
     validateScroll();
   //  proofRootPanel.revalidate();
 //    proofRootPanel.repaint();

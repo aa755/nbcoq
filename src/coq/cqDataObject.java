@@ -187,6 +187,29 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     {
         return (ke.isControlDown()&&ke.getKeyCode()==KeyEvent.VK_DOWN);
     }
+
+    boolean isSearchAboutShortcut(KeyEvent ke)
+    {
+        return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_S);
+    }
+
+    boolean isPrintShortcut(KeyEvent ke)
+    {
+        return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_P);
+    }
+    
+    String getSelectedWord()
+    {
+        try
+        {
+            return getEditor().getOpenedPanes()[0].getSelectedText();
+        }
+        catch(NullPointerException ex)
+        {
+            return "";
+        }
+    }
+    
     @Override
     public void keyPressed(KeyEvent ke) {
         //keyboard shortcuts?
@@ -196,6 +219,14 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             handleUpButton();
         else if(isDownShortcut(ke))
             handleDownButton();
+        else if(isSearchAboutShortcut(ke))
+        {
+            if(uiWindow!=null) 
+            {
+                uiWindow.setQuery("SearchAbout "+getSelectedWord()+".");
+                handleQuery();
+            }
+        }            
     }
 
     @Override

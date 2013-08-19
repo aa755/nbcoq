@@ -62,7 +62,7 @@ public class ProofSubgoal {
             initFromVar(coqLine.substring(0, splitIndex), coqLine.substring(splitIndex+2));
         }
         
-        JPanel getPanel(int viewPortWidth)
+        JPanel getPanel(int viewPortWidth, cqDataObject dobj)
         {
             JPanel ret=new JPanel();
            // FlowLayout fl=new FlowLayout(FlowLayout.LEFT,0,0);
@@ -132,7 +132,7 @@ public class ProofSubgoal {
             this.type = type;
         }        
         
-        JPanel getPanel(int viewPortWidth)
+        JPanel getPanel(int viewPortWidth, cqDataObject dobj)
         {
             JPanel ret=new JPanel();
             ret.setLayout(new GridLayout(1,1));
@@ -184,13 +184,13 @@ public class ProofSubgoal {
     compactHyps();
     }
     
-    JPanel showSubgoal(JPanel jp,int viewPortWidth)
+    JPanel showSubgoal(JPanel jp, cqDataObject dobj, int viewPortWidth)
     {
-        JPanel conclP=(concl.getPanel(viewPortWidth));
+        JPanel conclP=(concl.getPanel(viewPortWidth,dobj));
         jp.add(conclP);
         for(int i=hypothesis.size()-1; i>=0; i--)
         {
-            jp.add(hypothesis.get(i).getPanel(viewPortWidth));           
+            jp.add(hypothesis.get(i).getPanel(viewPortWidth,dobj));           
         }
         //jp.validate();
     return conclP;
