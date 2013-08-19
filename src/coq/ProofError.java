@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
@@ -458,6 +459,13 @@ void displayGoal(int index)
 //    vs.setValue(vs.getMaximum()-vs.getVisibleAmount()-1);
 //    proofScroll.scrollRectToVisible(concl.getBounds());
     proofRootPanel.repaint();
+    //https://forums.oracle.com/thread/2414508
+    SwingUtilities.invokeLater(new Runnable() {
+     @Override
+     public void run() {
+          proofScroll.getVerticalScrollBar().setValue(0);
+     }
+});
 }
 
 public boolean isShowGoalChecked()
@@ -517,6 +525,9 @@ try {
 
     @Override
     public void valueChanged(ListSelectionEvent lse) {
-        displayGoal(subGoalsList.getSelectedIndex());
+        if(!lse.getValueIsAdjusting())
+        {
+            displayGoal(subGoalsList.getSelectedIndex());
+        }
     }
 }
