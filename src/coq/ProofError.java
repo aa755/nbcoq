@@ -142,6 +142,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         jScrollPane1.setMinimumSize(new java.awt.Dimension(23, 100));
 
         jTextArea1.setColumns(20);
+        jTextArea1.setFont(new java.awt.Font("Monospaced", 0, 18)); // NOI18N
         jTextArea1.setRows(5);
         jTextArea1.setMinimumSize(new java.awt.Dimension(4, 100));
         jScrollPane1.setViewportView(jTextArea1);
@@ -521,6 +522,8 @@ try {
     public void setEditorDoc(cqDataObject editorDoc) {
         this.editorDoc = editorDoc;
         editorDoc.setUiWindow(this);
+        jTextArea1.addKeyListener(editorDoc);
+                
     }
 
     @Override

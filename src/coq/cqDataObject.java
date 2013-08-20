@@ -213,7 +213,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     
     static boolean partOFId(char ch)
     {
-        return ('a'<=ch && ch<='z') || ('0'<=ch && ch<='9') || (ch=='_');
+        return ('a'<=ch && ch<='z')||('A'<=ch && ch<='Z') || ('0'<=ch && ch<='9') || (ch=='_');
     }
 
     static String getSelectedWord(Object src)
@@ -230,7 +230,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             try
             {
                 char ch;
-                while( partOFId(ch= comp.getText(pos, 1).toLowerCase().charAt(0)))
+                while( partOFId(ch= comp.getText(pos, 1).charAt(0)))
                 {
                     ret=ret+ch;
                     pos++;
@@ -245,7 +245,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             try
             {
                 char ch;
-                while( partOFId(ch= comp.getText(pos, 1).toLowerCase().charAt(0)))
+                while( partOFId(ch= comp.getText(pos, 1).charAt(0)))
                 {
                     ret=ch+ret;
                     pos--;
