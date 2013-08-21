@@ -58,7 +58,8 @@ public class CoqHighlighter implements HighlightsLayerFactory {
               weakDoc = new WeakReference<Document>(context.getDocument());
              cqDataObject dobj = (cqDataObject) NbEditorUtilities.getDataObject(weakDoc.get());
     //         dobj.setHighlighter(this);
-             dobj.setRetb(new OffsetsBag(context.getDocument()));
+             if(dobj.getRetb()==null)
+                   dobj.setRetb(new OffsetsBag(context.getDocument()));
            // context.getDocument().putProperty(MarkHTMLOccurrencesHighlightsLayerFactory.class, this);
 //            retb.addHighlight(context.getDocument().getStartPosition().getOffset(), context.getDocument().getEndPosition().getOffset(), compiledCodeAttr);
             return new HighlightsLayer[]{

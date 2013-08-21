@@ -14,12 +14,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -317,6 +319,22 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         this.retb = retb;
     }
 
+    public synchronized void  setHighlightHelper(int start, int end)
+    {
+        try {
+            //System.out.println(getDocument());
+              this.getEditor().getOpenedPanes()[0].getHighlighter().removeAllHighlights();
+              this.getEditor().getOpenedPanes()[0].getHighlighter().addHighlight(start, end, new DefaultHighlighter.DefaultHighlightPainter(Color.red));
+              
+    //        retb.clear();
+    //        if(ProofError.DARK)
+    //            retb.addHighlight(start, end, compiledCodeAttrDark);
+    //            retb.addHighlight(start, end, compiledCodeAttr);
+    //            retb.addHighlight(start, end, compiledCodeAttr);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }        
+    }
     public synchronized void setHighlight(int start, int end)
     {
         retb.clear();
@@ -324,6 +342,19 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             retb.addHighlight(start, end, compiledCodeAttrDark);
         else    
             retb.addHighlight(start, end, compiledCodeAttr);
+    }        
+    
+    
+    public void setHighlightBad(final int start, final int end)
+    {
+            SwingUtilities.invokeLater(new Runnable () {
+
+                @Override
+                public void run() {
+                    setHighlightHelper(start, end);
+                }
+            });
+        
     }
 
     public synchronized void addErrorHighlight(int start, int end)
