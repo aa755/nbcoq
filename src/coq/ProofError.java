@@ -111,8 +111,10 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         highlightButton = new javax.swing.JButton();
         nextHButton = new javax.swing.JButton();
         prevHButton = new javax.swing.JButton();
+        bottomButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
+        goToCursorButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.toolTipText")); // NOI18N
         goToCursorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 goToCursorButtonActionPerformed(evt);
@@ -120,6 +122,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(downButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downButton.text")); // NOI18N
+        downButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.downButton.toolTipText")); // NOI18N
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downButtonActionPerformed(evt);
@@ -204,6 +207,13 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         org.openide.awt.Mnemonics.setLocalizedText(prevHButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.prevHButton.text")); // NOI18N
         prevHButton.setEnabled(false);
 
+        org.openide.awt.Mnemonics.setLocalizedText(bottomButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.bottomButton.text")); // NOI18N
+        bottomButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bottomButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -225,15 +235,17 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                         .addComponent(downButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(upButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bottomButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(topButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jumpButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(highlightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(prevHButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(nextHButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -251,18 +263,17 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jumpButton)
-                                .addComponent(highlightButton)
-                                .addComponent(prevHButton)
-                                .addComponent(nextHButton)
-                                .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(goToCursorButton)
-                                .addComponent(downButton)
-                                .addComponent(upButton)
-                                .addComponent(topButton)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(goToCursorButton)
+                            .addComponent(downButton)
+                            .addComponent(upButton)
+                            .addComponent(topButton)
+                            .addComponent(bottomButton)
+                            .addComponent(jumpButton)
+                            .addComponent(highlightButton)
+                            .addComponent(prevHButton)
+                            .addComponent(nextHButton)
+                            .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(goalOption)
@@ -292,12 +303,14 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     {
         downButton.setEnabled(false);
         goToCursorButton.setEnabled(false);
+        bottomButton.setEnabled(false);
     }
     
     public void enableCompileButtonsAndShowDbug()
     {
        downButton.setEnabled(true);
        goToCursorButton.setEnabled(true);
+       bottomButton.setEnabled(true);
        jTextArea1.setText(editorDoc.getDbugcontents());
        regm=null;
        highlightButton.setText("H");
@@ -391,6 +404,12 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         if(regm.hitEnd())
             regm.reset();
     }//GEN-LAST:event_nextHButtonActionPerformed
+
+    private void bottomButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bottomButtonActionPerformed
+        // TODO add your handling code here:
+        editorDoc.handleBottomButton();
+        disableCompileButtons();
+    }//GEN-LAST:event_bottomButtonActionPerformed
 
     public String getQuery()
     {
@@ -493,6 +512,7 @@ try {
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bottomButton;
     private javax.swing.JButton downButton;
     private javax.swing.JRadioButton followCompile;
     private javax.swing.JButton goToCursorButton;

@@ -19,7 +19,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <Component id="goalOption" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="queryField" min="-2" pref="170" max="-2" attributes="0"/>
@@ -28,21 +28,23 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="queryRegexp" min="-2" pref="204" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <Component id="goToCursorButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="downButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="upButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="bottomButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="topButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jumpButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="highlightButton" min="-2" pref="40" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="prevHButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="nextHButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="followCompile" min="-2" pref="22" max="-2" attributes="0"/>
@@ -65,20 +67,17 @@
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                              <Component id="jumpButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="highlightButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="prevHButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="nextHButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="followCompile" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                              <Component id="goToCursorButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="downButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="upButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="topButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="goToCursorButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="downButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="upButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="topButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bottomButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jumpButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="highlightButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="prevHButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="nextHButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="followCompile" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -104,6 +103,9 @@
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="coq/Bundle.properties" key="ProofError.goToCursorButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="coq/Bundle.properties" key="ProofError.goToCursorButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="goToCursorButtonActionPerformed"/>
@@ -113,6 +115,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="coq/Bundle.properties" key="ProofError.downButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="coq/Bundle.properties" key="ProofError.downButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -295,6 +300,16 @@
         </Property>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="bottomButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="coq/Bundle.properties" key="ProofError.bottomButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bottomButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

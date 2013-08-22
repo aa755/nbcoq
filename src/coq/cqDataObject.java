@@ -858,6 +858,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         batchCompile.decrementPendingSteps(offsets.size());
         scheduleCompilation();
     }
+
+    void handleBottomButton()
+    {
+        handleCompileToOffset(getDocument().getEndPosition().getOffset());
+    }
     /**
      * 
      * @param nofSteps
