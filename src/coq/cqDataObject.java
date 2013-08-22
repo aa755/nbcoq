@@ -201,6 +201,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_P);
     }
     
+    boolean isPrintSelectedShortcut(KeyEvent ke)
+    {
+        return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_P);
+    }
+    
     String getSelectedWord()
     {
         try
@@ -219,6 +224,20 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     }
 
     static String getSelectedWord(Object src)
+    {
+        
+        try
+        {
+            JTextComponent comp=(JTextComponent) src;
+            return comp.getSelectedText()+":"+comp;
+        }
+        catch(Exception ex) // cast exception
+        {
+            return "";
+        }
+    }
+    
+    static String getWordAtCursor(Object src)
     {
         
         try
@@ -278,7 +297,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             if(uiWindow!=null) 
             {
-                String word=getSelectedWord(ke.getSource());
+                String word=getWordAtCursor(ke.getSource());
                 if(!word.isEmpty())
                 {
                     uiWindow.setQuery("SearchAbout "+word+".");
@@ -286,12 +305,17 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 }
             }
         }            
-        else if(isPrintShortcut(ke))
+        else if(isPrintShortcut(ke) ||isPrintSelectedShortcut(ke))
         {
             if(uiWindow!=null) 
             {
                 
-                String word=getSelectedWord(ke.getSource());
+                String word;
+                if(isPrintShortcut(ke))
+                    word= getWordAtCursor(ke.getSource());
+                else
+                    word= getSelectedWord(ke.getSource());
+                    
                 if(!word.isEmpty())
                 {
                     uiWindow.setQuery("Print "+word+".");
