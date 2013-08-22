@@ -203,7 +203,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     
     boolean isPrintSelectedShortcut(KeyEvent ke)
     {
-        return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_P);
+        return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_O);
     }
     
     String getSelectedWord()
@@ -229,7 +229,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         try
         {
             JTextComponent comp=(JTextComponent) src;
-            return comp.getSelectedText()+":"+comp;
+            return comp.getSelectedText();
         }
         catch(Exception ex) // cast exception
         {
