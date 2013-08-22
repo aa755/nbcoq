@@ -605,7 +605,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private boolean initialized;   
     //private CoqHighlighter highlighter;
     private final RequestProcessor rp;
-    private static final Pattern coqCommandEnd=Pattern.compile("(\\.[\\s])");
+    private static final Pattern coqCommandEnd=Pattern.compile("([^.]\\.[\\s])");
     private static final Pattern coqComment=Pattern.compile("(\\(\\*)|(\\*\\))");
     private BatchCompile batchCompile;
     private ProofError uiWindow;
@@ -733,6 +733,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             {
                 String segment=code.substring(0, commandEndMatcher.end());
                 String seg_trim=segment.trim();
+                // if the segment to next dot begins with - / * / + , send only to that part
                 for(int i=0;i<indentStrs.length();i++)
                 {
                     String ich=indentStrs.substring(i, i+1)+" ";
