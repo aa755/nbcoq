@@ -442,6 +442,25 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         de.getType(); // just to find out when it gets triggered
     }
 
+    /**
+     * @return the coqtop
+     */
+    public CoqTopXMLIO getCoqtop() {
+        if(coqtop==null)
+        {
+            try {
+                coqtop=new CoqTopXMLIO(fileObj.getParent());
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+                uiWindow.disableCompileButtons();
+                uiWindow.setDebugMesg("could not start coqtop");
+            }
+        }
+        
+        return coqtop;
+    }
+
+
     class BatchCompile implements Runnable{
         private AtomicInteger targetOffset;
         private AtomicInteger pendingSteps;
@@ -588,7 +607,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         
         void handleQuery() {
             String sendtocoq = uiWindow.getQuery();
-            CoqTopXMLIO.CoqRecMesg rec = coqtop.interpret(sendtocoq);
+            CoqTopXMLIO.CoqRecMesg rec = getCoqtop().interpret(sendtocoq);
             if (rec.success) {
                 String reply=rec.nuDoc.getRootElement().getFirstChildElement("string").getValue();
                 String warnMesg="Warning: query commands should not be inserted in scripts";
@@ -649,6 +668,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private CoqError lastError;
     private static String indentStrs = "-+*";
 
+    private FileObject fileObj;
     class CoqError{
         public int startLoc;
         public int endLoc;
@@ -664,7 +684,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         super(pf, loader); 
         initialized=false;
         registerEditor("text/coq", true);
-        coqtop=new CoqTopXMLIO(pf.getParent());
+        fileObj=pf;
         compiledOffset=new AtomicInteger(0);
         rp = new RequestProcessor(cqDataObject.class);
         batchCompile=new BatchCompile(0);
@@ -734,7 +754,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     }
     synchronized void updateGoal()
     {
-        setGoal(coqtop.getGoal());
+        setGoal(getCoqtop().getGoal());
     }
     
     int getOffsetToSend() {
@@ -808,7 +828,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             assert(false);
         }
         
-        CoqTopXMLIO.CoqRecMesg rec=coqtop.interpret(sendtocoq);
+        CoqTopXMLIO.CoqRecMesg rec=getCoqtop().interpret(sendtocoq);
         if(rec.success)
         {
       //          setDbugcontents(""+rec.nuDoc.toXML());
@@ -896,7 +916,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
      */
     int rewindCoqtop (int nofSteps)
     {
-        CoqTopXMLIO.CoqRecMesg rec=coqtop.rewind(nofSteps);
+        CoqTopXMLIO.CoqRecMesg rec=getCoqtop().rewind(nofSteps);
         if(rec.success)
         {
             int actualSteps= rec.getExtraRewoudSteps()+nofSteps;
@@ -917,7 +937,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
      */
     void rewindCoqtopForQuery ()
     {
-        CoqTopXMLIO.CoqRecMesg rec=coqtop.rewind(1);
+        CoqTopXMLIO.CoqRecMesg rec=getCoqtop().rewind(1);
         assert(rec.success);
         assert(rec.getExtraRewoudSteps()==0);
     }
@@ -943,7 +963,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     void getContents() {
         
-            setDbugcontents("successfully started CoqTop version: \n" +coqtop.getVersion());
+            setDbugcontents("successfully started CoqTop version: \n" +getCoqtop().getVersion());
             
         
     }
