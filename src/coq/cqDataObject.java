@@ -54,7 +54,7 @@ import org.openide.windows.TopComponent;
         extension = {"v"})
 @DataObject.Registration(
         mimeType = "text/coq",
-        iconBase = "coq/1372847281_ok_16x16.gif",
+        iconBase = "coq/coq.gif",
         displayName = "#LBL_cq_LOADER",
         position = 300)
 @ActionReferences({
