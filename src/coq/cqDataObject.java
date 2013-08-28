@@ -617,6 +617,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                             //+ "you might want to save the file and restart the IDE");
                 setDbugcontents(reply.substring(warnMesg.length()));
                 rewindCoqtopForQuery();
+                uiWindow.saveQuery(sendtocoq);
             } else {
                 String error= "probably too large output from Coq. If so, please ask developer to increase "
                         + "CoqRecMesg.BUF_SIZE and/or CoqRecMesg.NUM_TRIALS";
