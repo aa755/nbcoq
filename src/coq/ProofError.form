@@ -51,9 +51,7 @@
                               <Component id="goalOption" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="queryCombo" min="-2" pref="173" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                              <Component id="queryExecuteButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
                               <Component id="queryRegexp" min="-2" pref="204" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -86,7 +84,6 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="goalOption" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="queryExecuteButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="queryRegexp" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="queryCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -253,16 +250,6 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="queryExecuteButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="coq/Bundle.properties" key="ProofError.queryExecuteButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="queryExecuteButtonActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JTextField" name="queryRegexp">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -317,6 +304,9 @@
           </StringArray>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="queryComboActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

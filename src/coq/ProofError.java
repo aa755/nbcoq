@@ -105,7 +105,6 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         topButton = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         subGoalsList = new javax.swing.JList();
-        queryExecuteButton = new javax.swing.JButton();
         queryRegexp = new javax.swing.JTextField();
         highlightButton = new javax.swing.JButton();
         nextHButton = new javax.swing.JButton();
@@ -179,13 +178,6 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         subGoalsList.setModel(assignListModel());
         jScrollPane3.setViewportView(subGoalsList);
 
-        org.openide.awt.Mnemonics.setLocalizedText(queryExecuteButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.queryExecuteButton.text")); // NOI18N
-        queryExecuteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                queryExecuteButtonActionPerformed(evt);
-            }
-        });
-
         queryRegexp.setText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.queryRegexp.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(highlightButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.highlightButton.text")); // NOI18N
@@ -214,6 +206,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
 
         queryCombo.setEditable(true);
         queryCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Print nat." }));
+        queryCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                queryComboActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -252,9 +249,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                                 .addComponent(goalOption)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(queryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(3, 3, 3)
-                                .addComponent(queryExecuteButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(58, 58, 58)
                                 .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -280,7 +275,6 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(goalOption)
-                            .addComponent(queryExecuteButton)
                             .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(queryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -352,9 +346,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         editorDoc.handleUppButton();
     }//GEN-LAST:event_topButtonActionPerformed
 
-    private void queryExecuteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryExecuteButtonActionPerformed
-         // TODO add your handling code here:
-        
+    void processQuery()
+    {
         String text=getQuery();
         if(text.isEmpty())
         {
@@ -366,7 +359,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
             setQuery(text+".");
         }
         editorDoc.handleQuery();
-    }//GEN-LAST:event_queryExecuteButtonActionPerformed
+
+    }   
+    
     public String getQuery()
     {
         //return queryField.getText();
@@ -429,6 +424,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         editorDoc.handleBottomButton();
         disableCompileButtons();
     }//GEN-LAST:event_bottomButtonActionPerformed
+
+    private void queryComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryComboActionPerformed
+        // TODO add your handling code here:
+        processQuery();
+    }//GEN-LAST:event_queryComboActionPerformed
 
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
@@ -544,7 +544,6 @@ try {
     private javax.swing.JButton prevHButton;
     private javax.swing.JScrollPane proofScroll;
     private javax.swing.JComboBox queryCombo;
-    private javax.swing.JButton queryExecuteButton;
     private javax.swing.JTextField queryRegexp;
     private javax.swing.JList subGoalsList;
     private javax.swing.JButton topButton;
