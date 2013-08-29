@@ -7,6 +7,8 @@ package coq;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -109,7 +111,7 @@ import org.openide.windows.TopComponent;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class cqDataObject extends MultiDataObject implements KeyListener, UndoableEditListener, DocumentListener{
+public class cqDataObject extends MultiDataObject implements KeyListener, UndoableEditListener, DocumentListener, MouseListener{
 
     /**
      * @return the compiledOffset
@@ -458,6 +460,38 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         
         return coqtop;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent me) {
+        if(me.getButton()==MouseEvent.BUTTON3)
+        {
+            String selection=getSelectedWord(me.getSource());
+            if(selection!=null && !selection.isEmpty())
+            {
+                try {
+                    getDocument().insertString(getEditor().getOpenedPanes()[0].getCaret().getDot(), selection, errorCodeAttr);
+                } catch (BadLocationException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent me) {
     }
 
 

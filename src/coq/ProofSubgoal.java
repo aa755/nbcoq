@@ -107,6 +107,7 @@ public class ProofSubgoal {
             maxSize.height=minSize.height;
             typeAr.setMaximumSize(maxSize);
             typeAr.addKeyListener(dobj);
+            typeAr.addMouseListener(dobj);
            // typeAr.setMinimumSize(minSize);
             if(ProofError.DARK)
             {
@@ -157,6 +158,7 @@ public class ProofSubgoal {
             maxSize.height=minSize.height;
             typeAr.setMaximumSize(maxSize);
             typeAr.addKeyListener(dobj);
+            typeAr.addMouseListener(dobj);
             if(ProofError.DARK)
             {
                 typeAr.setBackground(ProofError.DarkBack);

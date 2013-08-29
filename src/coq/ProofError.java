@@ -349,7 +349,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     void processQuery()
     {
         String text=getQuery();
-        if(text.isEmpty())
+        if(text==null||text.isEmpty())
         {
             setQuery("first enter query here");
             return;
@@ -380,6 +380,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
      */
     void saveQuery(String s)
     {
+//        queryCombo.removeItem(s); // to avoid duplicates
+//        if(queryCombo)
         queryCombo.insertItemAt(s, 0);
     }
     
