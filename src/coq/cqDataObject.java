@@ -464,7 +464,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     @Override
     public void mouseClicked(MouseEvent me) {
-        if(me.getButton()==MouseEvent.BUTTON3)
+        if(me.getButton()==MouseEvent.BUTTON2)
         {
             String selection=getSelectedWord(me.getSource());
             if(selection!=null && !selection.isEmpty())
