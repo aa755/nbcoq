@@ -400,6 +400,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         int offset=de.getOffset();
         if(offset<getCompiledOffset())
         {
+            if(offset+1<de.getDocument().getEndPosition().getOffset())
+                offset=offset+1; // to handle backspace before a dot
             handleCompileToOffset(offset);
             lastCharIsDot=false;
         }
@@ -407,8 +409,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             try {
                 String insert=getDocument().getText(offset, de.getLength());
-                if(lastCharIsDot&&insert.equals(" "))
+                if(lastCharIsDot&&Character.isWhitespace(insert.charAt(0)))
                 {
+                    if(offset+1<de.getDocument().getEndPosition().getOffset())
+                        offset=offset+1; // to handle backspace before a dot
                     handleCompileToOffset(offset);                    
                 }
                 else
@@ -433,6 +437,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     public void removeUpdate(DocumentEvent de) {
         int offset=de.getOffset();
         lastCharIsDot=false;
+        if(offset+1<de.getDocument().getEndPosition().getOffset())
+            offset=offset+1; // to handle backspace before a dot
         if(offset<getCompiledOffset())
         {
             handleCompileToOffset(offset);
