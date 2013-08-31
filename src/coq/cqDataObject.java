@@ -345,7 +345,16 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         this.retb = retb;
     }
 
-    public synchronized void  setHighlightHelper(int start, int end)
+    public /*synchronized*/ void setHighlight(int start, int end)
+    {
+        retb.clear();
+        if(ProofError.DARK)
+            retb.addHighlight(start, end, compiledCodeAttrDark);
+        else    
+            retb.addHighlight(start, end, compiledCodeAttr);
+    }        
+
+/*    public synchronized void  setHighlightHelper(int start, int end)
     {
         try {
             //System.out.println(getDocument());
@@ -361,17 +370,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             Exceptions.printStackTrace(ex);
         }        
     }
-    public synchronized void setHighlight(int start, int end)
-    {
-        retb.clear();
-        if(ProofError.DARK)
-            retb.addHighlight(start, end, compiledCodeAttrDark);
-        else    
-            retb.addHighlight(start, end, compiledCodeAttr);
-    }        
     
-    
-    public void setHighlightBad(final int start, final int end)
+        public void setHighlightBad(final int start, final int end)
     {
             SwingUtilities.invokeLater(new Runnable () {
 
@@ -382,8 +382,13 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             });
         
     }
-
-    public synchronized void addErrorHighlight(int start, int end)
+*/
+    /**
+     * retb already seems to have a lock; as it seems from debug
+     * @param start
+     * @param end 
+     */
+    public /*synchronized*/ void addErrorHighlight(int start, int end)
     {
         if(start<end)
             retb.addHighlight(start, end, errorCodeAttr);
@@ -674,7 +679,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             lastActionRequest.set(QUERY_ACTION);
         }
         
-        public synchronized void setTargetOffset(int targetOffset) {
+        public /*synchronized*/ void setTargetOffset(int targetOffset) {
             this.targetOffset.set(targetOffset);
             lastActionRequest.set(MOVE_TO_CURSOR_ACTION);
             
@@ -793,7 +798,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     {
         return getEditor().getDocument();
     }
-    synchronized void updateGoal()
+    /*synchronized*/ void updateGoal()
     {
         setGoal(getCoqtop().getGoal());
     }
@@ -856,7 +861,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     }
     
-    synchronized boolean  compileStep() {
+    /* synchronized */ boolean  compileStep() {
         if(!initialized)
             initialize();
         
