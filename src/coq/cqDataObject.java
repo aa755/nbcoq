@@ -225,6 +225,15 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return ('a'<=ch && ch<='z')||('A'<=ch && ch<='Z') || ('0'<=ch && ch<='9') || (ch=='_');
     }
 
+    static String getFocussedWord(Object src)
+    {
+        String str=getSelectedWord(src);
+        // if nothins is selected, return the word at cursor
+        if(str.isEmpty())
+            str=getWordAtCursor(src);
+        
+        return str;
+    }
     static String getSelectedWord(Object src)
     {
         
@@ -477,7 +486,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     public void mouseClicked(MouseEvent me) {
         if(me.getButton()==MouseEvent.BUTTON2)
         {
-            String selection=getSelectedWord(me.getSource());
+            String selection=getFocussedWord(me.getSource());
             if(selection!=null && !selection.isEmpty())
             {
                 try {
@@ -745,7 +754,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     void setKeyboardListener()
     {
         if(!keyListenerAssigned)
+        {
             getEditor().getOpenedPanes()[0].addKeyListener(this);
+          //  getEditor().getOpenedPanes()[0].addMouseListener(this);
+        }
         keyListenerAssigned=true;
     }
     void scheduleCompilation()

@@ -559,6 +559,7 @@ try {
         this.editorDoc = editorDoc;
         editorDoc.setUiWindow(this);
         jTextArea1.addKeyListener(editorDoc);
+        jTextArea1.addMouseListener(editorDoc);
                 
     }
 
