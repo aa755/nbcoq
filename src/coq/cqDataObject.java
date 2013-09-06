@@ -474,8 +474,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 coqtop=new CoqTopXMLIO(fileObj.getParent());
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
-                uiWindow.disableCompileButtons();
-                uiWindow.setDebugMesg("could not start coqtop");
+             //   uiWindow.disableCompileButtons();
+                uiWindow.setDebugMesg("could not start [h|c]oqtop. Check path in Tools | Options| Misc| CoqOptions");
             }
         }
         

@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 //import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.prefs.Preferences;
 
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -19,6 +20,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.openide.util.NbPreferences;
 
 
 /**
@@ -33,11 +35,18 @@ private  BufferedReader result;
 private  PrintWriter input;
 //private static PrintWriter input;
 
+    static String getCoqTopPath()
+    {
+        Preferences pref = NbPreferences.forModule(CoqOptionsPanel.class);
+        return pref.get(CoqOptionsPanel.COQPATH_KEY, "");
+    }
+    
     public CoqTopXMLIO(FileObject fob) throws IOException {
         
         
             System.out.println("coq path: "+fob.getPath());
-            process = new ProcessBuilder("coqtop","-ideslave").directory(FileUtil.toFile(fob)).start();
+            String command=getCoqTopPath();
+            process = new ProcessBuilder(command,"-ideslave").directory(FileUtil.toFile(fob)).start();
 //            process = new ProcessBuilder("coqtop","-ideslave  -I "+fob.getPath()).start();
 //         process = new ProcessBuilder("coqtop","-ideslave  -I "+path).directory(File.)+start();
         
