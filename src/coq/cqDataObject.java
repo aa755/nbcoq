@@ -157,6 +157,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return editor;
     }
 
+    void stopRequest()
+    {
+        batchCompile.requestStopping();
+    }
     /**
      * @return the goal
      */
