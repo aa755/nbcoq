@@ -659,6 +659,22 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             return change;
         }
         
+        /**
+         * 
+         * @return Top.v if it is in current file.
+         * full source filename otherwise
+         */
+        public String getFileName(String name)
+        {
+            String [] parts=name.split(".");
+            if(parts.length==2) //TODO: handle other cases
+            {
+                return parts[0]+".v";
+            }
+            else
+                return null;
+        }
+        
         void handleQuery() {
             String sendtocoq = uiWindow.getQuery();
             CoqTopXMLIO.CoqRecMesg rec = getCoqtop().interpret(sendtocoq);
@@ -669,9 +685,41 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                     JOptionPane.showMessageDialog(null, "you probably executed a non-query command as a query");
                             //+ "this might make IDE's estimation of coqtop's state inconsistent."
                             //+ "you might want to save the file and restart the IDE");
-                setDbugcontents(reply.substring(warnMesg.length()));
+                String creply=reply.substring(warnMesg.length());
+                setDbugcontents(creply);
                 rewindCoqtopForQuery();
                 uiWindow.saveQuery(sendtocoq);
+                String ctreply=creply.trim();
+               // ctreply.sp
+                String [] frags=ctreply.split("[\\s]");
+                String prefix="";
+               if(frags.length>1)
+               {
+                   if(frags[0].equals("Inductive"))
+                   {
+                       prefix=frags[0];
+                   }
+                   else if(frags[0].equals("Constant"))
+                   {
+                       prefix="((Definition)|(Fixpoint)|(Lemma)|(Theorem))";
+                   }
+                   
+                   if(!prefix.isEmpty())
+                   {
+                        String [] parts=frags[1].split("\\.");
+                        String filename="";
+                        if(parts.length==2) //TODO: handle other cases
+                        {
+                            String suffix=parts[1];
+                            String query=prefix+"[\\s]*"+suffix+" ";
+                            if(!parts[0].equals("Top"))
+                            {
+                                filename=parts[0];
+                            }
+                        }
+                       
+                   }
+               }
             } else {
                 String error= "probably too large output from Coq. If so, please ask developer to increase "
                         + "CoqRecMesg.BUF_SIZE and/or CoqRecMesg.NUM_TRIALS";
