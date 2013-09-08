@@ -27,6 +27,7 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import org.netbeans.api.actions.Openable;
 import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
@@ -36,9 +37,11 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.util.Exceptions;
@@ -675,6 +678,24 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 return null;
         }
         
+        cqDataObject getDataObject(String filename)
+        {
+            FileObject fob=fileObj.getParent().getFileObject(filename,"v");
+            //FileObject fob = FileUtil.toFileObject(FileUtil.normalizeFile(gifFile)); 
+            if (fob != null) { 
+                try {
+                    cqDataObject dob = (cqDataObject) DataObject.find (fob);
+                    return dob;
+                } catch (DataObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+            return null;
+//            OpenCookie oc = (OpenCookie) dob.getCookie (OpenCookie.class); 
+//            if (oc != null) 
+//            oc.open(); 
+//            }             
+        }
         void handleQuery() {
             String sendtocoq = uiWindow.getQuery();
             CoqTopXMLIO.CoqRecMesg rec = getCoqtop().interpret(sendtocoq);
@@ -707,15 +728,24 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                    if(!prefix.isEmpty())
                    {
                         String [] parts=frags[1].split("\\.");
-                        String filename="";
+                        cqDataObject target;
                         if(parts.length==2) //TODO: handle other cases
                         {
                             String suffix=parts[1];
                             String query=prefix+"[\\s]*"+suffix+" ";
-                            if(!parts[0].equals("Top"))
+                            if(parts[0].equals("Top"))
                             {
-                                filename=parts[0];
+                                target=getThisDataObject();
                             }
+                            else
+                            {
+                                String filename=parts[0];
+                                target=getDataObject(filename);
+                            }
+                            
+                            if(target!=null)
+                                target.getLookup().lookup(Openable.class).open();
+                            
                         }
                        
                    }
@@ -770,7 +800,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     boolean lastCharIsDot;
     private CoqError lastError;
     private static String indentStrs = "-+*";
-
+    /**
+     * file object denoting this file
+     */
     private FileObject fileObj;
     class CoqError{
         public int startLoc;
@@ -1067,6 +1099,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return 1;
     }
 
+    cqDataObject getThisDataObject()
+    {
+        return this;
+    }
     void getContents() {
         
             setDbugcontents("successfully started CoqTop version: \n" +getCoqtop().getVersion());
