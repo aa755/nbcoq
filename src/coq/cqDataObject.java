@@ -733,7 +733,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                    if(!prefix.isEmpty())
                    {
                         String [] parts=frags[1].split("\\.");
-                        cqDataObject target;
+                        final cqDataObject target;
                         if(parts.length==2) //TODO: handle other cases
                         {
                             String suffix=parts[1];
@@ -749,7 +749,24 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                             }
                             
                             if(target!=null)
+                            {
                                 target.getLookup().lookup(Openable.class).open();
+                                //target.getDocument().gette
+                                final Matcher mjump=Pattern.compile(query).matcher(target.getEntireText());
+                                if(mjump.find())
+                                {
+                                    SwingUtilities.invokeLater(new Runnable () {
+
+                                        @Override
+                                        public void run() {
+                                        target.jumpToOffset(mjump.start());
+                                        }
+                                    });
+                                    
+                                    //target.get
+                                }
+                                
+                            }
                             
                         }
                        
@@ -820,6 +837,16 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
     }
     
+    String getEntireText()
+    {
+        try {
+            return getDocument().getText(0, getDocument().getLength());
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+            return "";
+        }
+    }
+    
     public cqDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader); 
         initialized=false;
@@ -878,9 +905,13 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         handleCompileOffsetChange();
     }
     
+    void jumpToOffset(int offset)
+    {
+        getEditor().getOpenedPanes()[0].getCaret().setDot(offset);
+    }
     void jumpToCompileOffest()
     {        
-         getEditor().getOpenedPanes()[0].getCaret().setDot(compiledOffset.intValue());
+         jumpToOffset(compiledOffset.intValue());
     }    
     
     final void initialize()
@@ -1092,8 +1123,15 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     {
         editor=getLookup().lookup(EditorCookie.class);
         assert(getEditor()!=null);
-        assert(getEditor().getDocument()!=null);
-        getEditor().getDocument().addDocumentListener(this);
+        //assert(getEditor().openDocument()!=null);
+        StyledDocument doc;
+        try {
+            doc = getEditor().openDocument();
+            assert(doc!=null);
+            doc.addDocumentListener(this);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
   //      getEditor().getDocument().add
         //getEditor().getDocument().addUndoableEditListener(this);
         //getEditor().getDocument().add
