@@ -60,7 +60,12 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         // someCheckBox.setSelected(NbPreferences.forModule(CoqOptionsPanel.class).getBoolean("someFlag", false));
         // or:
         // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
-        jTextField1.setText(NbPreferences.forModule(CoqOptionsPanel.class).get(COQPATH_KEY, ""));
+        String coqtop=NbPreferences.forModule(CoqOptionsPanel.class).get(COQPATH_KEY, "");
+        if(coqtop==null || coqtop.isEmpty())
+        {
+            coqtop="coqtop";
+        }
+        jTextField1.setText(coqtop);
     }
 
     void store() {
