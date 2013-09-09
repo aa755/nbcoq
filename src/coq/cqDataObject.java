@@ -210,7 +210,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_P);
     }
     
-    boolean isPrintSelectedShortcut(KeyEvent ke)
+    boolean isJumpDefnShortcut(KeyEvent ke)
     {
         return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_O);
     }
@@ -323,24 +323,54 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 }
             }
         }            
-        else if(isPrintShortcut(ke) ||isPrintSelectedShortcut(ke))
+        else if(isPrintShortcut(ke))
         {
             if(uiWindow!=null) 
             {
                 
                 String word;
-                if(isPrintShortcut(ke))
-                    word= getWordAtCursor(ke.getSource());
+                String query;
+                word=getSelectedWord(ke.getSource());
+                /**
+                 * the only reason when one 
+                 * would take the pain to select
+                 * and not just click at the word,
+                 * is when the selection is more
+                 * complicated than a single word.
+                 * In this case, Print might not
+                 * make sens
+                 */
+                if(word!=null && (!word.isEmpty()))
+                {
+                    query="Check ("+word+").";
+                }
                 else
-                    word= getSelectedWord(ke.getSource());
+                {
+                    word= getWordAtCursor(ke.getSource());
+                    query="Print "+word+".";
+                    /**
+                     * print already shows the info that Check shown
+                     */
+                }
                     
                 if(!word.isEmpty())
                 {
-                    uiWindow.setQuery("Print "+word+".");
+                    uiWindow.setQuery(query);
                     handleQuery();
                 }
             }
-        }            
+        }
+        else if(isJumpDefnShortcut(ke))
+        {
+            String word;
+            String query;
+            word= getWordAtCursor(ke.getSource());
+            query="Locate "+word+".";
+            uiWindow.setQuery(query);
+            handleQuery();
+            
+        }
+            
     }
 
     @Override
