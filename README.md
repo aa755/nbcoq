@@ -9,7 +9,7 @@ There is an easier way to install, but I haven't tested it yet. So here
 are the complicated instructions:
 
 Download netbeans+java bundle
-http://www.oracle.com/technetwork/java/javase/downloads/index.html
+http://www.oracle.com/technetwork/java/javase/downloads/jdk-7-netbeans-download-432126.html
 
 Open netbeans. Click on team | git and clone this repo.
 It will find this netbeans project and ask if you wish to open it.
