@@ -767,7 +767,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                         if(parts.length==2) //TODO: handle other cases
                         {
                             String suffix=parts[1];
-                            String query=prefix+"[\\s]*"+suffix+" ";
+                            String query=prefix+"[\\s]*"+suffix+"[\\s:]";
                             if(parts[0].equals("Top"))
                             {
                                 target=getThisDataObject();
