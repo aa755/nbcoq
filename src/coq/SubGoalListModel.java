@@ -21,12 +21,16 @@ public class SubGoalListModel extends javax.swing.AbstractListModel {
         return ""+i;
     }
     
+    int getMaxIndex()
+    {
+        return size-1;
+    }
     void setValues(nu.xom.Elements allGoals)
     {
         if(allGoals==null)
             size=0;
         else
-            size=allGoals.size();
+            size=allGoals.size();        
         fireContentsChanged(this, 0, size);
     }
 }

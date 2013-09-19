@@ -493,6 +493,7 @@ void displayGoal(int index)
 {
      proofRootPanel.removeAll();
          slist.setValues(allGoals);
+     subGoalsList.ensureIndexIsVisible(slist.getMaxIndex());
   
     if(allGoals==null || allGoals.size()==0)
     {
