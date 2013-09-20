@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
+import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -112,6 +113,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         bottomButton = new javax.swing.JButton();
         queryCombo = new javax.swing.JComboBox();
         stopButton = new javax.swing.JButton();
+        orientButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
         goToCursorButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.toolTipText")); // NOI18N
@@ -220,6 +222,13 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(orientButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.orientButton.text")); // NOI18N
+        orientButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                orientButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -263,7 +272,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                                 .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 34, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(orientButton)
+                        .addGap(0, 36, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -289,7 +300,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                                 .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(queryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(stopButton)))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(orientButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -449,6 +461,32 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         editorDoc.stopRequest();
     }//GEN-LAST:event_stopButtonActionPerformed
 
+    void switchToVerticalSplit()
+    {
+     //   Dimension dim=jSplitPane1.getSize();
+        jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        orientButton.setText("|");
+    }
+
+    void switchToHorizontalSplit()
+    {
+    //    Dimension dim=jSplitPane1.getSize();
+        jSplitPane1.setOrientation(JSplitPane.HORIZONTAL_SPLIT);        
+        orientButton.setText("-");
+    }
+    
+    private void orientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orientButtonActionPerformed
+        // TODO add your handling code here:
+        if(jSplitPane1.getOrientation()==JSplitPane.VERTICAL_SPLIT)
+        {
+            switchToHorizontalSplit();
+        }
+        else
+        {
+            switchToVerticalSplit();
+        }
+    }//GEN-LAST:event_orientButtonActionPerformed
+
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
   
@@ -561,6 +599,7 @@ try {
     private javax.swing.JTree jTree1;
     private javax.swing.JButton jumpButton;
     private javax.swing.JButton nextHButton;
+    private javax.swing.JButton orientButton;
     private javax.swing.JButton prevHButton;
     private javax.swing.JScrollPane proofScroll;
     private javax.swing.JComboBox queryCombo;
