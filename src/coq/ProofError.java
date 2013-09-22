@@ -158,6 +158,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         org.openide.awt.Mnemonics.setLocalizedText(goalOption, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goalOption.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(jumpButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.jumpButton.text")); // NOI18N
+        jumpButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.jumpButton.toolTipText")); // NOI18N
         jumpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jumpButtonActionPerformed(evt);
@@ -184,6 +185,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         queryRegexp.setText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.queryRegexp.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(highlightButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.highlightButton.text")); // NOI18N
+        highlightButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.highlightButton.toolTipText")); // NOI18N
         highlightButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 highlightButtonActionPerformed(evt);
@@ -201,6 +203,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         prevHButton.setEnabled(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(bottomButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.bottomButton.text")); // NOI18N
+        bottomButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.bottomButton.toolTipText")); // NOI18N
         bottomButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bottomButtonActionPerformed(evt);
@@ -216,6 +219,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(stopButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.stopButton.text")); // NOI18N
+        stopButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.stopButton.toolTipText")); // NOI18N
         stopButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stopButtonActionPerformed(evt);
@@ -223,6 +227,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(orientButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.orientButton.text")); // NOI18N
+        orientButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.orientButton.toolTipText")); // NOI18N
         orientButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 orientButtonActionPerformed(evt);
