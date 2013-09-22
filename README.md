@@ -26,5 +26,5 @@ http://www.youtube.com/watch?v=94D5RVK-cQg
 
 A list of known issues can be found at:
 https://github.com/aa755/nbcoq/issues?state=open
-Feel free to file bugs if you encounter one
+Feel free to file bugs and feature requests if you encounter one
 
