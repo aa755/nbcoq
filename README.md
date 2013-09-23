@@ -22,7 +22,7 @@ Prediodically, you might want to go a git pull to get the latest features(and bu
 
 There is a video demonstration/documentation of this plugin at 
 http://www.youtube.com/watch?v=94D5RVK-cQg
-(coming up: a short video on how to use it if you have 2 screens)
+(watch the video in HD to avoid blurred text)
 
 A list of known issues can be found at:
 https://github.com/aa755/nbcoq/issues?state=open
