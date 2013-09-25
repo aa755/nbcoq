@@ -10,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -42,6 +44,39 @@ public class ProofSubgoal {
         ArrayList<String> vars;
         String type;
 
+        class ButtonHandler implements MouseListener
+        {
+            cqDataObject dobj;
+            int varIndex;
+            
+            public ButtonHandler(cqDataObject dobj, int varIndex) {
+                this.dobj=dobj;
+                this.varIndex=varIndex;
+            }
+            
+
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                dobj.insertStringAtCursor(vars.get(varIndex));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent me) {
+            }
+            
+        }
         public Hypothesis(ArrayList<String> vars, String type) {
             this.vars = vars;
             this.type = type;
@@ -86,6 +121,7 @@ public class ProofSubgoal {
        //         usedWidth=usedWidth+but.getMinimumSize().width;
                 but.setAlignmentX(Component.LEFT_ALIGNMENT);
                 ret.add(but);
+                but.addMouseListener(new ButtonHandler(dobj, i));
             }
             //ret.add(buttonPanel);
             
@@ -121,7 +157,7 @@ public class ProofSubgoal {
             
             return ret;            
         }
-        
+
     }
     
     static class Conclusion

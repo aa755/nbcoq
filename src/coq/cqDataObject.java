@@ -527,11 +527,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             String selection=getFocussedWord(me.getSource());
             if(selection!=null && !selection.isEmpty())
             {
-                try {
-                    getDocument().insertString(getEditor().getOpenedPanes()[0].getCaret().getDot(), selection, errorCodeAttr);
-                } catch (BadLocationException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
+                insertStringAtCursor(selection);
             }
         }
     }
@@ -952,7 +948,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         
      }
     
-    private StyledDocument getDocument()
+    public StyledDocument getDocument()
     {
         return getEditor().getDocument();
     }
@@ -961,6 +957,14 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         setGoal(getCoqtop().getGoal());
     }
     
+    void insertStringAtCursor(String str)
+    {
+        try {        
+            getDocument().insertString(getEditor().getOpenedPanes()[0].getCaret().getDot(), str, errorCodeAttr);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
     int getOffsetToSend() {
 
         int offset = 0;
