@@ -114,6 +114,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         queryCombo = new javax.swing.JComboBox();
         stopButton = new javax.swing.JButton();
         orientButton = new javax.swing.JButton();
+        fractionLabel = new javax.swing.JLabel();
 
         org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
         goToCursorButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.toolTipText")); // NOI18N
@@ -142,6 +143,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
 
         jSplitPane1.setDividerLocation(300);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        proofScroll.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.proofScroll.toolTipText")); // NOI18N
         jSplitPane1.setLeftComponent(proofScroll);
 
         jScrollPane1.setMinimumSize(new java.awt.Dimension(23, 100));
@@ -234,6 +237,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(fractionLabel, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.fractionLabel.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -278,7 +283,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(orientButton)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(orientButton)
+                            .addComponent(fractionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 36, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -306,7 +313,10 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                                 .addComponent(queryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(stopButton)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(orientButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(fractionLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(orientButton)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -320,7 +330,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         {
             setDebugMesg("upButton: no coq document is associated w/ this window. this could be a bug");
         }
-       disableCompileButtons();
+    //   disableCompileButtons();
        editorDoc.handleDownToCursor();
         
     }//GEN-LAST:event_goToCursorButtonActionPerformed
@@ -352,7 +362,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
             
         }
         
-       disableCompileButtons();
+    //   disableCompileButtons();
        editorDoc.handleDownButton();
     }//GEN-LAST:event_downButtonActionPerformed
 
@@ -453,7 +463,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     private void bottomButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bottomButtonActionPerformed
         // TODO add your handling code here:
         editorDoc.handleBottomButton();
-        disableCompileButtons();
+     //   disableCompileButtons();
     }//GEN-LAST:event_bottomButtonActionPerformed
 
     private void queryComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryComboActionPerformed
@@ -593,6 +603,7 @@ try {
     private javax.swing.JButton bottomButton;
     private javax.swing.JButton downButton;
     private javax.swing.JRadioButton followCompile;
+    private javax.swing.JLabel fractionLabel;
     private javax.swing.JButton goToCursorButton;
     private javax.swing.JRadioButton goalOption;
     private javax.swing.JButton highlightButton;

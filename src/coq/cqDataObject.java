@@ -598,6 +598,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             
             
             boolean change=false;
+            getUiWindow().disableCompileButtons();
             if(lastAc==UP_DOWN_ACTION)
                 change=handleSteps();
             else if(lastAc==MOVE_TO_CURSOR_ACTION)
