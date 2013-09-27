@@ -25,6 +25,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.Position;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.netbeans.api.actions.Openable;
@@ -391,8 +392,13 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         this.retb = retb;
     }
 
+    int  getDocLength()
+    {
+        return getDocument().getEndPosition().getOffset();
+    }
     public /*synchronized*/ void setHighlight(int start, int end)
     {
+        uiWindow.setProgressText(((float) getCompiledOffset())/ getDocLength() ); 
         retb.clear();
         if(ProofError.DARK)
             retb.addHighlight(start, end, compiledCodeAttrDark);

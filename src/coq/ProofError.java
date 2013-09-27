@@ -466,6 +466,10 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
      //   disableCompileButtons();
     }//GEN-LAST:event_bottomButtonActionPerformed
 
+    public void setProgressText(float ratio)
+    {
+        fractionLabel.setText(""+ratio);
+    }
     private void queryComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryComboActionPerformed
         // TODO add your handling code here:
         processQuery();
