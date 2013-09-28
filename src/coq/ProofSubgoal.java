@@ -57,7 +57,7 @@ public class ProofSubgoal {
 
             @Override
             public void mouseClicked(MouseEvent me) {
-                dobj.insertStringAtCursor(vars.get(varIndex));
+                dobj.insertStringAtCursor(vars.get(varIndex)+" ");
             }
 
             @Override
