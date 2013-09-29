@@ -30,3 +30,10 @@ Feel free to file bugs and feature requests if you encounter one.
 
 As of now, looking at commit messages is the best way to find out about new features.
 
+Shortcuts:
+1) for buttons, look at their tooltip text
+2) select and middle click in proof/message window to copy it into editor
+3) C+A+o : jump to definition
+4) C+A+p : Print the item under cursor(works even in proof/mesg window)
+5) C+A+l : SearchAbout the item under cursor
+6) click on hyp-name button to copy in into editor
