@@ -69,6 +69,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         {
             jTextArea1.setBackground(DarkBack);
             jTextArea1.setForeground(DarkFore);
+            jTextArea1.setDragEnabled(true);
         }
         //proofRootPanel.setMaximumSize(new Dimension(this.getWidth(),Integer.MAX_VALUE ));
     }
