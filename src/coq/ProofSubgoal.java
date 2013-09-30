@@ -14,6 +14,14 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
@@ -21,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.activation.DataSource;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -229,6 +238,44 @@ public class ProofSubgoal {
             }
             return popup;
         }
+
+        public static class DnDButton extends JButton implements DragGestureListener, DragSourceListener{
+
+            DragSource source;
+            public DnDButton(String string) {
+                super(string);
+                source = new DragSource();
+                source.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
+            }
+
+            
+            @Override
+            public void dragGestureRecognized(DragGestureEvent dge) {
+                getModel().setArmed(false);
+                source.startDrag(dge, DragSource.DefaultMoveDrop, new StringSelection(getText()),  this);             
+            }
+
+            @Override
+            public void dragEnter(DragSourceDragEvent dsde) {
+            }
+
+            @Override
+            public void dragOver(DragSourceDragEvent dsde) {
+            }
+
+            @Override
+            public void dropActionChanged(DragSourceDragEvent dsde) {
+            }
+
+            @Override
+            public void dragExit(DragSourceEvent dse) {
+            }
+
+            @Override
+            public void dragDropEnd(DragSourceDropEvent dsde) {
+            }
+            
+        }
         
         JPanel getPanel(int viewPortWidth, cqDataObject dobj)
         {
@@ -249,14 +296,14 @@ public class ProofSubgoal {
           //  JPanel buttonPanel=new JPanel(new FlowLayout());
             for(int i=0;i<vars.size();i++)
             {
-                JButton but=new JButton(vars.get(i));
+                DnDButton but=new DnDButton(vars.get(i));
                 but.setMaximumSize(but.getMinimumSize());
        //         usedWidth=usedWidth+but.getMinimumSize().width;
                 but.setAlignmentX(Component.LEFT_ALIGNMENT);
                 ret.add(but);
                 but.addActionListener(dobj.new InsertStringActionListener(vars.get(i)+" "));
                 but.addMouseListener(new ButtonMouseListener(getButtonPopupMenu(dobj, i)));
-           //     but.setTransferHandler(new HypTransferHandler(getVariable(i), dobj));
+                but.setTransferHandler(new HypTransferHandler(getVariable(i), dobj));
             }
             //ret.add(buttonPanel);
             
