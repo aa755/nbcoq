@@ -213,12 +213,20 @@ public class ProofSubgoal {
             return ret;
         }
         
-        static String [] getContexts()
+        static String [] getButtonContexts()
         {
             return new String [] {
                         "invertsn (*s*).\n",
+                        "simpl in (*s*).\n",
+                        "destruct (*s*).\n",
+                        "dorn (*s*).\n",
                         "clear (*s*).\n",
                         "duplicate (*s*).\n",
+                        "symmetry in (*s*).\n",
+                        "apply (*s*).\n",
+                        "exists (*s*).\n",
+                        "rw (*s*).\n",
+                        "rw <- (*s*).\n"
                                  };
         }
         
@@ -231,7 +239,7 @@ public class ProofSubgoal {
         {
             JPopupMenu popup;
             popup=new JPopupMenu();
-            String [] containers = getContexts();
+            String [] containers = getButtonContexts();
             for (int i=0;i<containers.length;i++)
             {
                 popup.add(getMenuItem(dobj, containers[i], getVariable(index) ));

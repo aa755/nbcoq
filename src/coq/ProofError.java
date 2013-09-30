@@ -572,6 +572,7 @@ void displayGoal(int index)
 //    proofScroll.scrollRectToVisible(concl.getBounds());
     proofRootPanel.repaint();
     //https://forums.oracle.com/thread/2414508
+     subGoalsList.ensureIndexIsVisible(slist.getMaxIndex());
     SwingUtilities.invokeLater(new Runnable() {
      @Override
      public void run() {
