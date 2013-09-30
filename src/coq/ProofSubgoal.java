@@ -10,8 +10,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -25,7 +30,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
+import javax.swing.TransferHandler;
 import javax.swing.border.Border;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -33,6 +40,36 @@ import javax.swing.border.Border;
  */
 public class ProofSubgoal {
     
+//    static class StringTransferable implements Transferable {
+//
+//        public StringTransferable(Strin ) {
+//        }
+//
+//        
+//        @Override
+//        public DataFlavor[] getTransferDataFlavors() {
+//            return new DataFlavor[]
+//            {
+//                DataFlavor.stringFlavor  
+//            };
+//        }
+//
+//        @Override
+//        public boolean isDataFlavorSupported(DataFlavor df) {
+//            if(df.equals(DataFlavor.stringFlavor))
+//                return true;
+//            else
+//                return false;
+//        }
+//
+//        @Override
+//        public Object getTransferData(DataFlavor df) throws UnsupportedFlavorException, IOException {
+//            return 
+//        }
+//        
+//    }
+    
+     
     public static JLabel getLabelOfWidth(String text, int width)
     {
         String html="<html> <body width='"+width+"px'> "+org.apache.commons.lang3.StringEscapeUtils.escapeHtml3(text)+"</body></html>";
@@ -49,6 +86,49 @@ public class ProofSubgoal {
         ArrayList<String> vars;
         String type;
 
+        static class HypTransferHandler extends TransferHandler{
+            String srcVar;
+            cqDataObject dobj;
+
+            public HypTransferHandler(String srcVar, cqDataObject dobj) {
+                this.srcVar = srcVar;
+                this.dobj = dobj;
+            }
+            
+
+            @Override
+            protected Transferable createTransferable(JComponent jc) {
+                return new StringSelection(srcVar);
+            }
+
+            @Override
+            public boolean canImport(TransferHandler.TransferSupport ts) {
+                return ts.isDataFlavorSupported(DataFlavor.stringFlavor);
+            }
+
+            @Override
+            public boolean importData(TransferSupport ts) {
+                try {
+                    String varOrLemmaName= (String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor);
+                    if(varOrLemmaName!=null)
+                    {
+                        String command="apply "+varOrLemmaName+" in "+srcVar+".\n";
+                        dobj.insertStringAtCompiledOffsetAndCompile(command);
+                        return true;
+                    }
+                    else
+                        return false;
+                } catch (UnsupportedFlavorException ex) {
+                    Exceptions.printStackTrace(ex);
+                    return false;
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                    return false;
+                }
+            }
+
+        }
+        
         class ButtonMouseListener implements MouseListener
         {
             JPopupMenu popup;
@@ -64,6 +144,13 @@ public class ProofSubgoal {
 
             @Override
             public void mousePressed(MouseEvent me) {
+//                JButton button = (JButton)me.getSource();
+//
+//                TransferHandler handle = button.getTransferHandler();
+//
+//                handle.exportAsDrag(button, me, TransferHandler.COPY);
+                // does not work: try the following?
+                //http://www.dreamincode.net/forums/topic/209966-java-drag-and-drop-tutorial-part-1-basics-of-dragging/
             }
 
             @Override
@@ -120,10 +207,10 @@ public class ProofSubgoal {
         static String [] getContexts()
         {
             return new String [] {
-                        "invertsn (*s*). ",
-                        "clear (*s*). ",
-                        "duplicate (*s*). ",
-                                    };
+                        "invertsn (*s*).\n",
+                        "clear (*s*).\n",
+                        "duplicate (*s*).\n",
+                                 };
         }
         
         String getVariable(int i)
@@ -169,6 +256,7 @@ public class ProofSubgoal {
                 ret.add(but);
                 but.addActionListener(dobj.new InsertStringActionListener(vars.get(i)+" "));
                 but.addMouseListener(new ButtonMouseListener(getButtonPopupMenu(dobj, i)));
+           //     but.setTransferHandler(new HypTransferHandler(getVariable(i), dobj));
             }
             //ret.add(buttonPanel);
             
