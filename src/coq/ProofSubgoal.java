@@ -21,7 +21,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
 
@@ -36,7 +38,10 @@ public class ProofSubgoal {
         String html="<html> <body width='"+width+"px'> "+org.apache.commons.lang3.StringEscapeUtils.escapeHtml3(text)+"</body></html>";
         return new JLabel(html);        
     }
-    
+    static interface CoqType{
+        public String getType();
+    }
+            
     static class Hypothesis
     {
         private static final Color COLOR=Color.RED;
@@ -44,20 +49,17 @@ public class ProofSubgoal {
         ArrayList<String> vars;
         String type;
 
-        class ButtonHandler implements MouseListener
+        class ButtonMouseListener implements MouseListener
         {
-            cqDataObject dobj;
-            int varIndex;
+            JPopupMenu popup;
             
-            public ButtonHandler(cqDataObject dobj, int varIndex) {
-                this.dobj=dobj;
-                this.varIndex=varIndex;
+            public ButtonMouseListener(JPopupMenu popup) {
+                this.popup=popup;
             }
             
 
             @Override
             public void mouseClicked(MouseEvent me) {
-                dobj.insertStringAtCursor(vars.get(varIndex)+" ");
             }
 
             @Override
@@ -65,7 +67,11 @@ public class ProofSubgoal {
             }
 
             @Override
-            public void mouseReleased(MouseEvent me) {
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                            popup.show(e.getComponent(),
+                                       e.getX(), e.getY());
+                }            
             }
 
             @Override
@@ -77,6 +83,7 @@ public class ProofSubgoal {
             }
             
         }
+        
         public Hypothesis(ArrayList<String> vars, String type) {
             this.vars = vars;
             this.type = type;
@@ -95,6 +102,45 @@ public class ProofSubgoal {
         public Hypothesis(String coqLine) {
              int splitIndex=coqLine.indexOf(" : ");
             initFromVar(coqLine.substring(0, splitIndex), coqLine.substring(splitIndex+2));
+        }
+        
+        String getInsertString(String container , String vname)
+        {
+            return container.replace("(*s*)", vname);
+        }
+        
+        JMenuItem getMenuItem(cqDataObject dobj, String container , String vname)
+        {
+            String label=getInsertString(container, vname);
+            JMenuItem ret=new JMenuItem(label);
+            ret.addActionListener(dobj.new InsertAndCompileActionListener(label));
+            return ret;
+        }
+        
+        static String [] getContexts()
+        {
+            return new String [] {
+                        "invertsn (*s*). ",
+                        "clear (*s*). ",
+                        "duplicate (*s*). ",
+                                    };
+        }
+        
+        String getVariable(int i)
+        {
+            return vars.get(i);
+        }
+        
+        JPopupMenu getButtonPopupMenu(cqDataObject dobj,int index)
+        {
+            JPopupMenu popup;
+            popup=new JPopupMenu();
+            String [] containers = getContexts();
+            for (int i=0;i<containers.length;i++)
+            {
+                popup.add(getMenuItem(dobj, containers[i], getVariable(index) ));
+            }
+            return popup;
         }
         
         JPanel getPanel(int viewPortWidth, cqDataObject dobj)
@@ -121,7 +167,8 @@ public class ProofSubgoal {
        //         usedWidth=usedWidth+but.getMinimumSize().width;
                 but.setAlignmentX(Component.LEFT_ALIGNMENT);
                 ret.add(but);
-                but.addMouseListener(new ButtonHandler(dobj, i));
+                but.addActionListener(dobj.new InsertStringActionListener(vars.get(i)+" "));
+                but.addMouseListener(new ButtonMouseListener(getButtonPopupMenu(dobj, i)));
             }
             //ret.add(buttonPanel);
             

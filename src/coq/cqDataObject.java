@@ -5,6 +5,8 @@
 package coq;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -951,10 +953,39 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     {
         initialized=true;
         assignCookie();
-//        assert(highlighter!=null);
-        
      }
     
+    public class InsertStringActionListener implements ActionListener
+    {
+        String str;
+
+        public InsertStringActionListener(String str) {
+            this.str=str;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            insertStringAtCursor(str);
+        }
+        
+    }
+        
+    public class InsertAndCompileActionListener implements ActionListener
+    {
+        String str;
+
+        public InsertAndCompileActionListener(String str) {
+            this.str=str;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            insertStringAtCompiledOffsetAndCompile(str);
+            
+        }
+        
+    }
+        
     public StyledDocument getDocument()
     {
         return getEditor().getDocument();
@@ -972,6 +1003,27 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             Exceptions.printStackTrace(ex);
         }
     }
+    void insertStringAndCompile(int startIndex, String str)
+    {
+        try {        
+            getDocument().insertString(startIndex, str, errorCodeAttr);
+            getEditor().getOpenedPanes()[0].getCaret().setDot(startIndex+str.length());
+            handleDownToCursor();
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    void insertStringAtCursorAndCompile(String str)
+    {
+        insertStringAndCompile(getEditor().getOpenedPanes()[0].getCaret().getDot(), str);
+    }
+
+    void insertStringAtCompiledOffsetAndCompile(String str)
+    {
+        insertStringAndCompile(getCompiledOffset(), str);
+    }
+
     int getOffsetToSend() {
 
         int offset = 0;
