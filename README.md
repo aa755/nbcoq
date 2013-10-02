@@ -43,3 +43,7 @@ Shortcuts:
 5) C+A+l : SearchAbout the item under cursor
 
 6) click on hyp-name button to copy in into editor
+
+7) drag and drop hyp-buttons to apply one hyp to another
+
+8) select and drag lemma name from any place(e.g. editor,the window which shows SearchAbout o/p) to hyp-button to apply
