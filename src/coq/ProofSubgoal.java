@@ -334,6 +334,7 @@ public class ProofSubgoal {
             typeAr.setMaximumSize(maxSize);
             typeAr.addKeyListener(dobj);
             typeAr.addMouseListener(dobj);
+            typeAr.setDragEnabled(true);
            // typeAr.setMinimumSize(minSize);
             if(ProofError.DARK)
             {
@@ -385,6 +386,7 @@ public class ProofSubgoal {
             typeAr.setMaximumSize(maxSize);
             typeAr.addKeyListener(dobj);
             typeAr.addMouseListener(dobj);
+            typeAr.setDragEnabled(true);
             if(ProofError.DARK)
             {
                 typeAr.setBackground(ProofError.DarkBack);
