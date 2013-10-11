@@ -153,7 +153,7 @@ private  PrintWriter input;
         boolean success;
      //   Element contents;
         private static final int BUF_SIZE=262144;
-        private static final int NUM_TRIALS=128;
+        private static final int NUM_TRIALS=1024;
         
         char [] buf=new char [BUF_SIZE];
         

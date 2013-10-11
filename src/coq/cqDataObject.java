@@ -824,8 +824,17 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         
         public /*synchronized*/ void setTargetOffset(int targetOffset) {
-            this.targetOffset.set(targetOffset);
-            lastActionRequest.set(MOVE_TO_CURSOR_ACTION);
+            if(targetOffset==0)
+            {
+                System.out.println("received 0 as targetOffset");
+                this.targetOffset.set(0);
+                lastActionRequest.set(MOVE_TO_CURSOR_ACTION);
+            }
+            else
+            {
+                this.targetOffset.set(targetOffset);
+                lastActionRequest.set(MOVE_TO_CURSOR_ACTION);
+            }
             
         }
     }
