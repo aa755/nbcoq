@@ -148,11 +148,11 @@ public class ProofSubgoal {
             
 
             @Override
-            public void mouseClicked(MouseEvent me) {
+            public void mouseClicked(MouseEvent e) {
             }
 
             @Override
-            public void mousePressed(MouseEvent me) {
+            public void mousePressed(MouseEvent e) {
 //                JButton button = (JButton)me.getSource();
 //
 //                TransferHandler handle = button.getTransferHandler();
@@ -160,6 +160,12 @@ public class ProofSubgoal {
 //                handle.exportAsDrag(button, me, TransferHandler.COPY);
                 // does not work: try the following?
                 //http://www.dreamincode.net/forums/topic/209966-java-drag-and-drop-tutorial-part-1-basics-of-dragging/
+                
+                // in linux, popup is triggerred at mouse press
+                if (e.isPopupTrigger()) {
+                            popup.show(e.getComponent(),
+                                       e.getX(), e.getY());
+                }            
             }
 
             @Override
