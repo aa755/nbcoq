@@ -244,6 +244,29 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         
         return str;
     }
+    
+    String getTextSelectedInEditor()
+    {
+       return getEditor().getOpenedPanes()[0].getSelectedText();
+    }
+    void fixSelectedCode()
+    {
+      String sellection = getTextSelectedInEditor();
+      String [] sp=sellection.split("[ :]", 3);
+      String lemmaname = "";
+      if(sp[0].equals("Lemma") ||sp[0].equals("Theorem"))
+         lemmaname= sp[1].replace("lsubst","lsubst_aux");
+                 
+      insertStringAtCursor("Proof.\n"
+              + "  intros. change_to_lsubst_aux2.\n"
+              + "  apply "+lemmaname+";try(sp;fail);\n" +
+"  try(apply disjoint_sub_as_flat_map;disjoint_reasoning).\n"
+              + "Qed.\n"
+              + "");
+      
+      String change=sellection.replace("lsubst","lsubst_aux");
+      insertStringAtCursor(change);
+    }
     static String getSelectedWord(Object src)
     {
         
