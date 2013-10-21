@@ -232,7 +232,8 @@ public class ProofSubgoal {
                         "apply (*s*).\n",
                         "exists (*s*).\n",
                         "rw (*s*).\n",
-                        "rw <- (*s*).\n"
+                        "rw <- (*s*).\n",
+                        "revert (*s*).\n"
                                  };
         }
         

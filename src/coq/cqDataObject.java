@@ -787,6 +787,17 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                    {
                        prefix="((Definition)|(Fixpoint)|(Lemma)|(Theorem))";
                    }
+                   else if(sendtocoq.startsWith("Locate"))
+                    {
+                      // this part is useful if the definition is the current file and
+                      // is a tactic or outside the compiled region
+                      prefix = "((Definition)|(Fixpoint)|(Lemma)|(Theorem)|(Ltac)|(Tactic[\\s]*Notation[\\s]*\"))";
+                      frags=new String[2];
+                      frags[0]="";
+                      String[] parts = sendtocoq.split(" ");
+                      String obname = parts[1];
+                      frags[1]="Top."+obname;
+                    }
                    
                    if(!prefix.isEmpty())
                    {
