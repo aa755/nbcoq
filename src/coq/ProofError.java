@@ -218,7 +218,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     });
 
     queryCombo.setEditable(true);
-    queryCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Print nat." }));
+    queryCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Set Printing Universes." }));
     queryCombo.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         queryComboActionPerformed(evt);

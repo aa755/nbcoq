@@ -72,6 +72,11 @@ private  PrintWriter input;
         return communicate(new CoqSendMesg(code));
     }
     
+    public CoqRecMesg setOption(String code)
+    {
+        return communicate(new CoqSendMesg(code,"interp"," id=\"-2\" raw=\"\""));
+    }
+
     public CoqRecMesg rewind(int steps)
     {
         return communicate(new CoqSendRewindMeg(steps));
@@ -98,6 +103,7 @@ private  PrintWriter input;
     public static class CoqSendMesg{
         public String mesg;
         public String type;
+        public String extras;
 
 
         static CoqSendMesg getVersionMesg()
@@ -108,20 +114,28 @@ private  PrintWriter input;
         public CoqSendMesg(String mesg, String type) {
             this.mesg = mesg;
             this.type = type;
+            this.extras="";
         }
 
         public CoqSendMesg(String mesg) {
             this.mesg = mesg;
             this.type= "interp";
+            this.extras="";
         }
         
+        public CoqSendMesg(String mesg, String type, String extras) {
+            this.mesg = mesg;
+            this.type = type;
+            this.extras=extras;
+        }
+
         public static CoqSendMesg goalMessage()
         {
             return new CoqSendMesg("", "goal");
         }
         public String toXML()
-        {            
-            return "<call val=\""+ type +"\">"+ StringEscapeUtils.escapeXml(mesg)+"</call>";
+        {
+            return "<call val=\""+ type +"\""+extras+">"+ StringEscapeUtils.escapeXml(mesg)+"</call>";
         }
     }
     
