@@ -5,16 +5,21 @@
 package coq;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -42,6 +47,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import org.apache.commons.collections15.Transformer;
 import org.jgraph.JGraph;
 import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultEdge;
@@ -1284,13 +1290,25 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         assert(rec.getExtraRewoudSteps()==0);
     }
     
+    private Color edgeColor(String edgeLabel)
+    {
+        if (edgeLabel.startsWith("s")) // <=
+            return Color.RED;
+        else if(edgeLabel.startsWith("n")) // <
+            return Color.GREEN;
+        else
+            return Color.BLUE; // =
+    }
     
     void debugUnivInconsistency()
     {
         Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
         Matcher mat = pat.matcher(dbugcontents);
-        String start = "",end = "";
-        boolean strict;
+        String start = "";
+        String end = "";
+        
+        String edgetype;
+        
         if(mat.find())
         {
             start=mat.group(1);
@@ -1301,22 +1319,115 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         if(rec.success)
         {
             String constraints= rec.conciseReply;
-            //setDbugcontents(constraints);
+            setDbugcontents(constraints);
+            uiWindow.enableCompileButtonsAndShowDbug();
+            // strict equality of edge is true
             Graph<String,String> g= new DirectedSparseGraph<String, String>();
-            g.addVertex(start);
-            g.addVertex(end);
-            g.addEdge("<=",start, end, EdgeType.DIRECTED);
+        //    g.addVertex(start);
+        //    g.addVertex(end);
+        //    g.addEdge(strict,start, end, EdgeType.DIRECTED);
             
-            Layout<String, String> layout=new CircleLayout<String, String>(g);
+            String[] lines=constraints.split("\n");
+            String curLHS="";
+            for(int i=0;i<lines.length;i++)
+            {
+                String line=lines[i];
+                if(line.trim().isEmpty())
+                    continue;
+                String frags[]=line.split("[<=]");
+                System.err.println(line);
+                String lhs,rhs;
+                if(frags.length==3)
+                {
+                    edgetype="n"; // not strict inequality (<=)
+                    lhs=frags[0].trim();
+                    assert(frags[1].isEmpty());
+                    rhs=frags[2].trim();
+                } 
+                else
+                {
+                    assert(frags.length==2);
+                
+                    lhs=frags[0].trim();
+                    rhs=frags[1].trim();                    
+                    if (line.contains("<"))
+                        edgetype = "s"; // strict inequality (<)
+                    else
+                    {
+                        assert(line.contains("="));
+                        edgetype = "e"; // equality (=)
+                    }
+                }
+
+                if(lhs.isEmpty())
+                    lhs=curLHS;
+                else
+                    curLHS=lhs;
+                
+                String edgelabel=edgetype+i;
+                assert(!lhs.isEmpty());
+                assert(!rhs.isEmpty());
+                g.addVertex(lhs);
+                g.addVertex(rhs);
+                g.addEdge(edgelabel, rhs, lhs, EdgeType.DIRECTED);// arrow can be read as <,i.e for a<b, arrow is at a.                
+            }
             
-            layout.setSize(new Dimension(400, 400));
-            BasicVisualizationServer<String, String> vv=
-                        new BasicVisualizationServer<String, String>(layout);
+            
+            
+            FRLayout<String, String> layout=new FRLayout<String, String>(g);
+            
+            layout.setSize(new Dimension(1000, 800));
+            VisualizationViewer<String, String> vv=
+                        new VisualizationViewer<String, String>(layout);
+            DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
+            gm.setMode(ModalGraphMouse.Mode.PICKING);
+            vv.setGraphMouse(gm);
+            vv.getRenderContext().setVertexDrawPaintTransformer(new Transformer<String, Paint>() {
+
+                @Override
+                public Paint transform(String i) {
+                    return Color.GREEN;
+                }
+            });
+            vv.getRenderContext().setVertexFillPaintTransformer(new Transformer<String, Paint>() {
+
+                @Override
+                public Paint transform(String i) {
+                    return Color.GREEN;
+                }
+            });
+           
+            vv.getRenderContext().setArrowDrawPaintTransformer(new Transformer<String, Paint>() {
+
+                @Override
+                public Paint transform(String i) {
+                    return edgeColor(i);
+                }
+            });
+            
+            vv.getRenderContext().setArrowFillPaintTransformer(new Transformer<String, Paint>() {
+
+                @Override
+                public Paint transform(String i) {
+                    return edgeColor(i);
+                }
+            });
+            
+            
+            vv.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<String, Paint>() {
+
+                @Override
+                public Paint transform(String i) {
+                    return edgeColor(i);
+                }
+            });
+
             vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
             vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
             
             JFrame jd= new JFrame();
             jd.setTitle("Inconsistency");
+            jd.setSize(new Dimension(1000, 800));
             jd.pack();
             jd.setVisible(true);
             jd.getContentPane().add(vv);
