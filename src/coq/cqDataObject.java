@@ -738,18 +738,33 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         void handleQuery() {
             String sendtocoq = uiWindow.getQuery();
-            CoqTopXMLIO.CoqRecMesg rec = getCoqtop().interpret(sendtocoq);
+            boolean setCommand=sendtocoq.trim().startsWith("Set");
+            
+            CoqTopXMLIO.CoqRecMesg rec;
+            if(setCommand)
+              rec=getCoqtop().setOption(sendtocoq);
+            else
+              rec= getCoqtop().interpret(sendtocoq);
+            
             if (rec.success) {
                 String reply=rec.nuDoc.getRootElement().getFirstChildElement("string").getValue();
+                String creply=reply;
                 String warnMesg="Warning: query commands should not be inserted in scripts";
-                if(!reply.startsWith(warnMesg))
-                    JOptionPane.showMessageDialog(null, "you probably executed a non-query command as a query");
+                if(reply.startsWith(warnMesg))
+                    creply=reply.substring(warnMesg.length());
                             //+ "this might make IDE's estimation of coqtop's state inconsistent."
                             //+ "you might want to save the file and restart the IDE");
-                String creply=reply.substring(warnMesg.length());
                 setDbugcontents(creply);
-                rewindCoqtopForQuery();
-                uiWindow.saveQuery(sendtocoq);
+                
+                if(!setCommand)
+                {
+                  rewindCoqtopForQuery();                
+                  uiWindow.saveQuery(sendtocoq);
+                }
+                
+                if(!sendtocoq.trim().startsWith("Locate"))
+                  return;
+                
                 String ctreply=creply.trim();
                // ctreply.sp
                 String [] frags=ctreply.split("[\\s]");
