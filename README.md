@@ -14,15 +14,24 @@ It will find this netbeans project and ask if you wish to open it.
 Say yes.
 
 
-Click run or debug .. it will open another instance of netbeans.
-Alternatively, right click on the project node and click Install in Development IDE to avoid running 2 instances.
+Right click on the project node and click Install in Development IDE.
+(If you made some changes to plugin code, you might want to click debug. Tt will open another instance of netbeans
+and let you debug the code.)
 
 
 Prediodically, you might want to go a git pull to get the latest features(and bugs).
+If you do that, Right click on the project node and click Install in Development IDE and restart the IDE
+once the reload is finished (might take ~20 seconds to build)
+
 
 There is a video demonstration/documentation of this plugin at 
 http://www.youtube.com/watch?v=94D5RVK-cQg
 (watch the video in HD to avoid blurred text)
+Corrections to the video: 
+You might want to use a C++ project instead of a Java project and provide the Coq Makefile.
+Then, you can use the IDE's build system. This might need installation 
+of the C++ plugin
+
 
 A list of known issues can be found at:
 https://github.com/aa755/nbcoq/issues?state=open
