@@ -20,6 +20,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openide.util.NbPreferences;
 
 
@@ -70,6 +71,38 @@ private  PrintWriter input;
     public CoqRecMesg interpret(String code)
     {
         return communicate(new CoqSendMesg(code));
+    }
+    
+    
+    /**
+     * Assumes that this query was executed 
+     * outside the file being edited. e.g. the separate query interface
+     * By rewinding, it ensures that the coqtop state is not changed.
+     * 
+     * @param code
+     * @return 
+     */
+    public CoqRecMesg query(String code)
+    {
+        CoqRecMesg rec= communicate(new CoqSendMesg(code));
+        if(rec.success)
+        {
+            rewindForQuery();            
+            String reply=rec.nuDoc.getRootElement().getFirstChildElement("string").getValue();
+            String creply=reply;
+            String warnMesg="Warning: query commands should not be inserted in scripts";
+            if(reply.startsWith(warnMesg))
+                creply=reply.substring(warnMesg.length());
+            rec.conciseReply=creply;
+        }
+        return rec;
+    }
+
+    void rewindForQuery()
+    {
+        CoqRecMesg rec=rewind(1);
+        assert(rec.success);
+        assert(rec.getExtraRewoudSteps()==0);        
     }
     
     public CoqRecMesg setOption(String code)
@@ -168,6 +201,7 @@ private  PrintWriter input;
      //   Element contents;
         private static final int BUF_SIZE=262144;
         private static final int NUM_TRIALS=1024;
+        String conciseReply;
         
         char [] buf=new char [BUF_SIZE];
         

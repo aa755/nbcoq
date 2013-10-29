@@ -4,7 +4,17 @@
  */
 package coq;
 
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.DirectedGraph;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -17,6 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -30,6 +42,11 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import org.jgraph.JGraph;
+import org.jgrapht.ext.JGraphModelAdapter;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.ListenableDirectedWeightedGraph;
+import org.jgrapht.graph.SimpleGraph;
 import org.netbeans.api.actions.Openable;
 import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -1043,7 +1060,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         
     }
-        
+     
     public StyledDocument getDocument()
     {
         return getEditor().getDocument();
@@ -1265,6 +1282,57 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         CoqTopXMLIO.CoqRecMesg rec=getCoqtop().rewind(1);
         assert(rec.success);
         assert(rec.getExtraRewoudSteps()==0);
+    }
+    
+    
+    void debugUnivInconsistency()
+    {
+        Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
+        Matcher mat = pat.matcher(dbugcontents);
+        String start = "",end = "";
+        boolean strict;
+        if(mat.find())
+        {
+            start=mat.group(1);
+            end=mat.group(2);
+        }
+        
+        CoqTopXMLIO.CoqRecMesg rec= getCoqtop().query("Print Universes.");        
+        if(rec.success)
+        {
+            String constraints= rec.conciseReply;
+            //setDbugcontents(constraints);
+            Graph<String,String> g= new DirectedSparseGraph<String, String>();
+            g.addVertex(start);
+            g.addVertex(end);
+            g.addEdge("<=",start, end, EdgeType.DIRECTED);
+            
+            Layout<String, String> layout=new CircleLayout<String, String>(g);
+            
+            layout.setSize(new Dimension(400, 400));
+            BasicVisualizationServer<String, String> vv=
+                        new BasicVisualizationServer<String, String>(layout);
+            vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
+            vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+            
+            JFrame jd= new JFrame();
+            jd.setTitle("Inconsistency");
+            jd.pack();
+            jd.setVisible(true);
+            jd.getContentPane().add(vv);
+           
+            
+//            g.addVertex(start);
+//            g.addVertex(end);
+//            Object e=(DefaultEdge) g.addEdge(start, end);
+//            g.setEdgeWeight(e, 0);
+        }
+        else
+        {
+            setDbugcontents(rec.toString());
+        }
+        
+        
     }
     /**
      * final because it is called in the constructor
