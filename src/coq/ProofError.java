@@ -220,7 +220,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     });
 
     queryCombo.setEditable(true);
-    queryCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Set Printing Universes." }));
+    queryCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Set Printing Universes.", "Unset Printing Notations." }));
     queryCombo.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         queryComboActionPerformed(evt);
@@ -260,6 +260,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     });
 
     org.openide.awt.Mnemonics.setLocalizedText(TopUnivsButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.TopUnivsButton.text")); // NOI18N
+    TopUnivsButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        TopUnivsButtonActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -555,6 +560,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         // TODO add your handling code here:
         editorDoc.debugUnivInconsistency();
     }//GEN-LAST:event_UnivButtonActionPerformed
+
+  private void TopUnivsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TopUnivsButtonActionPerformed
+    // TODO add your handling code here:
+      editorDoc.showTopUnivs();
+  }//GEN-LAST:event_TopUnivsButtonActionPerformed
 
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());

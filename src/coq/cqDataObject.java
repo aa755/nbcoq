@@ -8,12 +8,9 @@ import agape.tools.Components;
 import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
-import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
@@ -53,12 +50,8 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
-import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.alg.StrongConnectivityInspector;
-import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DirectedMultigraph;
-import org.jgrapht.graph.DirectedSubgraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.netbeans.api.actions.Openable;
 import org.netbeans.api.editor.settings.AttributesUtilities;
@@ -280,7 +273,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     }
     void fixSelectedCode()
     {
-      String prefix="((Definition)|(Fixpoint)|(Lemma)|(Theorem))";
+      String prefix="((Definition)|(Fixpoint)|(Lemma)|(Theorem)|(Inductive))";
       Pattern pat=Pattern.compile(prefix+" ([\\w]*)");
       Matcher mat=pat.matcher(getEntireText());
       dbugcontents="";
@@ -1431,6 +1424,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             edgetype="e";
         }
 
+        boolean involvesTop()
+        {
+            return lhs.startsWith("Top.") && rhs.startsWith("Top.");
+        }
         
         public Constraint(String line) {
                 String frags[]=line.split("[<=]");
@@ -1563,6 +1560,37 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return filtered;
     }
     
+    void showTopUnivs()
+    {
+        CoqTopXMLIO.CoqRecMesg rec= getCoqtop().query("Print Universes.");        
+        if(rec.success)
+        {
+            String constraints= rec.conciseReply;
+            setDbugcontents(constraints);
+            DirectedSparseMultigraph<String,String> g= new DirectedSparseMultigraph<String, String>();
+            
+            String[] lines=constraints.split("\n");
+            String curLHS="";
+            for(int i=0;i<lines.length;i++)
+            {
+                String line=lines[i];
+                if(line.trim().isEmpty())
+                    continue;
+
+                Constraint constr=new Constraint(line);
+                
+                if(constr.lhs.isEmpty())
+                    constr.lhs=curLHS;
+                else
+                    curLHS=constr.lhs;
+                
+                if(constr.involvesTop())
+                    constr.addToGraph(g, i+1);
+            }
+            showGraph(makeEqualitiesUndirected(g),"","");
+        }
+    }
+        
     void debugUnivInconsistency()
     {
         Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
