@@ -1382,12 +1382,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
       }
       
     }
-    
-    void showGraph(Graph g, String lhs, String rhs)
+    JFrame topUnivs=null;
+    void showGraph(Graph g, String lhs, String rhs, boolean newWindow)
     {
             FRLayout<String, String> layout=new FRLayout<String, String>(g);
-            
-            layout.setSize(new Dimension(1000, 800));
+            int numV=g.getVertexCount();
+            layout.setSize(new Dimension(Math.max(400, numV), Math.max(400, numV)));
             VisualizationViewer<String, String> vv=
                         new VisualizationViewer<String, String>(layout);
             DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
@@ -1401,10 +1401,23 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
             vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
             
-            JFrame jd= new JFrame();
-            jd.setTitle("Inconsistency");
-            jd.setSize(new Dimension(1000, 800));
-            jd.pack();
+            JFrame jd;
+            if(newWindow || topUnivs==null)
+            {
+                jd=new JFrame();
+                jd.setTitle("Inconsistency");
+                jd.setSize(new Dimension(1000, 800));
+               // jd.pack();
+            }
+            else
+            {
+                jd=topUnivs;                
+            }
+            
+            if(topUnivs==null&&!newWindow)
+                topUnivs=jd;
+            
+            jd.getContentPane().removeAll();
             jd.getContentPane().add(vv);
             jd.setVisible(true);
       
@@ -1426,7 +1439,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
         boolean involvesTop()
         {
-            return lhs.startsWith("Top.") && rhs.startsWith("Top.");
+            return lhs.startsWith("Top.") || rhs.startsWith("Top.");
         }
         
         public Constraint(String line) {
@@ -1556,7 +1569,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         DirectedSparseMultigraph<String,String> filtered=(DirectedSparseMultigraph<String,String>) vf.transform(g);
         uiWindow.enableCompileButtonsAndShowDbug();
 
-        showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs);
+        showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs,true);
         return filtered;
     }
     
@@ -1587,7 +1600,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 if(constr.involvesTop())
                     constr.addToGraph(g, i+1);
             }
-            showGraph(makeEqualitiesUndirected(g),"","");
+            showGraph(makeEqualitiesUndirected(g),"","",false);
         }
     }
         
@@ -1634,7 +1647,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 
                 constr.addToGraph(g, i+1);
             }
-            showGraph(g,violatedConstr.lhs,violatedConstr.rhs);
+            showGraph(g,violatedConstr.lhs,violatedConstr.rhs,true);
           Set<String> keepV = getVerticesToKeepJgraph(g,violatedConstr.lhs,violatedConstr.rhs);
           filterKeepAndVisualize(g, keepV, violatedConstr);
           
