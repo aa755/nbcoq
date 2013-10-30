@@ -53,10 +53,12 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
+import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.alg.StrongConnectivityInspector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.graph.DirectedSubgraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.netbeans.api.actions.Openable;
 import org.netbeans.api.editor.settings.AttributesUtilities;
@@ -278,7 +280,21 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     }
     void fixSelectedCode()
     {
-      String sellection = getTextSelectedInEditor();
+      String prefix="((Definition)|(Fixpoint)|(Lemma)|(Theorem))";
+      Pattern pat=Pattern.compile(prefix+" ([\\w]*)");
+      Matcher mat=pat.matcher(getEntireText());
+      dbugcontents="";
+      while(mat.find())
+      {
+          String [] frags=mat.group().trim().split(" ");
+          String mesg="Print "+frags[1]+".";
+          CoqTopXMLIO.CoqRecMesg query = getCoqtop().query(mesg);
+          if(query.success)
+              dbugcontents=dbugcontents+query.conciseReply;
+          
+      }
+          uiWindow.enableCompileButtonsAndShowDbug();
+/*      String sellection = getTextSelectedInEditor();
       String [] sp=sellection.split("[ :]", 3);
       String lemmaname = "";
       if(sp[0].equals("Lemma") ||sp[0].equals("Theorem"))
@@ -292,7 +308,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
               + "");
       
       String change=sellection.replace("lsubst","lsubst_aux");
-      insertStringAtCursor(change);
+      insertStringAtCursor(change);*/
+      
+      
     }
     static String getSelectedWord(Object src)
     {
@@ -788,7 +806,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         void handleQuery() {
             String sendtocoq = uiWindow.getQuery();
-            boolean setCommand=sendtocoq.trim().startsWith("Set");
+            boolean setCommand=sendtocoq.trim().startsWith("Set") || sendtocoq.trim().startsWith("Unset");
             
             CoqTopXMLIO.CoqRecMesg rec;
             if(setCommand)
@@ -1530,6 +1548,21 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return ret;
     }
     
+    DirectedSparseMultigraph<String,String> filterKeepAndVisualize(DirectedSparseMultigraph<String, String> g,Set<String> keepV,Constraint violatedConstr)
+    {
+        dbugcontents=dbugcontents+"\n init # nodes:"+g.getVertexCount()+" # edges:"+ g.getEdgeCount();
+        dbugcontents=dbugcontents+"nodes left in SCC(#nodes):"+keepV.size();
+        //init # nodes:1060 # edges:2911filtering removed(#nodes):943
+        VertexPredicateFilter<String,String> vf =
+                //new VertexPredicateFilter<String, String>(new FilterNodesOut(discardv));
+        new VertexPredicateFilter<String, String>(new FilterKeepNodes(keepV));
+        DirectedSparseMultigraph<String,String> filtered=(DirectedSparseMultigraph<String,String>) vf.transform(g);
+        uiWindow.enableCompileButtonsAndShowDbug();
+
+        showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs);
+        return filtered;
+    }
+    
     void debugUnivInconsistency()
     {
         Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
@@ -1575,19 +1608,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             }
             showGraph(g,violatedConstr.lhs,violatedConstr.rhs);
           Set<String> keepV = getVerticesToKeepJgraph(g,violatedConstr.lhs,violatedConstr.rhs);
+          filterKeepAndVisualize(g, keepV, violatedConstr);
+          
+          
             // filtering begins
             //Set<String> discardv=getVerticesToDiscard(g, violatedConstr.lhs, violatedConstr.rhs);
             
-            dbugcontents=dbugcontents+"\n init # nodes:"+g.getVertexCount()+" # edges:"+ g.getEdgeCount();
-            dbugcontents=dbugcontents+"nodes left in SCC(#nodes):"+keepV.size();
-            //init # nodes:1060 # edges:2911filtering removed(#nodes):943
-            VertexPredicateFilter<String,String> vf =
-                    //new VertexPredicateFilter<String, String>(new FilterNodesOut(discardv));
-            new VertexPredicateFilter<String, String>(new FilterKeepNodes(keepV));
-            DirectedSparseMultigraph<String,String> filtered=(DirectedSparseMultigraph<String,String>) vf.transform(g);
-            uiWindow.enableCompileButtonsAndShowDbug();
-            
-            showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs);
         }
         else
         {
