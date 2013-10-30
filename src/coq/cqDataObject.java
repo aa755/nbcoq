@@ -9,6 +9,8 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
@@ -1307,7 +1309,21 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
       public boolean evaluate(String t) {
         return !(filterOut.contains(t));
       }
-        
+    }
+
+    static class FilterLeavesOut implements Predicate<String>
+    {
+      Graph<String,Object> graph;
+
+      public FilterLeavesOut(Graph graph) {
+        this.graph = graph;
+      }
+      
+      @Override
+      public boolean evaluate(String t) {
+        return (graph.getNeighborCount(t)>1);
+         // if a variable(vertex) has only 1 constraint, it can be trivially solved
+      }
     }
 
     class VertexColor implements Transformer<String, Paint>
@@ -1353,46 +1369,28 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             jd.setTitle("Inconsistency");
             jd.setSize(new Dimension(1000, 800));
             jd.pack();
-            jd.setVisible(true);
             jd.getContentPane().add(vv);
+            jd.setVisible(true);
       
     }
-    void debugUnivInconsistency()
+    static class Constraint
     {
-        Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
-        Matcher mat = pat.matcher(dbugcontents);
-        String start = "";
-        String end = "";
-        
-        String edgetype;
-        
-        if(mat.find())
-        {
-            start=mat.group(1);
-            end=mat.group(2);
+         public String lhs, rhs, edgetype;
+
+        public Constraint(String lhs, String rhs, String line) {
+          this.lhs = lhs;
+          this.rhs = rhs;
+          if(line.contains("<="))
+            edgetype="n";
+          else if (line.contains("<"))
+            edgetype="s";
+          else
+            edgetype="e";
         }
+
         
-        CoqTopXMLIO.CoqRecMesg rec= getCoqtop().query("Print Universes.");        
-        if(rec.success)
-        {
-            String constraints= rec.conciseReply;
-            setDbugcontents(constraints);
-            // strict equality of edge is true
-            Graph<String,String> g= new DirectedSparseGraph<String, String>();
-        //    g.addVertex(start);
-        //    g.addVertex(end);
-        //    g.addEdge(strict,start, end, EdgeType.DIRECTED);
-            
-            String[] lines=constraints.split("\n");
-            String curLHS="";
-            for(int i=0;i<lines.length;i++)
-            {
-                String line=lines[i];
-                if(line.trim().isEmpty())
-                    continue;
+        public Constraint(String line) {
                 String frags[]=line.split("[<=]");
-                System.err.println(line);
-                String lhs,rhs;
                 if(frags.length==3)
                 {
                     edgetype="n"; // not strict inequality (<=)
@@ -1414,25 +1412,76 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                         edgetype = "e"; // equality (=)
                     }
                 }
+        }
+        
+        public void addToGraph(Graph<String,String> g, int i)
+        {
+              String edgelabel=edgetype+i;
+              assert(!lhs.isEmpty());
+              assert(!rhs.isEmpty());
+              g.addVertex(lhs);
+              g.addVertex(rhs);
+              //EdgeType edt=EdgeType.DIRECTED;
+              
+              //if(edgetype.equals("e"))
+                //edt=EdgeType.UNDIRECTED;
+              
+              assert(g.addEdge(edgelabel, rhs, lhs, EdgeType.DIRECTED ));// arrow can be read as <,i.e for a<b, arrow is at a.                
 
-                if(lhs.isEmpty())
-                    lhs=curLHS;
-                else
-                    curLHS=lhs;
+        }
+       
+    }
+    void debugUnivInconsistency()
+    {
+        Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
+        Matcher mat = pat.matcher(dbugcontents);
+        Constraint violatedConstr;
+        
+        if(mat.find())
+        {
+            String toParse=mat.group().substring("(cannot enforce".length());
+            violatedConstr=new Constraint(mat.group(1),mat.group(2),mat.group());
+        }
+        else
+          return;
+        
+        CoqTopXMLIO.CoqRecMesg rec= getCoqtop().query("Print Universes.");        
+        if(rec.success)
+        {
+            String constraints= rec.conciseReply;
+            setDbugcontents(constraints);
+            // strict equality of edge is true
+            Graph<String,String> g= new DirectedSparseGraph<String, String>();
+            violatedConstr.addToGraph(g, 0);
+        //    g.addVertex(start);
+        //    g.addVertex(end);
+        //    g.addEdge(strict,start, end, EdgeType.DIRECTED);
+            
+            String[] lines=constraints.split("\n");
+            String curLHS="";
+            for(int i=0;i<lines.length;i++)
+            {
+                String line=lines[i];
+                if(line.trim().isEmpty())
+                    continue;
+
+                Constraint constr=new Constraint(line);
                 
-                String edgelabel=edgetype+i;
-                assert(!lhs.isEmpty());
-                assert(!rhs.isEmpty());
-                g.addVertex(lhs);
-                g.addVertex(rhs);
-                g.addEdge(edgelabel, rhs, lhs, EdgeType.DIRECTED);// arrow can be read as <,i.e for a<b, arrow is at a.                
+                if(constr.lhs.isEmpty())
+                    constr.lhs=curLHS;
+                else
+                    curLHS=constr.lhs;
+                
+                constr.addToGraph(g, i+1);
             }
+            showGraph(g,violatedConstr.lhs,violatedConstr.rhs);
             
             // filtering begins
             BFSDistanceLabeler<String,String> bfs=new BFSDistanceLabeler<String, String>();
+            
             HashSet<String> roots=new HashSet<String>(2);
-            roots.add(start);
-            roots.add(end);
+            roots.add(violatedConstr.lhs);
+            roots.add(violatedConstr.rhs);
 
             dbugcontents=dbugcontents+"\n init # nodes:"+g.getVertexCount()+" # edges:"+ g.getEdgeCount();
             
@@ -1440,13 +1489,13 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             Set<String> discardv=bfs.getUnvisitedVertices();
             
             dbugcontents=dbugcontents+"filtering removed(#nodes):"+discardv.size();
-            
+            //init # nodes:1060 # edges:2911filtering removed(#nodes):943
             VertexPredicateFilter<String,String> vf =
                     new VertexPredicateFilter<String, String>(new FilterNodesOut(discardv));
             Graph filtered=vf.transform(g);
             uiWindow.enableCompileButtonsAndShowDbug();
             
-            showGraph(filtered,start,end);
+            showGraph(filtered,violatedConstr.lhs,violatedConstr.rhs);
                        
 //            g.addVertex(start);
 //            g.addVertex(end);
