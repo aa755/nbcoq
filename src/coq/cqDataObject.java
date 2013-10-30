@@ -8,6 +8,7 @@ import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.Context;
@@ -1431,6 +1432,30 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
        
     }
+    
+    
+    Set<String> getVerticesToDiscard(Graph<String,String> g, String lhs, String rhs)
+    {
+      // wrong because equalities need to be bidirectional
+        BFSDistanceLabeler<String,String> bfs=new BFSDistanceLabeler<String, String>();
+        HashSet<String> roots=new HashSet<String>(2);
+        roots.add(lhs);
+        roots.add(rhs);
+        bfs.labelDistances(g, roots);
+        return bfs.getUnvisitedVertices();      
+    }
+    
+    Set<String> getVerticesToKeep(Graph<String,String> g, String lhs, String rhs)
+    {
+        BFSDistanceLabeler<String,String> bfs=new BFSDistanceLabeler<String, String>();
+        HashSet<String> roots=new HashSet<String>(2);
+        roots.add(lhs);
+        roots.add(rhs);
+        bfs.labelDistances(g, roots);
+        return bfs.getUnvisitedVertices();      
+        
+    }
+
     void debugUnivInconsistency()
     {
         Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
@@ -1451,7 +1476,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             String constraints= rec.conciseReply;
             setDbugcontents(constraints);
             // strict equality of edge is true
-            Graph<String,String> g= new DirectedSparseGraph<String, String>();
+            Graph<String,String> g= new DirectedSparseMultigraph<String, String>();
             violatedConstr.addToGraph(g, 0);
         //    g.addVertex(start);
         //    g.addVertex(end);
@@ -1477,17 +1502,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             showGraph(g,violatedConstr.lhs,violatedConstr.rhs);
             
             // filtering begins
-            BFSDistanceLabeler<String,String> bfs=new BFSDistanceLabeler<String, String>();
+            Set<String> discardv=getVerticesToDiscard(g, violatedConstr.lhs, violatedConstr.rhs);
             
-            HashSet<String> roots=new HashSet<String>(2);
-            roots.add(violatedConstr.lhs);
-            roots.add(violatedConstr.rhs);
-
             dbugcontents=dbugcontents+"\n init # nodes:"+g.getVertexCount()+" # edges:"+ g.getEdgeCount();
-            
-            bfs.labelDistances(g, roots);
-            Set<String> discardv=bfs.getUnvisitedVertices();
-            
             dbugcontents=dbugcontents+"filtering removed(#nodes):"+discardv.size();
             //init # nodes:1060 # edges:2911filtering removed(#nodes):943
             VertexPredicateFilter<String,String> vf =

@@ -169,6 +169,10 @@
                 <binary-origin>release/modules/ext/jung-graph-impl-2.0.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/agape-0.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/agape-0.3.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/collections-generic-4.01.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/collections-generic-4.01.jar</binary-origin>
             </class-path-extension>
