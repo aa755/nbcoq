@@ -12,6 +12,7 @@ import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -1510,7 +1511,25 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return null;
         
     }
-
+    SparseMultigraph<String, String> makeEqualitiesUndirected(DirectedSparseMultigraph<String,String> g)
+    { 
+        SparseMultigraph<String, String> ret=new SparseMultigraph<String, String>();
+        Collection<String> edges = g.getEdges();
+        for (String ed : edges)
+        {
+            String srcv = g.getSource(ed);
+            String destv = g.getDest(ed);
+            ret.addVertex(srcv);
+            ret.addVertex(destv);
+            EdgeType et= EdgeType.DIRECTED;
+            if(ed.startsWith("e"))
+               et=EdgeType.UNDIRECTED;
+            ret.addEdge(ed,srcv, destv,et);
+        }
+        
+        return ret;
+    }
+    
     void debugUnivInconsistency()
     {
         Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
@@ -1564,11 +1583,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             //init # nodes:1060 # edges:2911filtering removed(#nodes):943
             VertexPredicateFilter<String,String> vf =
                     //new VertexPredicateFilter<String, String>(new FilterNodesOut(discardv));
-                    new VertexPredicateFilter<String, String>(new FilterKeepNodes(keepV));
-            Graph filtered=vf.transform(g);
+            new VertexPredicateFilter<String, String>(new FilterKeepNodes(keepV));
+            DirectedSparseMultigraph<String,String> filtered=(DirectedSparseMultigraph<String,String>) vf.transform(g);
             uiWindow.enableCompileButtonsAndShowDbug();
             
-            showGraph(filtered,violatedConstr.lhs,violatedConstr.rhs);
+            showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs);
         }
         else
         {
