@@ -4,14 +4,12 @@
  */
 package coq;
 
-import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.DirectedGraph;
+import edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
@@ -27,14 +25,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -42,17 +40,11 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.Position;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
-import org.jgraph.JGraph;
-import org.jgrapht.ext.JGraphModelAdapter;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.ListenableDirectedWeightedGraph;
-import org.jgrapht.graph.SimpleGraph;
 import org.netbeans.api.actions.Openable;
 import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -63,7 +55,6 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
@@ -1290,16 +1281,82 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         assert(rec.getExtraRewoudSteps()==0);
     }
     
-    private Color edgeColor(String edgeLabel)
+   class EdgeColor implements Transformer<String, Paint>
     {
-        if (edgeLabel.startsWith("s")) // <=
-            return Color.RED;
-        else if(edgeLabel.startsWith("n")) // <
-            return Color.GREEN;
-        else
-            return Color.BLUE; // =
+
+      @Override
+      public Paint transform(String edgeLabel) {
+          if (edgeLabel.startsWith("s")) // <=
+              return Color.RED;
+          else if(edgeLabel.startsWith("n")) // <
+              return Color.GREEN;
+          else
+              return Color.BLUE; // =
+      }
     }
     
+    static class FilterNodesOut implements Predicate<String>
+    {
+      Set<String> filterOut;
+
+      public FilterNodesOut(Set<String> filterOut) {
+        this.filterOut = filterOut;
+      }
+      
+      @Override
+      public boolean evaluate(String t) {
+        return !(filterOut.contains(t));
+      }
+        
+    }
+
+    class VertexColor implements Transformer<String, Paint>
+    {
+      String lhs, rhs;
+
+      public VertexColor(String lhs, String rhs) {
+        this.lhs = lhs;
+        this.rhs = rhs;
+      }
+      
+      @Override
+      public Paint transform(String i) {
+        if(i.equals(lhs))
+          return Color.CYAN;
+        else if(i.equals(rhs))
+          return Color.MAGENTA;
+        else
+          return Color.GREEN;
+      }
+      
+    }
+    
+    void showGraph(Graph g, String lhs, String rhs)
+    {
+            FRLayout<String, String> layout=new FRLayout<String, String>(g);
+            
+            layout.setSize(new Dimension(1000, 800));
+            VisualizationViewer<String, String> vv=
+                        new VisualizationViewer<String, String>(layout);
+            DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
+            gm.setMode(ModalGraphMouse.Mode.PICKING);
+            vv.setGraphMouse(gm);
+            vv.getRenderContext().setVertexDrawPaintTransformer(new VertexColor(lhs, rhs));
+            vv.getRenderContext().setVertexFillPaintTransformer(new VertexColor(lhs, rhs));
+            vv.getRenderContext().setArrowDrawPaintTransformer(new EdgeColor());
+            vv.getRenderContext().setArrowFillPaintTransformer(new EdgeColor());
+            vv.getRenderContext().setEdgeDrawPaintTransformer(new EdgeColor());
+            vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
+            vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+            
+            JFrame jd= new JFrame();
+            jd.setTitle("Inconsistency");
+            jd.setSize(new Dimension(1000, 800));
+            jd.pack();
+            jd.setVisible(true);
+            jd.getContentPane().add(vv);
+      
+    }
     void debugUnivInconsistency()
     {
         Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
@@ -1320,7 +1377,6 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             String constraints= rec.conciseReply;
             setDbugcontents(constraints);
-            uiWindow.enableCompileButtonsAndShowDbug();
             // strict equality of edge is true
             Graph<String,String> g= new DirectedSparseGraph<String, String>();
         //    g.addVertex(start);
@@ -1372,67 +1428,26 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 g.addEdge(edgelabel, rhs, lhs, EdgeType.DIRECTED);// arrow can be read as <,i.e for a<b, arrow is at a.                
             }
             
-            
-            
-            FRLayout<String, String> layout=new FRLayout<String, String>(g);
-            
-            layout.setSize(new Dimension(1000, 800));
-            VisualizationViewer<String, String> vv=
-                        new VisualizationViewer<String, String>(layout);
-            DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
-            gm.setMode(ModalGraphMouse.Mode.PICKING);
-            vv.setGraphMouse(gm);
-            vv.getRenderContext().setVertexDrawPaintTransformer(new Transformer<String, Paint>() {
+            // filtering begins
+            BFSDistanceLabeler<String,String> bfs=new BFSDistanceLabeler<String, String>();
+            HashSet<String> roots=new HashSet<String>(2);
+            roots.add(start);
+            roots.add(end);
 
-                @Override
-                public Paint transform(String i) {
-                    return Color.GREEN;
-                }
-            });
-            vv.getRenderContext().setVertexFillPaintTransformer(new Transformer<String, Paint>() {
-
-                @Override
-                public Paint transform(String i) {
-                    return Color.GREEN;
-                }
-            });
-           
-            vv.getRenderContext().setArrowDrawPaintTransformer(new Transformer<String, Paint>() {
-
-                @Override
-                public Paint transform(String i) {
-                    return edgeColor(i);
-                }
-            });
+            dbugcontents=dbugcontents+"\n init # nodes:"+g.getVertexCount()+" # edges:"+ g.getEdgeCount();
             
-            vv.getRenderContext().setArrowFillPaintTransformer(new Transformer<String, Paint>() {
-
-                @Override
-                public Paint transform(String i) {
-                    return edgeColor(i);
-                }
-            });
+            bfs.labelDistances(g, roots);
+            Set<String> discardv=bfs.getUnvisitedVertices();
             
+            dbugcontents=dbugcontents+"filtering removed(#nodes):"+discardv.size();
             
-            vv.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<String, Paint>() {
-
-                @Override
-                public Paint transform(String i) {
-                    return edgeColor(i);
-                }
-            });
-
-            vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
-            vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+            VertexPredicateFilter<String,String> vf =
+                    new VertexPredicateFilter<String, String>(new FilterNodesOut(discardv));
+            Graph filtered=vf.transform(g);
+            uiWindow.enableCompileButtonsAndShowDbug();
             
-            JFrame jd= new JFrame();
-            jd.setTitle("Inconsistency");
-            jd.setSize(new Dimension(1000, 800));
-            jd.pack();
-            jd.setVisible(true);
-            jd.getContentPane().add(vv);
-           
-            
+            showGraph(filtered,start,end);
+                       
 //            g.addVertex(start);
 //            g.addVertex(end);
 //            Object e=(DefaultEdge) g.addEdge(start, end);
