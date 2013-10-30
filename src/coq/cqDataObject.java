@@ -4,6 +4,7 @@
  */
 package coq;
 
+import agape.tools.Components;
 import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler;
@@ -28,7 +29,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -48,6 +52,11 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
+import org.jgrapht.alg.StrongConnectivityInspector;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 import org.netbeans.api.actions.Openable;
 import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -1312,6 +1321,20 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
       }
     }
 
+    static class FilterKeepNodes implements Predicate<String>
+    {
+      Set<String> keepNodes;
+
+      public FilterKeepNodes(Set<String> keepNodes) {
+        this.keepNodes = keepNodes;
+      }
+      
+      @Override
+      public boolean evaluate(String t) {
+        return (keepNodes.contains(t));
+      }
+    }
+
     static class FilterLeavesOut implements Predicate<String>
     {
       Graph<String,Object> graph;
@@ -1445,14 +1468,46 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return bfs.getUnvisitedVertices();      
     }
     
-    Set<String> getVerticesToKeep(Graph<String,String> g, String lhs, String rhs)
+    Set<String> getVerticesToKeep(DirectedSparseMultigraph<String,String> g)
     {
-        BFSDistanceLabeler<String,String> bfs=new BFSDistanceLabeler<String, String>();
-        HashSet<String> roots=new HashSet<String>(2);
-        roots.add(lhs);
-        roots.add(rhs);
-        bfs.labelDistances(g, roots);
-        return bfs.getUnvisitedVertices();      
+        //Set<String>g.getEdges()
+        Components comps=new Components();
+        ArrayList<Set<String>> ascc 
+                = Components.getAllStronglyConnectedComponent(g);
+        dbugcontents=dbugcontents+"\n\n\n found #SCCs"+ascc+"\n\n";
+        for(Set<String> s: ascc)
+        {
+            assert(!s.contains("Top.10"));
+        }
+        return ascc.get(0);
+    }
+
+    Set<String> getVerticesToKeepJgraph(DirectedSparseMultigraph<String,String> g,String vlhs, String vrhs)
+    {
+        SimpleDirectedGraph<String,String> jg =new SimpleDirectedGraph(DefaultEdge.class);
+        Collection<String> edges = g.getEdges();
+        for (String ed : edges)
+        {
+            String srcv = g.getSource(ed);
+            String destv = g.getDest(ed);
+            jg.addVertex(srcv);
+            jg.addVertex(destv);
+            jg.addEdge(srcv, destv,ed);
+            if(ed.startsWith("e"))
+               jg.addEdge(destv, srcv,ed);
+        }
+        
+        StrongConnectivityInspector<String,String> insp=new StrongConnectivityInspector(jg);
+        List<Set<String>> stronglyConnectedSets = insp.stronglyConnectedSets();
+        dbugcontents=dbugcontents+"\n\n\n found #SCCs"+stronglyConnectedSets+"\n\n";
+
+        for (Set<String> scc :stronglyConnectedSets)
+        {
+            if (scc.contains(vlhs) || scc.contains(vrhs))
+               return scc;
+        }
+        
+        return null;
         
     }
 
@@ -1476,7 +1531,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             String constraints= rec.conciseReply;
             setDbugcontents(constraints);
             // strict equality of edge is true
-            Graph<String,String> g= new DirectedSparseMultigraph<String, String>();
+            DirectedSparseMultigraph<String,String> g= new DirectedSparseMultigraph<String, String>();
             violatedConstr.addToGraph(g, 0);
         //    g.addVertex(start);
         //    g.addVertex(end);
@@ -1500,24 +1555,20 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 constr.addToGraph(g, i+1);
             }
             showGraph(g,violatedConstr.lhs,violatedConstr.rhs);
-            
+          Set<String> keepV = getVerticesToKeepJgraph(g,violatedConstr.lhs,violatedConstr.rhs);
             // filtering begins
-            Set<String> discardv=getVerticesToDiscard(g, violatedConstr.lhs, violatedConstr.rhs);
+            //Set<String> discardv=getVerticesToDiscard(g, violatedConstr.lhs, violatedConstr.rhs);
             
             dbugcontents=dbugcontents+"\n init # nodes:"+g.getVertexCount()+" # edges:"+ g.getEdgeCount();
-            dbugcontents=dbugcontents+"filtering removed(#nodes):"+discardv.size();
+            dbugcontents=dbugcontents+"nodes left in SCC(#nodes):"+keepV.size();
             //init # nodes:1060 # edges:2911filtering removed(#nodes):943
             VertexPredicateFilter<String,String> vf =
-                    new VertexPredicateFilter<String, String>(new FilterNodesOut(discardv));
+                    //new VertexPredicateFilter<String, String>(new FilterNodesOut(discardv));
+                    new VertexPredicateFilter<String, String>(new FilterKeepNodes(keepV));
             Graph filtered=vf.transform(g);
             uiWindow.enableCompileButtonsAndShowDbug();
             
             showGraph(filtered,violatedConstr.lhs,violatedConstr.rhs);
-                       
-//            g.addVertex(start);
-//            g.addVertex(end);
-//            Object e=(DefaultEdge) g.addEdge(start, end);
-//            g.setEdgeWeight(e, 0);
         }
         else
         {
