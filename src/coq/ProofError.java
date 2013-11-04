@@ -119,6 +119,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     jButton1 = new javax.swing.JButton();
     UnivButton = new javax.swing.JButton();
     TopUnivsButton = new javax.swing.JButton();
+    parseNamesButton = new javax.swing.JButton();
 
     org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
     goToCursorButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.toolTipText")); // NOI18N
@@ -153,7 +154,6 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
 
     jScrollPane1.setMinimumSize(new java.awt.Dimension(23, 100));
 
-    jTextArea1.setEditable(false);
     jTextArea1.setColumns(20);
     jTextArea1.setFont(new java.awt.Font("Monospaced", 0, 18)); // NOI18N
     jTextArea1.setLineWrap(true);
@@ -266,6 +266,13 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       }
     });
 
+    org.openide.awt.Mnemonics.setLocalizedText(parseNamesButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.parseNamesButton.text")); // NOI18N
+    parseNamesButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        parseNamesButtonActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -308,18 +315,19 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(layout.createSequentialGroup()
-                .addComponent(orientButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(goalOption)
-                .addGap(18, 18, 18)
-                .addComponent(UnivButton))
-              .addGroup(layout.createSequentialGroup()
                 .addComponent(fractionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TopUnivsButton)))
-            .addGap(0, 13, Short.MAX_VALUE))
+                .addComponent(TopUnivsButton))
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(orientButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(goalOption)
+                .addGap(18, 18, 18)
+                .addComponent(UnivButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(parseNamesButton))))
           .addGroup(layout.createSequentialGroup()
             .addContainerGap()
             .addComponent(jScrollPane2)))
@@ -361,7 +369,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(orientButton)
               .addComponent(goalOption)
-              .addComponent(UnivButton))))
+              .addComponent(UnivButton)
+              .addComponent(parseNamesButton))))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -566,6 +575,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       editorDoc.showTopUnivs();
   }//GEN-LAST:event_TopUnivsButtonActionPerformed
 
+  private void parseNamesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parseNamesButtonActionPerformed
+    // TODO add your handling code here:
+      editorDoc.parseNames(jTextArea1.getText());
+  }//GEN-LAST:event_parseNamesButtonActionPerformed
+
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
   
@@ -684,6 +698,7 @@ try {
   private javax.swing.JButton jumpButton;
   private javax.swing.JButton nextHButton;
   private javax.swing.JButton orientButton;
+  private javax.swing.JButton parseNamesButton;
   private javax.swing.JButton prevHButton;
   private javax.swing.JScrollPane proofScroll;
   private javax.swing.JComboBox queryCombo;

@@ -29,6 +29,7 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -1387,7 +1388,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     {
             FRLayout<String, String> layout=new FRLayout<String, String>(g);
             int numV=g.getVertexCount();
-            layout.setSize(new Dimension(Math.max(400, numV), Math.max(400, numV)));
+            layout.setSize(new Dimension(Math.max(600, numV), Math.max(600, numV)));
             VisualizationViewer<String, String> vv=
                         new VisualizationViewer<String, String>(layout);
             DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
@@ -1467,6 +1468,18 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 }
         }
         
+        public void addHelpfulNames(HashMap<String, String> help)
+        {
+            if(help==null|| help.isEmpty())
+                return;
+            
+            if(help.containsKey(lhs))
+                lhs=help.get(lhs);
+            
+            if(help.containsKey(rhs))
+                rhs=help.get(rhs);
+            
+        }
         public void addToGraph(Graph<String,String> g, int i)
         {
               String edgelabel=edgetype+i;
@@ -1572,6 +1585,22 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs,true);
         return filtered;
     }
+    HashMap<String, String> helpfulConstrNames=null;
+    
+    void parseNames(String input)
+    {
+        if(helpfulConstrNames==null)
+            helpfulConstrNames=new HashMap<String, String>();
+        helpfulConstrNames.clear();
+        
+        String[] lines=input.split("\n");
+        for(String line: lines)
+        {
+            String [] frags=line.split(":");
+            helpfulConstrNames.put(frags[0],frags[1]);
+            System.out.println("mapping " + frags[0] +" to "+frags[1]);
+        }
+    }
     
     void showTopUnivs()
     {
@@ -1597,6 +1626,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 else
                     curLHS=constr.lhs;
                 
+                constr.addHelpfulNames(helpfulConstrNames);
                 if(constr.involvesTop())
                     constr.addToGraph(g, i+1);
             }
@@ -1614,6 +1644,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             String toParse=mat.group().substring("(cannot enforce".length());
             violatedConstr=new Constraint(mat.group(1),mat.group(2),mat.group());
+            violatedConstr.addHelpfulNames(helpfulConstrNames);
+
         }
         else
           return;
@@ -1645,6 +1677,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 else
                     curLHS=constr.lhs;
                 
+                constr.addHelpfulNames(helpfulConstrNames);
                 constr.addToGraph(g, i+1);
             }
             showGraph(g,violatedConstr.lhs,violatedConstr.rhs,true);
