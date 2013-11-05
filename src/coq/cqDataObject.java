@@ -4,7 +4,6 @@
  */
 package coq;
 
-import agape.tools.Components;
 import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler;
@@ -1510,20 +1509,6 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return bfs.getUnvisitedVertices();      
     }
     
-    Set<String> getVerticesToKeep(DirectedSparseMultigraph<String,String> g)
-    {
-        //Set<String>g.getEdges()
-        Components comps=new Components();
-        ArrayList<Set<String>> ascc 
-                = Components.getAllStronglyConnectedComponent(g);
-        dbugcontents=dbugcontents+"\n\n\n found #SCCs"+ascc+"\n\n";
-        for(Set<String> s: ascc)
-        {
-            assert(!s.contains("Top.10"));
-        }
-        return ascc.get(0);
-    }
-
     Set<String> getVerticesToKeepJgraph(DirectedSparseMultigraph<String,String> g,String vlhs, String vrhs)
     {
         SimpleDirectedGraph<String,String> jg =new SimpleDirectedGraph(DefaultEdge.class);
