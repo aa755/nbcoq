@@ -32,6 +32,12 @@ You might want to use a C++ project instead of a Java project and provide the Co
 Then, you can use the IDE's build system. This might need installation 
 of the C++ plugin
 
+You might want to go to Tools | Options | Fonts & Colors and set the profile to Norway Today.
+The highlighting colors are currently designed to work with this setting
+and cannot be customized w/o changing the plugin code.
+If you prefer a white backgroud, set ProofError.DARK to false in ProofSubgoal.java
+There is no syntax highlighting at the moment.
+
 
 A list of known issues can be found at:
 https://github.com/aa755/nbcoq/issues?state=open
