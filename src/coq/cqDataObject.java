@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -578,9 +579,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             try {
                 coqtop=new CoqTopXMLIO(fileObj.getParent());
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
              //   uiWindow.disableCompileButtons();
+                JOptionPane.showMessageDialog(null, "could not start [h|c]oqtop. Check path in Tools | Options| Misc| CoqOptions");
                 uiWindow.setDebugMesg("could not start [h|c]oqtop. Check path in Tools | Options| Misc| CoqOptions");
                 uiWindow.enableCompileButtonsAndShowDbug(); // down buttoon might have disabled it. this will allow user to fix problem
             }
