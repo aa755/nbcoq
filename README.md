@@ -51,9 +51,9 @@ Shortcuts:
 
 2) select and middle click in proof/message window to copy it into editor
 
-3) C+A+o : jump to definition
+3) C+A+o : jump to definition. Issues a Locate command internally.
 
-4) C+A+p : Print the item under cursor(works even in proof/mesg window)
+4) C+A+p : If nothing is selected, it Prints the item under cursor(works even in proof/mesg window). Otherwise, it issues a Check command on the selection.
 
 5) C+A+l : SearchAbout the item under cursor
 
