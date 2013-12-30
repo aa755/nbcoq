@@ -619,7 +619,22 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     public void mouseExited(MouseEvent me) {
     }
 
+  /**
+   * @return the fontDelta
+   */
+  public int getFontDelta() {
+    return fontDelta;
+  }
 
+  public void incementFont() {
+    fontDelta = fontDelta +1;
+  }
+
+  public void decrementFont() {
+    fontDelta = fontDelta -1;
+  }
+
+  
     class BatchCompile implements Runnable{
         private AtomicInteger targetOffset;
         private AtomicInteger pendingSteps;
@@ -942,6 +957,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private ProofError uiWindow;
     private nu.xom.Document goal;
     private Stack<Integer> offsets;
+    private int fontDelta=0;
     private OffsetsBag retb;
     private static final AttributeSet compiledCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,

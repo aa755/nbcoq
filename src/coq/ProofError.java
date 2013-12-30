@@ -7,6 +7,7 @@ package coq;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.util.regex.Matcher;
@@ -65,12 +66,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         proofScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         proofRootPanel.setLayout(bl);
         subGoalsList.getSelectionModel().addListSelectionListener(this);
-        if(DARK)
-        {
-            jTextArea1.setBackground(DarkBack);
-            jTextArea1.setForeground(DarkFore);
-            jTextArea1.setDragEnabled(true);
-        }
+        jTextArea1.setDragEnabled(true);
         //proofRootPanel.setMaximumSize(new Dimension(this.getWidth(),Integer.MAX_VALUE ));
     }
 
@@ -120,6 +116,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     UnivButton = new javax.swing.JButton();
     TopUnivsButton = new javax.swing.JButton();
     parseNamesButton = new javax.swing.JButton();
+    plusButton = new javax.swing.JButton();
+    minusButton = new javax.swing.JButton();
 
     org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
     goToCursorButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.toolTipText")); // NOI18N
@@ -156,7 +154,6 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
 
     jTextArea1.setColumns(20);
     jTextArea1.setFont(new java.awt.Font("Monospaced", 0, 18)); // NOI18N
-    jTextArea1.setLineWrap(true);
     jTextArea1.setRows(5);
     jTextArea1.setMinimumSize(new java.awt.Dimension(4, 100));
     jScrollPane1.setViewportView(jTextArea1);
@@ -273,6 +270,20 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       }
     });
 
+    org.openide.awt.Mnemonics.setLocalizedText(plusButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.plusButton.text")); // NOI18N
+    plusButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        plusButtonActionPerformed(evt);
+      }
+    });
+
+    org.openide.awt.Mnemonics.setLocalizedText(minusButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.minusButton.text")); // NOI18N
+    minusButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        minusButtonActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -315,22 +326,27 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(layout.createSequentialGroup()
-                .addComponent(fractionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TopUnivsButton))
-              .addGroup(layout.createSequentialGroup()
                 .addComponent(orientButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(goalOption)
                 .addGap(18, 18, 18)
-                .addComponent(UnivButton)
+                .addComponent(UnivButton))
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(fractionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(parseNamesButton))))
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(TopUnivsButton)))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(parseNamesButton)
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(plusButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(minusButton))))
           .addGroup(layout.createSequentialGroup()
             .addContainerGap()
-            .addComponent(jScrollPane2)))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 791, Short.MAX_VALUE)))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -365,6 +381,12 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                 .addGap(11, 11, 11))
               .addGroup(layout.createSequentialGroup()
                 .addComponent(TopUnivsButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+              .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                  .addComponent(plusButton)
+                  .addComponent(minusButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(orientButton)
@@ -580,6 +602,18 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       editorDoc.parseNames(jTextArea1.getText());
   }//GEN-LAST:event_parseNamesButtonActionPerformed
 
+  private void plusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusButtonActionPerformed
+    // TODO add your handling code here:
+     editorDoc.incementFont();
+     setFonts();
+  }//GEN-LAST:event_plusButtonActionPerformed
+
+  private void minusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minusButtonActionPerformed
+    // TODO add your handling code here:
+    editorDoc.decrementFont();
+    setFonts();
+  }//GEN-LAST:event_minusButtonActionPerformed
+
     public DefaultMutableTreeNode buildnu(nu.xom.Element e) {   
    DefaultMutableTreeNode result = new DefaultMutableTreeNode(""+e.toXML());
   
@@ -696,9 +730,11 @@ try {
   private javax.swing.JTextArea jTextArea1;
   private javax.swing.JTree jTree1;
   private javax.swing.JButton jumpButton;
+  private javax.swing.JButton minusButton;
   private javax.swing.JButton nextHButton;
   private javax.swing.JButton orientButton;
   private javax.swing.JButton parseNamesButton;
+  private javax.swing.JButton plusButton;
   private javax.swing.JButton prevHButton;
   private javax.swing.JScrollPane proofScroll;
   private javax.swing.JComboBox queryCombo;
@@ -722,9 +758,22 @@ try {
         editorDoc.setUiWindow(this);
         jTextArea1.addKeyListener(editorDoc);
         jTextArea1.addMouseListener(editorDoc);
+        setFonts();
+        jTextArea1.setBackground(editorDoc.getEditor().getOpenedPanes()[0].getBackground());
+        jTextArea1.setForeground(editorDoc.getEditor().getOpenedPanes()[0].getForeground());
                 
     }
 
+    void setFonts()
+    {
+        Font fnt=editorDoc.getEditor().getOpenedPanes()[0].getFont();
+        Font newF=fnt.deriveFont((float)(fnt.getSize()+editorDoc.getFontDelta()));
+        jTextArea1.setFont(newF);
+        queryCombo.setFont(newF);
+        queryRegexp.setFont(newF);
+      
+    }
+    
     @Override
     public void valueChanged(ListSelectionEvent lse) {
         if(!lse.getValueIsAdjusting())

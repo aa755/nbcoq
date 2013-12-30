@@ -91,7 +91,6 @@ public class ProofSubgoal {
     static class Hypothesis
     {
         private static final Color COLOR=Color.RED;
-        private static final float  FONT_SIZE=18;
         ArrayList<String> vars;
         String type;
 
@@ -329,8 +328,8 @@ public class ProofSubgoal {
             //typeAr.setPreferredSize();
             typeAr.setWrapStyleWord(true);
             typeAr.setEditable(false);                    
-            Font fnt=typeAr.getFont();
-            Font newF=fnt.deriveFont(FONT_SIZE);
+            Font fnt=dobj.getEditor().getOpenedPanes()[0].getFont();
+            Font newF=fnt.deriveFont((float)(fnt.getSize() + dobj.getFontDelta()));
             typeAr.setFont(newF);
          //   int availableWidth=viewPortWidth - usedWidth;
             Dimension maxSize=typeAr.getMaximumSize();
@@ -343,11 +342,8 @@ public class ProofSubgoal {
             typeAr.addMouseListener(dobj);
             typeAr.setDragEnabled(true);
            // typeAr.setMinimumSize(minSize);
-            if(ProofError.DARK)
-            {
-                typeAr.setBackground(ProofError.DarkBack);
-                typeAr.setForeground(ProofError.DarkFore);
-            }
+            typeAr.setBackground(dobj.getEditor().getOpenedPanes()[0].getBackground());
+            typeAr.setForeground(dobj.getEditor().getOpenedPanes()[0].getForeground());
             
             ret.add(typeAr);
             ret.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -380,9 +376,6 @@ public class ProofSubgoal {
             typeAr.setEditable(false);
             //typeAr.setRows(1);
             //typeAr.setColumns(container.getWidth()/typeAr.getC);           
-            Font fnt=typeAr.getFont();
-            Font newF=fnt.deriveFont(FONT_SIZE);
-            typeAr.setFont(newF);
             ret.setAlignmentX(Component.LEFT_ALIGNMENT);
             ret.setBorder(BorderFactory.createLineBorder(Color.GREEN));
             Dimension maxSize=typeAr.getMaximumSize();
@@ -394,12 +387,11 @@ public class ProofSubgoal {
             typeAr.addKeyListener(dobj);
             typeAr.addMouseListener(dobj);
             typeAr.setDragEnabled(true);
-            if(ProofError.DARK)
-            {
-                typeAr.setBackground(ProofError.DarkBack);
-                typeAr.setForeground(ProofError.DarkFore);
-            }
-
+            Font fnt=dobj.getEditor().getOpenedPanes()[0].getFont();
+            Font newF=fnt.deriveFont((float)(fnt.getSize() + dobj.getFontDelta()));
+            typeAr.setFont(newF);
+            typeAr.setBackground(dobj.getEditor().getOpenedPanes()[0].getBackground());
+            typeAr.setForeground(dobj.getEditor().getOpenedPanes()[0].getForeground());
             ret.add(typeAr);
             return ret;            
         }
