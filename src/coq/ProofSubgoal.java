@@ -88,11 +88,20 @@ public class ProofSubgoal {
         public String getType();
     }
             
+    ArrayList<JTextArea> getTextAreas()
+    {
+        ArrayList<JTextArea> ret= new ArrayList<JTextArea>();
+        ret.add(concl.typeAr);
+        for(int i=0;i<hypothesis.size();i++)
+          ret.add(hypothesis.get(i).typeAr);
+        return ret;
+    }
     static class Hypothesis
     {
         private static final Color COLOR=Color.RED;
         ArrayList<String> vars;
         String type;
+        JTextArea typeAr;
 
         static class HypTransferHandler extends TransferHandler{
             String srcVar;
@@ -324,7 +333,7 @@ public class ProofSubgoal {
 //               buttonPanel.add(new JButton(vars.get(i)));
 //            ret.add(buttonPanel);
             
-            JTextArea typeAr=new JTextArea(type);
+            typeAr=new JTextArea(type);
             //typeAr.setPreferredSize();
             typeAr.setWrapStyleWord(true);
             typeAr.setEditable(false);                    
@@ -359,7 +368,7 @@ public class ProofSubgoal {
         String type;
         //private static final Color COLOR=Color.RED;
         private static final float  FONT_SIZE=18;
-
+        JTextArea typeAr;
         public Conclusion(String type) {
             this.type = type;
         }        
@@ -370,7 +379,7 @@ public class ProofSubgoal {
             ret.setLayout(new GridLayout(1,1));
             
             
-            JTextArea typeAr=new JTextArea(type);
+            typeAr=new JTextArea(type);
 //            typeAr.setWrapStyleWord(true);
             typeAr.setWrapStyleWord(false);
             typeAr.setEditable(false);

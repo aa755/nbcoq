@@ -10,12 +10,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -189,6 +191,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     jScrollPane3.setViewportView(subGoalsList);
 
     queryRegexp.setText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.queryRegexp.text")); // NOI18N
+    queryRegexp.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.queryRegexp.toolTipText")); // NOI18N
 
     org.openide.awt.Mnemonics.setLocalizedText(highlightButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.highlightButton.text")); // NOI18N
     highlightButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.highlightButton.toolTipText")); // NOI18N
@@ -288,7 +291,6 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jSplitPane1)
       .addGroup(layout.createSequentialGroup()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
@@ -346,8 +348,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                 .addComponent(minusButton))))
           .addGroup(layout.createSequentialGroup()
             .addContainerGap()
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 791, Short.MAX_VALUE)))
+            .addComponent(jScrollPane2)))
         .addContainerGap())
+      .addComponent(jSplitPane1)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -504,22 +507,30 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
        String regexp=queryRegexp.getText();
        if(!regexp.isEmpty())
        {
-           Highlighter h=jTextArea1.getHighlighter();
-           h.removeAllHighlights();
-           Pattern search=Pattern.compile(regexp);
-           regm = search.matcher(editorDoc.getDbugcontents());
-           int count=0;
-           while(regm.find())
+           ArrayList<JTextArea> areas = curGoal.getTextAreas();
+           areas.add(jTextArea1); // this has to be the last one
+          // for the next arrows to work
+            int count=0;
+           for(int i=0;i<areas.size();i++)
            {
-               try {
-                   h.addHighlight(regm.start(), regm.end(), DefaultHighlighter.DefaultPainter );
-               } catch (BadLocationException ex) {
-                   Exceptions.printStackTrace(ex);
+               JTextArea area = areas.get(i);
+               Highlighter h=area.getHighlighter();
+               h.removeAllHighlights();
+               Pattern search=Pattern.compile(regexp);
+               regm = search.matcher(area.getText());
+               count=0;
+               while(regm.find())
+               {
+                   try {
+                       h.addHighlight(regm.start(), regm.end(), DefaultHighlighter.DefaultPainter );
+                   } catch (BadLocationException ex) {
+                       Exceptions.printStackTrace(ex);
+                   }
+                   count++;
                }
-               count++;
            }
         
-           regm.reset();
+           regm.reset(); // navigation for the last area
            highlightButton.setText(""+count);
        }
         // TODO add your handling code here:
@@ -658,7 +669,7 @@ void displayGoal(int index)
 {
      proofRootPanel.removeAll();
          slist.setValues(allGoals);
-     subGoalsList.ensureIndexIsVisible(slist.getMaxIndex());
+     subGoalsList.ensureIndexIsVisible(index);
   
     if(allGoals==null || allGoals.size()==0)
     {
