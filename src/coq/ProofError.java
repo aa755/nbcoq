@@ -770,8 +770,6 @@ try {
         jTextArea1.addKeyListener(editorDoc);
         jTextArea1.addMouseListener(editorDoc);
         setFonts();
-        jTextArea1.setBackground(editorDoc.getEditor().getOpenedPanes()[0].getBackground());
-        jTextArea1.setForeground(editorDoc.getEditor().getOpenedPanes()[0].getForeground());
                 
     }
 
@@ -782,6 +780,8 @@ try {
         jTextArea1.setFont(newF);
         queryCombo.setFont(newF);
         queryRegexp.setFont(newF);
+        jTextArea1.setBackground(editorDoc.getEditor().getOpenedPanes()[0].getBackground());
+        jTextArea1.setForeground(editorDoc.getEditor().getOpenedPanes()[0].getForeground());
       
     }
     
