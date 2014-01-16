@@ -317,6 +317,8 @@ public class ProofSubgoal {
             ret.setLayout(gl);
          //   int usedWidth=0;
           //  JPanel buttonPanel=new JPanel(new FlowLayout());
+            Font fnt=dobj.getEditor().getOpenedPanes()[0].getFont();
+            Font newF=fnt.deriveFont((float)(fnt.getSize() + dobj.getFontDelta()));
             for(int i=0;i<vars.size();i++)
             {
                 DnDButton but=new DnDButton(vars.get(i));
@@ -327,6 +329,7 @@ public class ProofSubgoal {
                 but.addActionListener(dobj.new InsertStringActionListener(vars.get(i)+" "));
                 but.addMouseListener(new ButtonMouseListener(getButtonPopupMenu(dobj, i)));
                 but.setTransferHandler(new HypTransferHandler(getVariable(i), dobj));
+                but.setFont(fnt);
             }
             //ret.add(buttonPanel);
             
@@ -337,8 +340,6 @@ public class ProofSubgoal {
             //typeAr.setPreferredSize();
             typeAr.setWrapStyleWord(true);
             typeAr.setEditable(false);                    
-            Font fnt=dobj.getEditor().getOpenedPanes()[0].getFont();
-            Font newF=fnt.deriveFont((float)(fnt.getSize() + dobj.getFontDelta()));
             typeAr.setFont(newF);
          //   int availableWidth=viewPortWidth - usedWidth;
             Dimension maxSize=typeAr.getMaximumSize();
