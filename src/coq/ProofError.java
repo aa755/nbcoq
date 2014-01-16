@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BoxLayout;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -86,11 +87,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       {
           JTextArea dbgarea= new JTextArea();
           dbgarea.setText( mesg );
-          setFontsTextArea(jTextArea1, getTargetFont());
-
-          JOptionPane.showMessageDialog( null, dbgarea,
-          "Query Output",
-          JOptionPane.INFORMATION_MESSAGE);
+          setFontsTextArea(dbgarea, getTargetFont());
+          JDialog jd=new JDialog();
+          jd.add(dbgarea);
+          jd.pack();
+          jd.setVisible(true);
       }
     }
     /**
