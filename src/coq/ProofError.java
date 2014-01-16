@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
@@ -79,7 +80,18 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     
     void setDebugMesg(String mesg)
     {
-        jTextArea1.setText(mesg);
+      if(!newWindow.isSelected())          
+          jTextArea1.setText(mesg);
+      else
+      {
+          JTextArea dbgarea= new JTextArea();
+          dbgarea.setText( mesg );
+          setFontsTextArea(jTextArea1, getTargetFont());
+
+          JOptionPane.showMessageDialog( null, dbgarea,
+          "Query Output",
+          JOptionPane.INFORMATION_MESSAGE);
+      }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -120,6 +132,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     parseNamesButton = new javax.swing.JButton();
     plusButton = new javax.swing.JButton();
     minusButton = new javax.swing.JButton();
+    newWindow = new javax.swing.JCheckBox();
 
     org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
     goToCursorButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.toolTipText")); // NOI18N
@@ -221,6 +234,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
 
     queryCombo.setEditable(true);
     queryCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Set Printing Universes.", "Unset Printing Notations." }));
+    queryCombo.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.queryCombo.toolTipText")); // NOI18N
     queryCombo.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         queryComboActionPerformed(evt);
@@ -287,6 +301,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       }
     });
 
+    org.openide.awt.Mnemonics.setLocalizedText(newWindow, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.newWindow.text")); // NOI18N
+    newWindow.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.newWindow.toolTipText")); // NOI18N
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -294,7 +311,16 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       .addGroup(layout.createSequentialGroup()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(queryCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newWindow)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(stopButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
               .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(goToCursorButton)
@@ -315,14 +341,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(nextHButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(queryCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(stopButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -373,7 +392,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
               .addComponent(queryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
               .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(stopButton)
-                .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(newWindow))))
           .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -426,7 +446,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
        downButton.setEnabled(true);
        goToCursorButton.setEnabled(true);
        bottomButton.setEnabled(true);
-       jTextArea1.setText(editorDoc.getDbugcontents());
+       setDebugMesg(editorDoc.getDbugcontents());
        regm=null;
        highlightButton.setText("H");
        if(isFollowCursorChecked())
@@ -712,7 +732,6 @@ public boolean isFollowCursorChecked()
 void showGoal()
 {
 try {
-            //jTextArea1.setText(editorDoc.getGoal());
             //resetTree(editorDoc.getGoal());
             setAllGoals(editorDoc.getGoal());
             displayGoal(0);
@@ -742,6 +761,7 @@ try {
   private javax.swing.JTree jTree1;
   private javax.swing.JButton jumpButton;
   private javax.swing.JButton minusButton;
+  private javax.swing.JCheckBox newWindow;
   private javax.swing.JButton nextHButton;
   private javax.swing.JButton orientButton;
   private javax.swing.JButton parseNamesButton;
@@ -773,16 +793,24 @@ try {
                 
     }
 
-    void setFonts()
+    Font getTargetFont()
     {
         Font fnt=editorDoc.getEditor().getOpenedPanes()[0].getFont();
         Font newF=fnt.deriveFont((float)(fnt.getSize()+editorDoc.getFontDelta()));
-        jTextArea1.setFont(newF);
+        return newF;
+    }
+    void setFonts()
+    {
+        Font newF= getTargetFont();
         queryCombo.setFont(newF);
         queryRegexp.setFont(newF);
-        jTextArea1.setBackground(editorDoc.getEditor().getOpenedPanes()[0].getBackground());
-        jTextArea1.setForeground(editorDoc.getEditor().getOpenedPanes()[0].getForeground());
-      
+        setFontsTextArea(jTextArea1, newF);
+    }
+    void setFontsTextArea(JTextArea jt, Font newF)
+    {
+        jt.setFont(newF);
+        jt.setBackground(editorDoc.getEditor().getOpenedPanes()[0].getBackground());
+        jt.setForeground(editorDoc.getEditor().getOpenedPanes()[0].getForeground());
     }
     
     @Override
