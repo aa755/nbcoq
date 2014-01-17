@@ -582,11 +582,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     class OffsetTime implements Comparable<OffsetTime>
     {
         int offset;
-        long duration;
+        int duration;
 
         @Override
         public int compareTo(OffsetTime t) {
-            return (int) (duration-t.duration);
+            return (int) (t.duration-duration);
         }
         
         boolean compileStepAndMeasureTime()
@@ -594,7 +594,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             long startTime=System.nanoTime();
             boolean success=compileStep();
             offset=getCompiledOffset();
-            duration=System.nanoTime()-startTime;
+            duration=(int) (System.nanoTime()-startTime);
             return success;
         }
     }
@@ -604,9 +604,14 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     void showProfilingInfo()
     {
         Collections.sort(profInfo);
-        final JList list = new JList(profInfo.toArray()); //data has type Object[]
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        Integer [] times=new Integer [20];
+        for(int i=0;i<20;i++)
+        {
+            times[i]=(profInfo.get(i).duration);
+        }
+        final JList list = new JList(times); //data has type Object[]
         list.setVisibleRowCount(-1);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.addListSelectionListener(new ListSelectionListener() {
 
           @Override
