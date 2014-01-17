@@ -594,7 +594,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             long startTime=System.nanoTime();
             boolean success=compileStep();
             offset=getCompiledOffset();
-            duration=(int) (System.nanoTime()-startTime);
+            duration=(int) ((System.nanoTime()/1000000L)-(startTime/1000000L));
             return success;
         }
     }
@@ -610,7 +610,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         Integer [] times=new Integer [size];        
         for(int i=0;i<size;i++)
         {
-            times[i]=(profInfo.get(i).duration/1000000); // nano to milliseconds
+            times[i]=(profInfo.get(i).duration);
         }
         final JList list = new JList(times); //data has type Object[]
         list.setVisibleRowCount(-1);
