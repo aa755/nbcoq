@@ -79,6 +79,11 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
         proofScroll.validate();
     }
     
+    boolean isProfilingEnabled()
+    {
+        return profileButton.isSelected();
+    }
+    
     void setDebugMesg(String mesg)
     {
       if(!newWindow.isSelected())          
@@ -134,6 +139,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     plusButton = new javax.swing.JButton();
     minusButton = new javax.swing.JButton();
     newWindow = new javax.swing.JCheckBox();
+    profileButton = new javax.swing.JCheckBox();
 
     org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
     goToCursorButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.toolTipText")); // NOI18N
@@ -305,6 +311,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     org.openide.awt.Mnemonics.setLocalizedText(newWindow, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.newWindow.text")); // NOI18N
     newWindow.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.newWindow.toolTipText")); // NOI18N
 
+    org.openide.awt.Mnemonics.setLocalizedText(profileButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.profileButton.text")); // NOI18N
+    profileButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.profileButton.toolTipText")); // NOI18N
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -312,20 +321,16 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       .addGroup(layout.createSequentialGroup()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(profileButton)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(jScrollPane2))
+          .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(queryCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(newWindow)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(stopButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
               .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(29, 29, 29)
                 .addComponent(goToCursorButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(downButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(upButton)
@@ -342,7 +347,15 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(nextHButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(queryCombo, 0, 298, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(newWindow)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(stopButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -365,10 +378,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
               .addGroup(layout.createSequentialGroup()
                 .addComponent(plusButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(minusButton))))
-          .addGroup(layout.createSequentialGroup()
-            .addContainerGap()
-            .addComponent(jScrollPane2)))
+                .addComponent(minusButton)))))
         .addContainerGap())
       .addComponent(jSplitPane1)
     );
@@ -376,25 +386,6 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-          .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-              .addComponent(goToCursorButton)
-              .addComponent(downButton)
-              .addComponent(upButton)
-              .addComponent(topButton)
-              .addComponent(bottomButton)
-              .addComponent(jumpButton)
-              .addComponent(highlightButton)
-              .addComponent(prevHButton)
-              .addComponent(nextHButton)
-              .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(queryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(stopButton)
-                .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(newWindow))))
           .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -416,7 +407,28 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
               .addComponent(orientButton)
               .addComponent(goalOption)
               .addComponent(UnivButton)
-              .addComponent(parseNamesButton))))
+              .addComponent(parseNamesButton)))
+          .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+              .addComponent(profileButton)
+              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(goToCursorButton)
+                .addComponent(downButton)
+                .addComponent(upButton)
+                .addComponent(topButton)
+                .addComponent(bottomButton)
+                .addComponent(jumpButton)
+                .addComponent(highlightButton)
+                .addComponent(prevHButton)
+                .addComponent(nextHButton)
+                .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(queryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(stopButton)
+                .addComponent(queryRegexp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(newWindow)))))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -768,6 +780,7 @@ try {
   private javax.swing.JButton parseNamesButton;
   private javax.swing.JButton plusButton;
   private javax.swing.JButton prevHButton;
+  private javax.swing.JCheckBox profileButton;
   private javax.swing.JScrollPane proofScroll;
   private javax.swing.JComboBox queryCombo;
   private javax.swing.JTextField queryRegexp;

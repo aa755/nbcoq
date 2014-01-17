@@ -28,6 +28,7 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,11 +38,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
@@ -571,6 +577,49 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         de.getType(); // just to find out when it gets triggered
     }
 
+
+
+    class OffsetTime implements Comparable<OffsetTime>
+    {
+        int offset;
+        long duration;
+
+        @Override
+        public int compareTo(OffsetTime t) {
+            return (int) (duration-t.duration);
+        }
+        
+        boolean compileStepAndMeasureTime()
+        {
+            long startTime=System.nanoTime();
+            boolean success=compileStep();
+            offset=getCompiledOffset();
+            duration=System.nanoTime()-startTime;
+            return success;
+        }
+    }
+    
+    ArrayList<OffsetTime> profInfo=null;
+
+    void showProfilingInfo()
+    {
+        Collections.sort(profInfo);
+        final JList list = new JList(profInfo.toArray()); //data has type Object[]
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setVisibleRowCount(-1);
+        list.addListSelectionListener(new ListSelectionListener() {
+
+          @Override
+          public void valueChanged(ListSelectionEvent lse) {
+              jumpToOffset(profInfo.get(list.getSelectedIndex()).offset);
+          }
+        });
+        JDialog jd=new JDialog();
+        jd.add(list);
+        jd.pack();
+        jd.setVisible(true);
+    }
+    
     /**
      * @return the coqtop
      */
@@ -756,19 +805,44 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         
         boolean handleCompileToTargetPos()
-        {
+        {   
             boolean change = false;
             if (getCompiledOffset() > targetOffset.intValue()) {
                 change = handleUpCursor();
             } 
             else {
+                boolean profile= (uiWindow.isProfilingEnabled());
+                if(profile)
+                {
+                    if(profInfo==null)
+                        profInfo=new ArrayList<OffsetTime>();
+                    else
+                      profInfo.clear();
+                }
                 while (getCompiledOffset() < targetOffset.intValue() && (!stopRequest.get())) {
-                    if (compileStep()) {
+                    boolean success;
+                    if(!profile)
+                    {
+                        success=compileStep();
+                    }
+                    else
+                    {
+                        OffsetTime ot = new OffsetTime();
+                        success=ot.compileStepAndMeasureTime();
+                        profInfo.add(ot);
+                    }
+                    if (success) {
                         change = true;
                     } else {
                         break;
                     }
                 }
+                
+                if(profile)
+                {
+                    showProfilingInfo();
+                }
+                
                 if(lastError!=null)
                 {
                     lastError.highlight();
