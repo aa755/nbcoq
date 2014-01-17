@@ -604,10 +604,13 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     void showProfilingInfo()
     {
         Collections.sort(profInfo);
-        Integer [] times=new Integer [20];
-        for(int i=0;i<20;i++)
+        int size= 20;
+        if(profInfo.size()<size)
+            size=profInfo.size();
+        Integer [] times=new Integer [size];        
+        for(int i=0;i<size;i++)
         {
-            times[i]=(profInfo.get(i).duration);
+            times[i]=(profInfo.get(i).duration/1000000); // nano to milliseconds
         }
         final JList list = new JList(times); //data has type Object[]
         list.setVisibleRowCount(-1);
