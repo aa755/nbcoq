@@ -11,8 +11,8 @@ Installation:
 
 Download netbeans+java bundle
 http://www.oracle.com/technetwork/java/javase/downloads/jdk-netbeans-jsp-142931.html
-If you already have JDK installed you may just download netbeans. I've used (tested) this 
-plugin ony with Oracle's JDK.
+If you already have JDK installed, you may just download netbeans (https://netbeans.org/).
+I've used (tested) this plugin ony with Oracle's JDK.
 
 Open netbeans. Click on team | git and clone this repo.
 It will find this netbeans project and ask if you wish to open it.
