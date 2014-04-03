@@ -1,6 +1,9 @@
 nbcoq
 =====
 
+NOTE: This plugin was delveloped for Coq version 8.4pl2. It does NOT work with the new 8.4pl3 version because the xml communication protocol for coqtop was changed. Hopefully I'll fix that when I start working on my next big Coq project.
+
+
 Coq plugin for Netbeans
 
 Installation:
