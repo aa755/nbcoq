@@ -753,8 +753,14 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             {
                 if(uiWindow.isShowGoalChecked())
                 {
+                                    SwingUtilities.invokeLater(new Runnable () {
+
+                                        @Override
+                                        public void run() {
                     updateGoal();
                     uiWindow.showGoal();                    
+                                        }
+                                    });
                 }
             }
         }
@@ -1483,7 +1489,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
       
     }
     JFrame topUnivs=null;
-    void showGraph(Graph g, String lhs, String rhs, boolean newWindow)
+    void showGraph(Graph g, String lhs, String rhs, boolean newWindow, String title)
     {
             FRLayout<String, String> layout=new FRLayout<String, String>(g);
             int numV=g.getVertexCount();
@@ -1505,7 +1511,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             if(newWindow || topUnivs==null)
             {
                 jd=new JFrame();
-                jd.setTitle("Inconsistency");
+                jd.setTitle(title);
                 jd.setSize(new Dimension(1000, 800));
                // jd.pack();
             }
@@ -1666,8 +1672,31 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         new VertexPredicateFilter<String, String>(new FilterKeepNodes(keepV));
         DirectedSparseMultigraph<String,String> filtered=(DirectedSparseMultigraph<String,String>) vf.transform(g);
         uiWindow.enableCompileButtonsAndShowDbug();
+        Collection<String> edges = filtered.getEdges();
+        int count=0;
+        for(String s:edges)
+        {
+            count=count+1;
+           dbugcontents=dbugcontents+s+"\n";
+        }
+        dbugcontents=dbugcontents+"\n\n"+count+" both edges: \n\n";
 
-        showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs,true);
+        count=0;
+        edges = g.getEdges();
+        for(String s:edges)
+        {
+            count=count+1;
+            if(s.startsWith("s")&&(keepV.contains(g.getSource(s)) || keepV.contains(g.getDest(s))))
+            {
+              dbugcontents=dbugcontents+s+"\n";
+              filtered.addEdge(s, g.getSource(s), g.getDest(s));
+            }
+        }
+        dbugcontents=dbugcontents+"\n\n"+count+" finish s edges: \n\n";
+        
+        uiWindow.enableCompileButtonsAndShowDbug();
+        
+        showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs,true, "filtered SCC");
         return filtered;
     }
     HashMap<String, String> helpfulConstrNames=null;
@@ -1715,13 +1744,13 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 if(constr.involvesTop())
                     constr.addToGraph(g, i+1);
             }
-            showGraph(makeEqualitiesUndirected(g),"","",false);
+            showGraph(makeEqualitiesUndirected(g),"","",false, "Inconsistency");
         }
     }
         
     void debugUnivInconsistency()
     {
-        Pattern pat = Pattern.compile("\\(cannot enforce ([\\w.]*) <= ([\\w.]*)\\)");
+        Pattern pat = Pattern.compile("\\(cannot enforce ([\\w_.]*)[ \\n]<[=]?[ \\n]([\\w_.]*)\\)");
         Matcher mat = pat.matcher(dbugcontents);
         Constraint violatedConstr;
         
@@ -1765,7 +1794,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 constr.addHelpfulNames(helpfulConstrNames);
                 constr.addToGraph(g, i+1);
             }
-            showGraph(g,violatedConstr.lhs,violatedConstr.rhs,true);
+            showGraph(g,violatedConstr.lhs,violatedConstr.rhs,true, "Inconsistency");
           Set<String> keepV = getVerticesToKeepJgraph(g,violatedConstr.lhs,violatedConstr.rhs);
           filterKeepAndVisualize(g, keepV, violatedConstr);
           
