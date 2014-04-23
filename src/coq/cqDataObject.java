@@ -961,9 +961,14 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                    {
                         String [] parts=frags[1].split("\\.");
                         final cqDataObject target;
-                        if(parts.length==2) //TODO: handle other cases
+                        if(parts.length>=2) //TODO: handle other cases
                         {
-                            String suffix=parts[1];
+                            String suffix=parts[parts.length-1]; 
+                            // if the jump target is in a section in the current file,
+                            // parts.length-1 is better than 2
+                            // However, this simplistic implementation
+                            // ignores section names, i.e it might jump to
+                            // a definition of same name in a prev. section.
                             String query=prefix+"[\\s]*"+suffix+"[\\s:]";
                             if(parts[0].equals("Top"))
                             {
@@ -1000,7 +1005,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                    }
                }
             } else {
-                String error= "probably too large output from Coq. If so, please ask developer to increase "
+                String error= "probably too large output from Coq. If so, please ask the plugin developer to increase "
                         + "CoqRecMesg.BUF_SIZE and/or CoqRecMesg.NUM_TRIALS";
                 if(rec.nuDoc!=null)
                 {
