@@ -898,7 +898,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         }
         void handleQuery() {
             String sendtocoq = uiWindow.getQuery();
-            boolean setCommand=sendtocoq.trim().startsWith("Set") || sendtocoq.trim().startsWith("Unset");
+            boolean setCommand=(sendtocoq.trim().startsWith("Set") || sendtocoq.trim().startsWith("Unset"));
             
             CoqTopXMLIO.CoqRecMesg rec;
             if(setCommand)
@@ -943,7 +943,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                     {
                       // this part is useful if the definition is the current file and
                       // is a tactic or outside the compiled region
-                      prefix = "((Definition)|(Fixpoint)|(Lemma)|(Theorem)|(Ltac)|(Tactic[\\s]*Notation[\\s]*\"))";
+                      prefix = "((Definition)|(Fixpoint)|(Lemma)|(Notation)|(Theorem)|(Ltac)|(Tactic[\\s]*Notation[\\s]*\"))";
                       frags=new String[2];
                       frags[0]="";
                       String[] parts = sendtocoq.split(" ");
