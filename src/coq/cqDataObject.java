@@ -1057,7 +1057,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             new Color(200, 255, 200));
     private static final AttributeSet compiledCodeAttrDark =
             AttributesUtilities.createImmutable(StyleConstants.Background,
-            new Color(0, 0, 150));
+            new Color(50, 20, 0));
     private static final AttributeSet errorCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(255, 100, 100));
