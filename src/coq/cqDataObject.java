@@ -222,6 +222,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return (ke.isControlDown()&&ke.getKeyCode()==KeyEvent.VK_RIGHT);
     }
     
+    boolean isBottomShortcut(KeyEvent ke)
+    {
+        return (ke.isControlDown()&&ke.getKeyCode()==KeyEvent.VK_LEFT);
+    }
+
     boolean isUpShortcut(KeyEvent ke)
     {
         return (ke.isControlDown()&&ke.getKeyCode()==KeyEvent.VK_UP);
@@ -380,6 +385,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             handleDownToCursor();
         else if(isUpShortcut(ke))
             handleUpButton();
+        else if(isBottomShortcut(ke))
+            handleBottomButton();
         else if(isDownShortcut(ke))
             handleDownButton();
         else if(isSearchAboutShortcut(ke))
