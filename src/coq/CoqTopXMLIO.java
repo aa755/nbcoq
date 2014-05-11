@@ -42,6 +42,9 @@ private  PrintWriter input;
         return pref.get(CoqOptionsPanel.COQPATH_KEY, "");
     }
     
+/**
+ * @fob : supposed to be the fileobject corresponding to the directory containing the .v file that is being edited  
+ **/
     public CoqTopXMLIO(FileObject fob) throws IOException {
         
         
