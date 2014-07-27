@@ -27,6 +27,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1439,6 +1440,38 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         
     void debugUnivInconsistency()
     {        
+        Pattern pat = Pattern.compile("\\(cannot enforce ([\\w_.]*)[ \\n]<[=]?[ \\n]([\\w_.]*)\\)");
+        Matcher mat = pat.matcher(dbugcontents);
+        DebugUnivInconst.Constraint violatedConstr;
+        
+        
+        if(mat.find())
+        {
+            String toParse=mat.group().substring("(cannot enforce".length());
+            violatedConstr=new DebugUnivInconst.Constraint(mat.group(1),mat.group(2),mat.group());
+//            violatedConstr.addHelpfulNames(helpfulConstrNames);
+        }
+        else
+        {
+          setDbugcontents("could not parse the error message in the constraint. aborting");
+          return;
+        }
+        
+        CoqTopXMLIO.CoqRecMesg rec= getCoqtop().query("Print Universes.");        
+        if(rec.success)
+        {
+            String constraints= rec.conciseReply;
+            setDbugcontents(constraints);
+            // strict equality of edge is true
+            ArrayList<DebugUnivInconst.Constraint> cts = dbgC.parseConstraints(constraints);
+            cts.add(violatedConstr);
+            HashSet<String> highlightNodes=new HashSet<String>();
+            highlightNodes.add(violatedConstr.lhs);
+            highlightNodes.add(violatedConstr.rhs);
+            int index=dbgC.debugUnivInconsistency(cts,highlightNodes);
+            
+        }
+
     }
     /**
      * final because it is called in the constructor

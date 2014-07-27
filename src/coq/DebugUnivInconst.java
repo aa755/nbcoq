@@ -21,6 +21,8 @@ import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,30 +44,46 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 public class DebugUnivInconst {
     JFrame topUnivs=null;
 
-    void showTopUnivs(String constraints)
+    /**
+     * 
+     * @param constraints : the string containing the output of "Print Universes."
+     * @return a list of constraint objects
+     */
+    ArrayList<Constraint> parseConstraints(String constraints)
     {
-            DirectedSparseMultigraph<String,String> g= new DirectedSparseMultigraph<String, String>();
-            
             String[] lines=constraints.split("\n");
             String curLHS="";
-            for(int i=0;i<lines.length;i++)
-            {
-                String line=lines[i];
-                if(line.trim().isEmpty())
-                    continue;
-
-                Constraint constr=new Constraint(line);
-                
-                if(constr.lhs.isEmpty())
-                    constr.lhs=curLHS;
-                else
-                    curLHS=constr.lhs;
-                
-                constr.addHelpfulNames(helpfulConstrNames);
-                if(constr.involvesTop())
-                    constr.addToGraph(g, i+1);
-            }
-            showGraph(makeEqualitiesUndirected(g),"","",false, "Inconsistency");
+            ArrayList<Constraint> ret= new ArrayList<Constraint>();
+      for (String line : lines) {
+        if(line.trim().isEmpty())
+          continue;
+        
+        Constraint constr=new Constraint(line);
+        
+        if(constr.lhs.isEmpty())
+          constr.lhs=curLHS;
+        else
+          curLHS=constr.lhs;
+        
+        constr.addHelpfulNames(helpfulConstrNames);
+        ret.add(constr);
+      }   
+            return ret;
+    }
+    
+    void showTopUnivs(String constraints)
+    {
+      ArrayList<Constraint> cts= parseConstraints(constraints);
+      DirectedSparseMultigraph<String,String> g= new DirectedSparseMultigraph<String, String>();
+            
+      for (int i=0;i<cts.size();i++)
+      {
+        Constraint constr=cts.get(i);
+        if(constr.involvesTop())
+           constr.addToGraph(g, i+1);
+      }
+            
+      showGraph(makeEqualitiesUndirected(g),false, "Inconsistency",new HashSet<String>());
         
     }
 
@@ -128,26 +146,26 @@ public class DebugUnivInconst {
 
     static class VertexColor implements Transformer<String, Paint>
     {
-      String lhs, rhs;
+      HashSet<String> highlightNodes;
 
-      public VertexColor(String lhs, String rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
-      }
+    public VertexColor(HashSet<String> highlightNodes) {
+      this.highlightNodes = highlightNodes;
+    }
+
+      
       
       @Override
-      public Paint transform(String i) {
-        if(i.equals(lhs))
+      public Paint transform(String node) {
+        
+        if(highlightNodes.contains(node))
           return Color.CYAN;
-        else if(i.equals(rhs))
-          return Color.MAGENTA;
         else
           return Color.GREEN;
       }
       
     }
   
-    void showGraph(Graph g, String lhs, String rhs, boolean newWindow, String title)
+    void showGraph(Graph g,boolean newWindow, String title, HashSet<String>  highlightNodes)
     {
             FRLayout<String, String> layout=new FRLayout<String, String>(g);
             int numV=g.getVertexCount();
@@ -157,8 +175,8 @@ public class DebugUnivInconst {
             DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
             gm.setMode(ModalGraphMouse.Mode.PICKING);
             vv.setGraphMouse(gm);
-            vv.getRenderContext().setVertexDrawPaintTransformer(new VertexColor(lhs, rhs));
-            vv.getRenderContext().setVertexFillPaintTransformer(new VertexColor(lhs, rhs));
+            vv.getRenderContext().setVertexDrawPaintTransformer(new VertexColor(highlightNodes));
+            vv.getRenderContext().setVertexFillPaintTransformer(new VertexColor(highlightNodes));
             vv.getRenderContext().setArrowDrawPaintTransformer(new EdgeColor());
             vv.getRenderContext().setArrowFillPaintTransformer(new EdgeColor());
             vv.getRenderContext().setEdgeDrawPaintTransformer(new EdgeColor());
@@ -190,13 +208,14 @@ public class DebugUnivInconst {
     {
          public String lhs, rhs, edgetype;
 
+        public static String LESS_THAN="s";
         public Constraint(String lhs, String rhs, String line) {
           this.lhs = lhs;
           this.rhs = rhs;
           if(line.contains("<="))
             edgetype="n";
           else if (line.contains("<"))
-            edgetype="s";
+            edgetype=LESS_THAN;
           else
             edgetype="e";
         }
@@ -222,7 +241,7 @@ public class DebugUnivInconst {
                     lhs=frags[0].trim();
                     rhs=frags[1].trim();                    
                     if (line.contains("<"))
-                        edgetype = "s"; // strict inequality (<)
+                        edgetype = LESS_THAN; // strict inequality (<)
                     else
                     {
                         assert(line.contains("="));
@@ -258,7 +277,23 @@ public class DebugUnivInconst {
               assert(g.addEdge(edgelabel, rhs, lhs, EdgeType.DIRECTED ));// arrow can be read as <,i.e for a<b, arrow is at a.                
 
         }
-       
+        
+        boolean isStrict()
+        {
+          return edgetype.equals(LESS_THAN);
+        }
+        
+       static ArrayList<Constraint> keepStrictEdges(ArrayList<Constraint> constraints)
+       {
+         ArrayList<Constraint> ret= new ArrayList<Constraint>();
+         for(Constraint constr: constraints)
+         {
+           if(constr.isStrict())
+             ret.add(constr);
+         }
+         
+         return ret;
+       }
     }
     
     
@@ -273,7 +308,43 @@ public class DebugUnivInconst {
         return bfs.getUnvisitedVertices();      
     }
     
-    Set<String> getVerticesToKeepJgraph(DirectedSparseMultigraph<String,String> g,String vlhs, String vrhs)
+    /**
+     * 
+     * @param s1
+     * @param s2
+     * @return 
+     */
+    static boolean nonDisjoint(HashSet<String> highlight, Set<String> scc)
+    {
+      if(highlight.isEmpty())
+        return true;
+      
+      HashSet<String> highCopy= new HashSet<String> (highlight);
+      highCopy.retainAll(scc);
+      return (highCopy.size()>0);
+    }
+    
+    static ArrayList<Set<String>> keepBadSCCs(List<Set<String>> sccs, ArrayList<Constraint> strictConstraints,HashSet<String> highlight)
+    {
+      ArrayList<Set<String>> ret= new ArrayList<Set<String>>();
+      for(Set<String> scc: sccs)
+        if(containsAStrictInequality(scc, strictConstraints) && nonDisjoint(highlight, scc))
+          ret.add(scc);
+      
+      return ret;
+    }
+
+    static boolean containsAStrictInequality(Set<String> scc, ArrayList<Constraint> strictConstraints)
+    {
+      for(Constraint constr: strictConstraints)
+        if(scc.contains(constr.lhs) && scc.contains(constr.rhs))
+          return true;
+                  
+      return false;
+    }
+
+    ArrayList<Set<String>> getVerticesToKeepJgraph(DirectedSparseMultigraph<String,String> g,
+        HashSet<String> highlightHodes, ArrayList<Constraint> strictConstraints)
     {
         SimpleDirectedGraph<String,String> jg =new SimpleDirectedGraph(DefaultEdge.class);
         Collection<String> edges = g.getEdges();
@@ -290,17 +361,12 @@ public class DebugUnivInconst {
         
         StrongConnectivityInspector<String,String> insp=new StrongConnectivityInspector(jg);
         List<Set<String>> stronglyConnectedSets = insp.stronglyConnectedSets();
-        dbugcontents=dbugcontents+"\n\n\n found #SCCs"+stronglyConnectedSets+"\n\n";
+        //dbugcontents=dbugcontents+"\n\n\n found #SCCs"+stronglyConnectedSets+"\n\n";
 
-        for (Set<String> scc :stronglyConnectedSets)
-        {
-            if (scc.contains(vlhs) || scc.contains(vrhs))
-               return scc;
-        }
-        
-        return null;
-        
+        ArrayList<Set<String>> badSCCs= keepBadSCCs(stronglyConnectedSets, strictConstraints, highlightHodes);
+        return badSCCs;
     }
+    
     SparseMultigraph<String, String> makeEqualitiesUndirected(DirectedSparseMultigraph<String,String> g)
     { 
         SparseMultigraph<String, String> ret=new SparseMultigraph<String, String>();
@@ -320,24 +386,25 @@ public class DebugUnivInconst {
         return ret;
     }
     
-    DirectedSparseMultigraph<String,String> filterKeepAndVisualize(DirectedSparseMultigraph<String, String> g,Set<String> keepV,Constraint violatedConstr)
+    DirectedSparseMultigraph<String,String> filterKeepAndVisualize(DirectedSparseMultigraph<String, String> g, 
+            Set<String> keepV, HashSet<String> highlightNodes, String windowTitle)
     {
-        dbugcontents=dbugcontents+"\n init # nodes:"+g.getVertexCount()+" # edges:"+ g.getEdgeCount();
-        dbugcontents=dbugcontents+"nodes left in SCC(#nodes):"+keepV.size();
+        //dbugcontents=dbugcontents+"\n init # nodes:"+g.getVertexCount()+" # edges:"+ g.getEdgeCount();
+        //dbugcontents=dbugcontents+"nodes left in SCC(#nodes):"+keepV.size();
         //init # nodes:1060 # edges:2911filtering removed(#nodes):943
         VertexPredicateFilter<String,String> vf =
                 //new VertexPredicateFilter<String, String>(new FilterNodesOut(discardv));
         new VertexPredicateFilter<String, String>(new FilterKeepNodes(keepV));
         DirectedSparseMultigraph<String,String> filtered=(DirectedSparseMultigraph<String,String>) vf.transform(g);
-        uiWindow.enableCompileButtonsAndShowDbug();
+        //uiWindow.enableCompileButtonsAndShowDbug();
         Collection<String> edges = filtered.getEdges();
         int count=0;
         for(String s:edges)
         {
             count=count+1;
-           dbugcontents=dbugcontents+s+"\n";
+           //dbugcontents=dbugcontents+s+"\n";
         }
-        dbugcontents=dbugcontents+"\n\n"+count+" both edges: \n\n";
+        //dbugcontents=dbugcontents+"\n\n"+count+" both edges: \n\n";
 
         count=0;
         edges = g.getEdges();
@@ -346,15 +413,15 @@ public class DebugUnivInconst {
             count=count+1;
             if(s.startsWith("s")&&(keepV.contains(g.getSource(s)) || keepV.contains(g.getDest(s))))
             {
-              dbugcontents=dbugcontents+s+"\n";
+              //dbugcontents=dbugcontents+s+"\n";
               filtered.addEdge(s, g.getSource(s), g.getDest(s));
             }
         }
-        dbugcontents=dbugcontents+"\n\n"+count+" finish s edges: \n\n";
+        //dbugcontents=dbugcontents+"\n\n"+count+" finish s edges: \n\n";
         
-        uiWindow.enableCompileButtonsAndShowDbug();
+        //uiWindow.enableCompileButtonsAndShowDbug();
         
-        showGraph(makeEqualitiesUndirected(filtered),violatedConstr.lhs,violatedConstr.rhs,true, "filtered SCC");
+        showGraph(makeEqualitiesUndirected(filtered),true, windowTitle, highlightNodes);
         return filtered;
     }
     HashMap<String, String> helpfulConstrNames=null;
@@ -374,67 +441,27 @@ public class DebugUnivInconst {
         }
     }
   
-    void debugUnivInconsistency()
+    int debugUnivInconsistency(ArrayList<Constraint> cts, HashSet<String> highlightNodes)
     {
-        Pattern pat = Pattern.compile("\\(cannot enforce ([\\w_.]*)[ \\n]<[=]?[ \\n]([\\w_.]*)\\)");
-        Matcher mat = pat.matcher(dbugcontents);
-        Constraint violatedConstr;
-        
-        if(mat.find())
-        {
-            String toParse=mat.group().substring("(cannot enforce".length());
-            violatedConstr=new Constraint(mat.group(1),mat.group(2),mat.group());
-            violatedConstr.addHelpfulNames(helpfulConstrNames);
-
-        }
-        else
-          return;
-        
-        CoqTopXMLIO.CoqRecMesg rec= getCoqtop().query("Print Universes.");        
-        if(rec.success)
-        {
-            String constraints= rec.conciseReply;
-            setDbugcontents(constraints);
-            // strict equality of edge is true
             DirectedSparseMultigraph<String,String> g= new DirectedSparseMultigraph<String, String>();
-            violatedConstr.addToGraph(g, 0);
-        //    g.addVertex(start);
-        //    g.addVertex(end);
-        //    g.addEdge(strict,start, end, EdgeType.DIRECTED);
-            
-            String[] lines=constraints.split("\n");
-            String curLHS="";
-            for(int i=0;i<lines.length;i++)
+            for(int i=0;i<cts.size();i++)
             {
-                String line=lines[i];
-                if(line.trim().isEmpty())
-                    continue;
-
-                Constraint constr=new Constraint(line);
-                
-                if(constr.lhs.isEmpty())
-                    constr.lhs=curLHS;
-                else
-                    curLHS=constr.lhs;
-                
+                Constraint constr=cts.get(i);
                 constr.addHelpfulNames(helpfulConstrNames);
                 constr.addToGraph(g, i+1);
             }
-            showGraph(g,violatedConstr.lhs,violatedConstr.rhs,true, "Inconsistency");
-          Set<String> keepV = getVerticesToKeepJgraph(g,violatedConstr.lhs,violatedConstr.rhs);
-          filterKeepAndVisualize(g, keepV, violatedConstr);
+          showGraph(g,true, "Original Graph", highlightNodes);
           
           
-            // filtering begins
-            //Set<String> discardv=getVerticesToDiscard(g, violatedConstr.lhs, violatedConstr.rhs);
-            
-        }
-        else
-        {
-            setDbugcontents(rec.toString());
-        }
-        
-        
+          ArrayList<Set<String>> sccs = getVerticesToKeepJgraph(g,highlightNodes, Constraint.keepStrictEdges(cts));
+          
+          for(int i=0; i< sccs.size();i++)
+          {
+            filterKeepAndVisualize(g, sccs.get(i), highlightNodes,"SCC #"+i);
+          }
+          
+          return sccs.size();
     }
   
+    
 }
