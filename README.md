@@ -1,10 +1,11 @@
-nbcoq
+nbcoq : Coq plugin for Netbeans
 =====
 
 NOTE: This plugin was delveloped for Coq version 8.4pl2. It does NOT work with the new 8.4pl3 version because the xml communication protocol for coqtop was changed. Hopefully I would fix that when I start working on my next big Coq project.
 
+For a much more complete IDE built with many similar goals, checkout Coqoon http://itu.dk/research/tomeso/coqoon/
 
-Coq plugin for Netbeans
+
 
 Installation:
 
