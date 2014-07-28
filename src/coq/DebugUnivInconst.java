@@ -21,6 +21,10 @@ import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,7 +53,7 @@ public class DebugUnivInconst {
      * @param constraints : the string containing the output of "Print Universes."
      * @return a list of constraint objects
      */
-    ArrayList<Constraint> parseConstraints(String constraints)
+    static ArrayList<Constraint> parseConstraints(String constraints)
     {
             String[] lines=constraints.split("\n");
             String curLHS="";
@@ -65,7 +69,6 @@ public class DebugUnivInconst {
         else
           curLHS=constr.lhs;
         
-        constr.addHelpfulNames(helpfulConstrNames);
         ret.add(constr);
       }   
             return ret;
@@ -462,6 +465,22 @@ public class DebugUnivInconst {
           
           return sccs.size();
     }
-  
-    
+
+  static String readFile(String path) 
+  throws IOException 
+  {
+  byte[] encoded = Files.readAllBytes(Paths.get(path));
+  return new String(encoded, Charset.defaultCharset());
+  }  
+    public static void main(String [ ] args) throws IOException
+    {
+      System.out.println("args"+Arrays.toString(args));
+      if(args.length!=2)
+      {
+        System.err.println("usage : java -jar DebugUniv.jar filename\n where filename contains the constraints, e.g. output of Print Universes");
+        return;
+      }
+      DebugUnivInconst dbg= new DebugUnivInconst();
+      dbg.debugUnivInconsistency(parseConstraints(readFile(args[1])), new HashSet<String>());
+    }
 }
