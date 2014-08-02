@@ -78,7 +78,6 @@ public class DebugUnivInconst {
     {
       ArrayList<Constraint> cts= parseConstraints(constraints);
       DirectedSparseMultigraph<String,String> g= new DirectedSparseMultigraph<String, String>();
-            
       for (int i=0;i<cts.size();i++)
       {
         Constraint constr=cts.get(i);
@@ -86,7 +85,7 @@ public class DebugUnivInconst {
            constr.addToGraph(g, i+1);
       }
             
-      showGraph(makeEqualitiesUndirected(g),false, "Inconsistency",new HashSet<String>());
+      showGraph(makeEqualitiesUndirected(g),true, "Univ. levels in Top module",new HashSet<String>());
         
     }
 
@@ -171,6 +170,10 @@ public class DebugUnivInconst {
     void showGraph(Graph g,boolean newWindow, String title, HashSet<String>  highlightNodes)
     {
             FRLayout<String, String> layout=new FRLayout<String, String>(g);
+            System.err.println("----- "+title+"------");
+            System.out.println("#edges: "+g.getEdgeCount());
+            System.out.println("#nodes: "+g.getVertexCount());
+            System.err.println("-----------------------");
             int numV=g.getVertexCount();
             layout.setSize(new Dimension(Math.max(600, numV), Math.max(600, numV)));
             VisualizationViewer<String, String> vv=
@@ -185,6 +188,7 @@ public class DebugUnivInconst {
             vv.getRenderContext().setEdgeDrawPaintTransformer(new EdgeColor());
             vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
             vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+            
             
             JFrame jd;
             if(newWindow || topUnivs==null)
@@ -276,8 +280,8 @@ public class DebugUnivInconst {
               
               //if(edgetype.equals("e"))
                 //edt=EdgeType.UNDIRECTED;
-              
-              assert(g.addEdge(edgelabel, rhs, lhs, EdgeType.DIRECTED ));// arrow can be read as <,i.e for a<b, arrow is at a.                
+              boolean bl=g.addEdge(edgelabel, rhs, lhs, EdgeType.DIRECTED );
+              assert(bl);// arrow can be read as <,i.e for a<b, arrow is at a.                
 
         }
         
@@ -446,6 +450,8 @@ public class DebugUnivInconst {
   
     int debugUnivInconsistency(ArrayList<Constraint> cts, HashSet<String> highlightNodes)
     {
+            System.out.println("#constraints:" + cts.size());
+
             DirectedSparseMultigraph<String,String> g= new DirectedSparseMultigraph<String, String>();
             for(int i=0;i<cts.size();i++)
             {
@@ -453,7 +459,7 @@ public class DebugUnivInconst {
                 constr.addHelpfulNames(helpfulConstrNames);
                 constr.addToGraph(g, i+1);
             }
-          showGraph(g,true, "Original Graph", highlightNodes);
+          showGraph(makeEqualitiesUndirected(g),true, "Original Graph", highlightNodes);
           
           
           ArrayList<Set<String>> sccs = getVerticesToKeepJgraph(g,highlightNodes, Constraint.keepStrictEdges(cts));
@@ -475,12 +481,14 @@ public class DebugUnivInconst {
     public static void main(String [ ] args) throws IOException
     {
       System.out.println("args"+Arrays.toString(args));
-      if(args.length!=2)
+      if(args.length!=1)
       {
         System.err.println("usage : java -jar DebugUniv.jar filename\n where filename contains the constraints, e.g. output of Print Universes");
         return;
       }
       DebugUnivInconst dbg= new DebugUnivInconst();
-      dbg.debugUnivInconsistency(parseConstraints(readFile(args[1])), new HashSet<String>());
+      String fileString=readFile(args[0]);
+      dbg.showTopUnivs(fileString);
+      dbg.debugUnivInconsistency(parseConstraints(fileString), new HashSet<String>());
     }
 }
