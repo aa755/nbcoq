@@ -140,6 +140,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     minusButton = new javax.swing.JButton();
     newWindow = new javax.swing.JCheckBox();
     profileButton = new javax.swing.JCheckBox();
+    errorCursorJump = new javax.swing.JCheckBox();
 
     org.openide.awt.Mnemonics.setLocalizedText(goToCursorButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.text")); // NOI18N
     goToCursorButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.goToCursorButton.toolTipText")); // NOI18N
@@ -314,6 +315,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     org.openide.awt.Mnemonics.setLocalizedText(profileButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.profileButton.text")); // NOI18N
     profileButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.profileButton.toolTipText")); // NOI18N
 
+    org.openide.awt.Mnemonics.setLocalizedText(errorCursorJump, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.errorCursorJump.text")); // NOI18N
+    errorCursorJump.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.errorCursorJump.toolTipText")); // NOI18N
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -349,7 +353,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(followCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
               .addGroup(layout.createSequentialGroup()
-                .addComponent(queryCombo, 0, 298, Short.MAX_VALUE)
+                .addComponent(queryCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(newWindow)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -368,6 +372,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                 .addComponent(UnivButton))
               .addGroup(layout.createSequentialGroup()
                 .addComponent(fractionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(errorCursorJump)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -395,7 +401,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
                   .addComponent(jButton1))
                 .addGap(11, 11, 11))
               .addGroup(layout.createSequentialGroup()
-                .addComponent(TopUnivsButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                  .addComponent(TopUnivsButton)
+                  .addComponent(errorCursorJump))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
               .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                 .addContainerGap()
@@ -742,6 +750,11 @@ public boolean isFollowCursorChecked()
     return followCompile.isSelected();
 }
 
+public boolean isJumpToErrorChecked()
+{
+    return errorCursorJump.isSelected();
+}
+
 void showGoal()
 {
 try {
@@ -760,6 +773,7 @@ try {
   private javax.swing.JButton UnivButton;
   private javax.swing.JButton bottomButton;
   private javax.swing.JButton downButton;
+  private javax.swing.JCheckBox errorCursorJump;
   private javax.swing.JRadioButton followCompile;
   private javax.swing.JLabel fractionLabel;
   private javax.swing.JButton goToCursorButton;
