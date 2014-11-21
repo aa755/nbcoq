@@ -8,20 +8,20 @@ package coq;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-//import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.prefs.Preferences;
-
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
-//import nu.xom.ParsingException;
-//import nu.xom.ValidityException;
-import org.openide.util.Exceptions;
-import org.w3c.dom.Document;
+import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
+import org.w3c.dom.Document;
 
 
 /**
@@ -42,15 +42,28 @@ private  PrintWriter input;
         return pref.get(CoqOptionsPanel.COQPATH_KEY, "");
     }
     
+    static String getCoqInitOps()
+    {
+        Preferences pref = NbPreferences.forModule(CoqOptionsPanel.class);
+        return pref.get(CoqOptionsPanel.COQOPTIONS_KEY, "");
+    }
 /**
  * @fob : supposed to be the fileobject corresponding to the directory containing the .v file that is being edited  
  **/
     public CoqTopXMLIO(FileObject fob) throws IOException {
-        
-        
             System.out.println("coq path: "+fob.getPath());
             String command=getCoqTopPath();
-            process = new ProcessBuilder(command,"-ideslave").directory(FileUtil.toFile(fob)).start();
+            List<String> commandParts= new LinkedList();
+            commandParts.add(command);
+            commandParts.add("-ideslave");
+
+            String initOptions = getCoqInitOps();
+            String [] initOpParts= initOptions.split(" ");
+
+            commandParts.addAll(Arrays.asList(initOpParts));
+            JOptionPane.showMessageDialog(null, commandParts);
+            ProcessBuilder pb = new ProcessBuilder(commandParts);
+            process = pb.directory(FileUtil.toFile(fob)).start();
 //            process = new ProcessBuilder("coqtop","-ideslave  -I "+fob.getPath()).start();
 //         process = new ProcessBuilder("coqtop","-ideslave  -I "+path).directory(File.)+start();
         

@@ -1,7 +1,7 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
- */
+ */  
 package coq;
 
 import org.openide.util.NbPreferences;
@@ -27,12 +27,20 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
     jLabel1 = new javax.swing.JLabel();
     jTextField1 = new javax.swing.JTextField();
     jLabel2 = new javax.swing.JLabel();
+    jLabel3 = new javax.swing.JLabel();
+    initParams = new javax.swing.JTextField();
 
     org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.jLabel1.text")); // NOI18N
 
+    jTextField1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
     jTextField1.setText(org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.jTextField1.text")); // NOI18N
 
     org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.jLabel2.text")); // NOI18N
+
+    org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.jLabel3.text")); // NOI18N
+
+    initParams.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+    initParams.setText(org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.initParams.text")); // NOI18N
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -42,11 +50,16 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         .addGap(20, 20, 20)
         .addComponent(jLabel1)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE))
+        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
       .addGroup(layout.createSequentialGroup()
         .addGap(49, 49, 49)
         .addComponent(jLabel2)
         .addGap(0, 0, Short.MAX_VALUE))
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jLabel3)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(initParams, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -55,11 +68,16 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel1)
           .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addGap(18, 18, 18)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(jLabel3)
+          .addComponent(initParams, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(jLabel2))
     );
   }// </editor-fold>//GEN-END:initComponents
     public static final String COQPATH_KEY="CoqPath";
+    public static final String COQOPTIONS_KEY="CoqOptions";
     void load() {
         // TODO read settings and initialize GUI
         // Example:        
@@ -69,11 +87,17 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         // or:
         // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
         String coqtop=NbPreferences.forModule(CoqOptionsPanel.class).get(COQPATH_KEY, "");
+        String coqOptions=NbPreferences.forModule(CoqOptionsPanel.class).get(COQOPTIONS_KEY, "");
         if(coqtop==null || coqtop.isEmpty())
         {
             coqtop="coqtop";
         }
+        if(coqOptions==null)
+        {
+            coqOptions="";
+        }
         jTextField1.setText(coqtop);
+        initParams.setText(coqOptions);
     }
 
     void store() {
@@ -85,6 +109,7 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         // or:
         // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
         NbPreferences.forModule(CoqOptionsPanel.class).put(COQPATH_KEY, jTextField1.getText());
+        NbPreferences.forModule(CoqOptionsPanel.class).put(COQOPTIONS_KEY, initParams.getText());
     }
 
     boolean valid() {
@@ -92,8 +117,10 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         return true;
     }
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JTextField initParams;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
+  private javax.swing.JLabel jLabel3;
   private javax.swing.JTextField jTextField1;
   // End of variables declaration//GEN-END:variables
 }
