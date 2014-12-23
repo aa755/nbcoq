@@ -110,7 +110,7 @@ public static class EndHideReplace implements IndexBasedReplace
     @Override
     public String replacement (int index, String match)
     {
-        return "</div>";
+        return "</div>" + "<div class=\"doc\">\n";
     }
 }
 
@@ -136,8 +136,7 @@ public static void main(String[] args) throws IOException {
     
     {
       Pattern endHide = Pattern.compile("<div class=\"doc\">\n" +
-                        "end hide \n" +
-                        "</div>");
+                        "end hide ");
       pass = replace(endHide, new EndHideReplace(), pass);
     }
   
