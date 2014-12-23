@@ -28,7 +28,7 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
     jTextField1 = new javax.swing.JTextField();
     jLabel2 = new javax.swing.JLabel();
     jLabel3 = new javax.swing.JLabel();
-    initParams = new javax.swing.JTextField();
+    initParams = new javax.swing.JComboBox();
 
     org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.jLabel1.text")); // NOI18N
 
@@ -39,8 +39,8 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
 
     org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.jLabel3.text")); // NOI18N
 
-    initParams.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-    initParams.setText(org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.initParams.text")); // NOI18N
+    initParams.setEditable(true);
+    initParams.setToolTipText(org.openide.util.NbBundle.getMessage(CoqOptionsPanel.class, "CoqOptionsPanel.initParams.toolTipText")); // NOI18N
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -52,14 +52,16 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
       .addGroup(layout.createSequentialGroup()
-        .addGap(49, 49, 49)
-        .addComponent(jLabel2)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(layout.createSequentialGroup()
+            .addGap(49, 49, 49)
+            .addComponent(jLabel2))
+          .addGroup(layout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(jLabel3)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(initParams, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)))
         .addGap(0, 0, Short.MAX_VALUE))
-      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jLabel3)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(initParams, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -72,7 +74,7 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel3)
           .addComponent(initParams, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
         .addComponent(jLabel2))
     );
   }// </editor-fold>//GEN-END:initComponents
@@ -87,17 +89,22 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         // or:
         // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
         String coqtop=NbPreferences.forModule(CoqOptionsPanel.class).get(COQPATH_KEY, "");
-        String coqOptions=NbPreferences.forModule(CoqOptionsPanel.class).get(COQOPTIONS_KEY, "");
+        String coqOptionLines=NbPreferences.forModule(CoqOptionsPanel.class).get(COQOPTIONS_KEY, "");
         if(coqtop==null || coqtop.isEmpty())
         {
             coqtop="coqtop";
         }
-        if(coqOptions==null)
+        if(coqOptionLines==null)
         {
-            coqOptions="";
+            coqOptionLines="";
         }
         jTextField1.setText(coqtop);
-        initParams.setText(coqOptions);
+        String [] coqOpLines = coqOptionLines.split("\n");
+        // one could remove duplicates here
+        for(String optionLine : coqOpLines)
+          if(!optionLine.isEmpty())
+            initParams.addItem(optionLine);
+        initParams.setSelectedIndex(0);
     }
 
     void store() {
@@ -109,7 +116,17 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         // or:
         // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
         NbPreferences.forModule(CoqOptionsPanel.class).put(COQPATH_KEY, jTextField1.getText());
-        NbPreferences.forModule(CoqOptionsPanel.class).put(COQOPTIONS_KEY, initParams.getText());
+        String appended="";
+        int selectedIndex = initParams.getSelectedIndex();
+        //put the selected item first because the coqtop initializer picks this one
+        appended = appended + initParams.getSelectedItem() + "\n";
+        for(int i =0; i<initParams.getItemCount();i++)
+        {
+            if(i!=selectedIndex)
+            appended = appended + ((String) initParams.getItemAt(i) + "\n");
+        }
+        
+        NbPreferences.forModule(CoqOptionsPanel.class).put(COQOPTIONS_KEY, appended);
     }
 
     boolean valid() {
@@ -117,7 +134,7 @@ final class CoqOptionsPanel extends javax.swing.JPanel {
         return true;
     }
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JTextField initParams;
+  private javax.swing.JComboBox initParams;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;

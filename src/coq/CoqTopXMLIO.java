@@ -45,7 +45,9 @@ private  PrintWriter input;
     static String getCoqInitOps()
     {
         Preferences pref = NbPreferences.forModule(CoqOptionsPanel.class);
-        return pref.get(CoqOptionsPanel.COQOPTIONS_KEY, "");
+        String multipleLines = pref.get(CoqOptionsPanel.COQOPTIONS_KEY, "");
+        String [] lines = multipleLines.split("\n");
+        return lines[0];
     }
 /**
  * @fob : supposed to be the fileobject corresponding to the directory containing the .v file that is being edited  
