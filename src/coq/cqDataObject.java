@@ -4,21 +4,7 @@
  */
 package coq;
 
-import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler;
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseMultigraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
-import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
-import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -27,20 +13,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -56,11 +36,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import org.apache.commons.collections15.Predicate;
-import org.apache.commons.collections15.Transformer;
-import org.jgrapht.alg.StrongConnectivityInspector;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.netbeans.api.actions.Openable;
 import org.netbeans.api.editor.settings.AttributesUtilities;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -82,6 +57,7 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.TopComponent;
+import com.github.tomtung.latex2unicode.DefaultLatexToUnicodeConverter;
 
 @Messages({
     "LBL_cq_LOADER=Files of cq"
@@ -253,6 +229,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_O);
     }
     
+    boolean isLatex2UnicodeShortcut(KeyEvent ke)
+    {
+        return (ke.isControlDown()&&ke.isAltDown()&&ke.getKeyCode()==KeyEvent.VK_U);
+    }
+
     String getSelectedWord()
     {
         try
@@ -284,6 +265,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     {
        return getEditor().getOpenedPanes()[0].getSelectedText();
     }
+    
+    void replaceSelectedTextInEditorWith( String rep)
+    {
+       getEditor().getOpenedPanes()[0].replaceSelection(rep);
+    }
+
     void fixSelectedCode()
     {
       String prefix="((Definition)|(Fixpoint)|(Lemma)|(Theorem)|(Inductive))";
@@ -449,7 +436,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             handleQuery();
             
         }
-            
+        else if(isLatex2UnicodeShortcut(ke))
+        {
+            String word = getTextSelectedInEditor();
+            String unicode = DefaultLatexToUnicodeConverter.convert(word);
+            replaceSelectedTextInEditorWith(unicode);
+        }            
     }
 
     @Override
@@ -531,6 +523,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     @Override
     public void insertUpdate(DocumentEvent de) {
+        if (!(uiWindow.isJumpToErrorChecked()))
+          return;
        // JOptionPane.showMessageDialog(null, "you inserted text");
         int offset=de.getOffset();
         if(offset<getCompiledOffset())
@@ -554,10 +548,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 {
                     setHighlight(0, getCompiledOffset());                    
                 }
-                if(insert.equals("."))
-                    lastCharIsDot=true;
-                else
-                    lastCharIsDot=false;
+                lastCharIsDot = insert.equals(".");
             } catch (BadLocationException ex) {
                 setHighlight(0, getCompiledOffset());
                 lastCharIsDot=false;
@@ -1085,7 +1076,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             addErrorHighlight(startLoc, endLoc);
             
-            if(uiWindow.isJumpToErrorChecked())
+            //if(uiWindow.isJumpToErrorChecked())
               jumpToOffset(startLoc);
         }
     }

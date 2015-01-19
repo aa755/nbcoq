@@ -153,6 +153,10 @@
             </module-dependencies>
             <public-packages/>
             <class-path-extension>
+                <runtime-relative-path>ext/latex2unicode-assembly-0.1-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/latex2unicode-assembly-0.1-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/jung-algorithms-2.0.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jung-algorithms-2.0.1.jar</binary-origin>
             </class-path-extension>
@@ -169,8 +173,16 @@
                 <binary-origin>release/modules/ext/jung-graph-impl-2.0.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/parboiled-scala_2.10-1.1.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/parboiled-scala_2.10-1.1.6.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/collections-generic-4.01.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/collections-generic-4.01.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/parboiled-core-1.1.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/parboiled-core-1.1.6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/xom-1.2.10.jar</runtime-relative-path>
