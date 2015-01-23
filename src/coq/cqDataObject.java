@@ -523,8 +523,6 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
 
     @Override
     public void insertUpdate(DocumentEvent de) {
-        if (!(uiWindow.isJumpToErrorChecked()))
-          return;
        // JOptionPane.showMessageDialog(null, "you inserted text");
         int offset=de.getOffset();
         if(offset<getCompiledOffset())
@@ -538,7 +536,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             try {
                 String insert=getDocument().getText(offset, de.getLength());
-                if(lastCharIsDot&&Character.isWhitespace(insert.charAt(0)))
+                if((uiWindow.isJumpToErrorChecked())&&lastCharIsDot&&Character.isWhitespace(insert.charAt(0)))
                 {
                     if(offset+1<de.getDocument().getEndPosition().getOffset())
                         offset=offset+1; // to handle backspace before a dot
