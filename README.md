@@ -3,12 +3,16 @@ nbcoq : Coq plugin for Netbeans
 
 NOTE: This plugin was delveloped for Coq version 8.4pl2. It does NOT work with the new 8.4pl3 version because the xml communication protocol for coqtop was changed. Hopefully I would fix that when I start working on my next big Coq project.
 
-For a much more complete IDE built with many similar goals, checkout Coqoon http://itu.dk/research/tomeso/coqoon/
-
+Key features :
+1) All of netbeans's features. I regularly use features like (regexp) search (and replace) content in a project (not just individual files), multiple windows (usually on multiple screens), live version control information. Given the drastic variation in pixel densities screens, the font of the proof window can be adjusted independently of the editor (click on the + or - button)
+2) Entering unicode content by entering the corresponding latex. This uses https://github.com/tomtung/latex2unicode . ((see keyboard shortcut below)
+3) Drag and drop gestures for working on proofs. My proof scripts have often too long variable names. It jused to be a pain to type them manually.
+4) Hypothesis with same type are bunched together. Saves a lot of space while working on messy proofs.
+5) Experimental support for jumping to definition (see keyboard shortcut below)
+6) A drop down for entering queries like SearchAbout, Check, Print , e.t.c. The dropdown remembers old queries. There is a checkbox to display query output on a separate popup window. This is useful to compare definitions.
 
 
 Installation:
-
 
 Download netbeans+java bundle
 http://www.oracle.com/technetwork/java/javase/downloads/jdk-netbeans-jsp-142931.html
@@ -18,7 +22,6 @@ I've used (tested) this plugin ony with Oracle's JDK.)
 Open netbeans. Click on team | git and clone this repo.
 It will find this netbeans project and ask if you wish to open it.
 Say yes.
-
 
 Right click on the project node and click Install in Development IDE.
 (If you made some changes to plugin code, you might want to click debug. Tt will open another instance of netbeans
@@ -45,7 +48,6 @@ A list of known issues can be found at:
 https://github.com/aa755/nbcoq/issues?state=open
 Feel free to file bugs and feature requests if you encounter one.
 
-As of now, looking at commit messages is the best way to find out about new features.
 
 Shortcuts:
 
@@ -53,14 +55,18 @@ Shortcuts:
 
 2) select and middle click in proof/message window to copy it into editor
 
-3) C+A+o : jump to definition. Issues a Locate command to coqtop internally.
+3) Ctrl+Alt+o : jump to definition. Issues a Locate command to coqtop internally.
 
-4) C+A+p : If nothing is selected, it Prints the item under cursor(works even in proof/mesg window). Otherwise, it issues a Check command on the selection.
+4) Ctrl+Alt+p : If nothing is selected, it Prints the item under cursor(works even in proof/mesg window). Otherwise, it issues a Check command on the selection.
 
-5) C+A+l : SearchAbout the item under cursor
+5) Ctrl+Alt+l : SearchAbout the item under cursor
 
 6) click on hyp-name button to copy in into editor
 
 7) drag and drop hyp-buttons to apply one hypothesis to another
 
 8) select and drag lemma name from any place (e.g. editor,the window which shows SearchAbout o/p) to hyp-button to apply
+
+9) Ctrl+Alt+l to convert selected latex text to unicode.
+
+For another IDE built with many similar goals, checkout Coqoon http://itu.dk/research/tomeso/coqoon/
