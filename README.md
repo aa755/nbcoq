@@ -5,10 +5,15 @@ NOTE: This plugin was delveloped for Coq version 8.4pl2. It does NOT work with t
 
 Key features :
 1) All of netbeans's features. I regularly use features like (regexp) search (and replace) content in a project (not just individual files), multiple windows (usually on multiple screens), live version control information. Given the drastic variation in pixel densities screens, the font of the proof window can be adjusted independently of the editor (click on the + or - button)
+
 2) Entering unicode content by entering the corresponding latex. This uses https://github.com/tomtung/latex2unicode . ((see keyboard shortcut below)
+
 3) Drag and drop gestures for working on proofs. My proof scripts have often too long variable names. It jused to be a pain to type them manually.
+
 4) Hypothesis with same type are bunched together. Saves a lot of space while working on messy proofs.
+
 5) Experimental support for jumping to definition (see keyboard shortcut below)
+
 6) A drop down for entering queries like SearchAbout, Check, Print , e.t.c. The dropdown remembers old queries. There is a checkbox to display query output on a separate popup window. This is useful to compare definitions.
 
 
