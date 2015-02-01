@@ -1449,6 +1449,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
           String globContents = readFile(glob.getPath());
           String [] lines= globContents.split("\n");
+          String entText=getEntireText();
           for (String line:lines)
           {
             if(line.startsWith("R")) {
@@ -1457,8 +1458,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
               int spaceIndex= line.indexOf(" ");
               if(0<colonIndex && colonIndex<spaceIndex)
               {
-                int startIndex=Integer.parseInt(line.substring(0, colonIndex));
-                int endIndex=Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
+                int startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
+                int endIndexCP=Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
+                int startIndex=entText.codePointCount(0,startIndexCP);
+                int endIndex=entText.codePointCount(0,endIndexCP);
                 String [] words = line.split(" ");
                 String lastWord=words[words.length-1];
                 if(lastWord.startsWith("def")) // there could be a \r at end
