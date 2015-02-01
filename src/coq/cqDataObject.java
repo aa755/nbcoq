@@ -58,6 +58,9 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.TopComponent;
 import com.github.tomtung.latex2unicode.DefaultLatexToUnicodeConverter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Messages({
     "LBL_cq_LOADER=Files of cq"
@@ -562,7 +565,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         int offset=de.getOffset();
         lastCharIsDot=false;
         if(offset+1<de.getDocument().getEndPosition().getOffset())
-            offset=offset+1; // to handle backspace before a dot
+            offset=offset+1; // to handle backspace before a dot        
         if(offset<getCompiledOffset())
         {
             handleCompileToOffset(offset);
@@ -1058,6 +1061,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private static final AttributeSet errorCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(255, 100, 100));
+    private static final AttributeSet defnAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Foreground,
+            new Color(10, 255, 10));
     boolean lastCharIsDot;
     private CoqError lastError;
     private static String indentStrs = "-+*";
@@ -1428,8 +1434,53 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             dbgC.showTopUnivs(constraints);
         }
     }
+    
+  static String readFile(String path) 
+  throws IOException 
+  {
+  byte[] encoded = Files.readAllBytes(Paths.get(path));
+  return new String(encoded, Charset.defaultCharset());
+  } 
         
-    void debugUnivInconsistency()
+  void SyntaxHighlight()
+    {
+        FileObject glob=fileObj.getParent().getFileObject(fileObj.getName(),"glob");
+        try
+        {
+          String globContents = readFile(glob.getPath());
+          String [] lines= globContents.split("\n");
+          for (String line:lines)
+          {
+            if(line.startsWith("R")) {
+              line=line.substring(1);
+              int colonIndex= line.indexOf(":");
+              int spaceIndex= line.indexOf(" ");
+              if(0<colonIndex && colonIndex<spaceIndex)
+              {
+                int startIndex=Integer.parseInt(line.substring(0, colonIndex));
+                int endIndex=Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
+                String [] words = line.split(" ");
+                String lastWord=words[words.length-1];
+                if(lastWord.startsWith("def")) // there could be a \r at end
+                  retb.addHighlight(startIndex, endIndex, defnAttr);
+                  //getDocument().setParagraphAttributes
+                    //      (startIndex, endIndex-startIndex, defnAttr, true);
+              }
+              
+            }
+            
+            
+          }
+        }
+        catch(IOException ex)
+        {
+          JOptionPane.showMessageDialog(uiWindow, "could not read glob file");
+          
+        }
+        
+    }
+
+void debugUnivInconsistency()
     {        
         Pattern pat = Pattern.compile("\\(cannot enforce ([\\w_.]*)[ \\n]<[=]?[ \\n]([\\w_.]*)\\)");
         Matcher mat = pat.matcher(dbugcontents);

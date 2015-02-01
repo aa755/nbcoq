@@ -652,6 +652,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
   private void parseNamesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parseNamesButtonActionPerformed
     // TODO add your handling code here:
       //editorDoc.parseNames(jTextArea1.getText());
+      editorDoc.SyntaxHighlight();
   }//GEN-LAST:event_parseNamesButtonActionPerformed
 
   private void plusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusButtonActionPerformed
