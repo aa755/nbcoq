@@ -1450,6 +1450,23 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
           String globContents = readFile(glob.getPath());
           String [] lines= globContents.split("\n");
           String entText=getEntireText();
+          int [] charToCPOffset = new int[entText.length()];
+          for (int charIndex = 0, cpIndex=0, nChars = entText.length(), codepoint;
+            charIndex < nChars;
+            charIndex += Character.charCount(codepoint)) {
+            codepoint = entText.codePointAt(charIndex);
+            charToCPOffset[charIndex]=cpIndex;
+            cpIndex++;
+            if (Character.charCount(codepoint)==2)
+              charToCPOffset[charIndex+1]=cpIndex;
+            if (Character.charCount(codepoint)==3)
+              charToCPOffset[charIndex+2]=cpIndex;
+            if (Character.charCount(codepoint)>3)
+              return;
+            
+    // Do something with codepoint.
+            }
+          
           for (String line:lines)
           {
             if(line.startsWith("R")) {
@@ -1460,8 +1477,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
               {
                 int startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
                 int endIndexCP=Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
-                int startIndex=entText.codePointCount(0,startIndexCP);
-                int endIndex=entText.codePointCount(0,endIndexCP);
+                int startIndex=charToCPOffset[startIndexCP];
+                int endIndex=charToCPOffset[endIndexCP];
+                byte [] stc= entText.substring(0,startIndex).getBytes();
+                int stcl = stc.length;
                 String [] words = line.split(" ");
                 String lastWord=words[words.length-1];
                 if(lastWord.startsWith("def")) // there could be a \r at end
