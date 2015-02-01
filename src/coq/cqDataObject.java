@@ -1462,7 +1462,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 String [] words = line.split(" ");
                 String lastWord=words[words.length-1];
                 if(lastWord.startsWith("def")) // there could be a \r at end
-                  retb.addHighlight(startIndex, endIndex, defnAttr);
+                  retb.addHighlight(startIndex, endIndex+1, defnAttr);
                   //getDocument().setParagraphAttributes
                     //      (startIndex, endIndex-startIndex, defnAttr, true);
               }
