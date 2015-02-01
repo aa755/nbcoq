@@ -1450,23 +1450,19 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
           String globContents = readFile(glob.getPath());
           String [] lines= globContents.split("\n");
           String entText=getEntireText();
-          int [] charToCPOffset = new int[entText.length()];
-          for (int charIndex = 0, cpIndex=0, nChars = entText.length(), codepoint;
-            charIndex < nChars;
-            charIndex += Character.charCount(codepoint)) {
-            codepoint = entText.codePointAt(charIndex);
-            charToCPOffset[charIndex]=cpIndex;
-            cpIndex++;
-            if (Character.charCount(codepoint)==2)
-              charToCPOffset[charIndex+1]=cpIndex;
-            if (Character.charCount(codepoint)==3)
-              charToCPOffset[charIndex+2]=cpIndex;
-            if (Character.charCount(codepoint)>3)
-              return;
+          int [] byteToCPOffset = new int[entText.length()*2]; 
+          // the factor of 2 is a crude approximate (assuming each char takes at most  bytes). it might not work some decates later
+          final int entLen = entText.length();
+          int byteOffset=0;
+          for (int cpOffset=0;cpOffset<entLen;cpOffset++)
+          {
+            int newByteOffset= entText.substring(0,cpOffset+1).getBytes().length;
+            for(int i=byteOffset;i<newByteOffset;i++)
+              byteToCPOffset[i]=cpOffset;
             
-    // Do something with codepoint.
-            }
-          
+            byteOffset=newByteOffset;
+            
+          }
           for (String line:lines)
           {
             if(line.startsWith("R")) {
@@ -1477,8 +1473,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
               {
                 int startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
                 int endIndexCP=Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
-                int startIndex=charToCPOffset[startIndexCP];
-                int endIndex=charToCPOffset[endIndexCP];
+                int startIndex=byteToCPOffset[startIndexCP];
+                int endIndex=byteToCPOffset[endIndexCP];
                 byte [] stc= entText.substring(0,startIndex).getBytes();
                 int stcl = stc.length;
                 String [] words = line.split(" ");
