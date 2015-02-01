@@ -1063,7 +1063,24 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             new Color(255, 100, 100));
     private static final AttributeSet defnAttr =
             AttributesUtilities.createImmutable(StyleConstants.Foreground,
-            new Color(10, 255, 10));
+            new Color(50, 255, 50));
+    private static final AttributeSet indAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Foreground,
+            new Color(150, 150, 255));
+    private static final AttributeSet constrAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Foreground,
+            new Color(200, 0, 100));
+    private static final AttributeSet thmAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Foreground,
+            new Color(0, 200, 0));
+    private static final AttributeSet notationAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Foreground,
+            new Color(255, 50, 50));
+    
+    final String keywords="((Definition)|(Fixpoint)|(Lemma)|(Theorem)|(Section)"
+            + "|(Inductive)|(Qed)|(Defined)|(Require)|(Record)|(Instance)"
+            + "|(Export)|(Import)|(Notation)|(CoFixpoint)|(CoInductive))";
+    final Pattern keywordPat=Pattern.compile(keywords);
     boolean lastCharIsDot;
     private CoqError lastError;
     private static String indentStrs = "-+*";
@@ -1444,12 +1461,21 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         
   void SyntaxHighlight()
     {
-        FileObject glob=fileObj.getParent().getFileObject(fileObj.getName(),"glob");
+      Matcher kwMatcher = keywordPat.matcher(getEntireText());
+      while(kwMatcher.find())
+      {
+        retb.addHighlight(kwMatcher.start(), kwMatcher.end(), notationAttr);
+        //some of these will match other identifiers which have a keyword
+        // as a substring. these will get fixed anyway by the code below.
+      }
+
+      FileObject glob=fileObj.getParent().getFileObject(fileObj.getName(),"glob");
+
         try
         {
           String globContents = readFile(glob.getPath());
           String [] lines= globContents.split("\n");
-          String entText=getEntireText();
+          final String entText=getEntireText();
           int [] byteToCPOffset = new int[entText.length()*2]; 
           // the factor of 2 is a crude approximate (assuming each char takes at most  bytes). it might not work some decates later
           final int entLen = entText.length();
@@ -1473,14 +1499,26 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
               {
                 int startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
                 int endIndexCP=Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
+                String vfileword= entText.substring(startIndexCP, endIndexCP+1);
                 int startIndex=byteToCPOffset[startIndexCP];
                 int endIndex=byteToCPOffset[endIndexCP];
-                byte [] stc= entText.substring(0,startIndex).getBytes();
-                int stcl = stc.length;
                 String [] words = line.split(" ");
                 String lastWord=words[words.length-1];
-                if(lastWord.startsWith("def")) // there could be a \r at end
+                if(lastWord.trim().equals("def")) // there could be a \r at end
                   retb.addHighlight(startIndex, endIndex+1, defnAttr);
+                else if(lastWord.trim().equals("constr"))
+                  retb.addHighlight(startIndex, endIndex+1, constrAttr);
+                else if(lastWord.trim().equals("not"))
+                  retb.addHighlight(startIndex, endIndex+1, notationAttr);
+                else if(lastWord.trim().equals("thm"))
+                  retb.addHighlight(startIndex, endIndex+1, thmAttr);
+                else if(lastWord.trim().equals("proj"))
+                  retb.addHighlight(startIndex, endIndex+1, defnAttr);
+                else if(lastWord.trim().equals("ind"))
+                  retb.addHighlight(startIndex, endIndex+1, indAttr);
+                else if(lastWord.trim().equals("rec"))
+                  retb.addHighlight(startIndex, endIndex+1, indAttr);
+                  
                   //getDocument().setParagraphAttributes
                     //      (startIndex, endIndex-startIndex, defnAttr, true);
               }
