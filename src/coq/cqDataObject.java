@@ -454,15 +454,15 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     /**
      * @return the retb
      */
-    public OffsetsBag getRetb() {
-        return retb;
+    public OffsetsBag getCheckedAreaHighlights() {
+        return checkedAreaHighlights;
     }
 
     /**
      * @param retb the retb to set
      */
-    public void setRetb(OffsetsBag retb) {
-        this.retb = retb;
+    public void setCheckedAreaHighlights(OffsetsBag retb) {
+        this.checkedAreaHighlights = retb;
     }
 
     int  getDocLength()
@@ -472,11 +472,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     public /*synchronized*/ void setHighlight(int start, int end)
     {
         uiWindow.setProgressText(((float) getCompiledOffset())/ getDocLength() ); 
-        retb.clear();
+        checkedAreaHighlights.clear();
         if(ProofError.DARK)
-            retb.addHighlight(start, end, compiledCodeAttrDark);
+            checkedAreaHighlights.addHighlight(start, end, compiledCodeAttrDark);
         else    
-            retb.addHighlight(start, end, compiledCodeAttr);
+            checkedAreaHighlights.addHighlight(start, end, compiledCodeAttr);
     }        
 
 /*    public synchronized void  setHighlightHelper(int start, int end)
@@ -516,7 +516,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     public /*synchronized*/ void addErrorHighlight(int start, int end)
     {
         if(start<end)
-            retb.addHighlight(start, end, errorCodeAttr);
+            checkedAreaHighlights.addHighlight(start, end, errorCodeAttr);
     }
 
     @Override
@@ -576,6 +576,20 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     public void changedUpdate(DocumentEvent de) {
         de.getType(); // just to find out when it gets triggered
     }
+
+  /**
+   * @return the globSyntaxHighlights
+   */
+  public OffsetsBag getGlobSyntaxHighlights() {
+    return globSyntaxHighlights;
+  }
+
+  /**
+   * @param globSyntaxHighlights the globSyntaxHighlights to set
+   */
+  public void setGlobSyntaxHighlights(OffsetsBag globSyntaxHighlights) {
+    this.globSyntaxHighlights = globSyntaxHighlights;
+  }
 
 
 
@@ -1051,7 +1065,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private nu.xom.Document goal;
     private Stack<Integer> offsets;
     private int fontDelta=0;
-    private OffsetsBag retb;
+    private OffsetsBag checkedAreaHighlights;
+    private OffsetsBag globSyntaxHighlights;
     private static final AttributeSet compiledCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(200, 255, 200));
@@ -1082,7 +1097,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     
     final String keywords="((Definition)|(Fixpoint)|(Lemma)|(Theorem)|(Section)"
             + "|(Inductive)|(Qed)|(Defined)|(Require)|(Record)|(Instance)"
-            + "|(Export)|(Import)|(Notation)|(CoFixpoint)|(CoInductive))";
+            + "|(Export)|(Import)|(Notation)|(CoFixpoint)"
+            + "|(CoInductive)|(match)|(end))";
     final Pattern keywordPat=Pattern.compile(keywords);
     boolean lastCharIsDot;
     private CoqError lastError;
@@ -1125,7 +1141,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         batchCompile=new BatchCompile(0);
         batchCompileTask=rp.create(batchCompile, true);
         offsets=new Stack<Integer>();
-        retb=null;
+        checkedAreaHighlights=null;
         lastCharIsDot=false;
         keyListenerAssigned=false;
     //    initialize();
@@ -1462,12 +1478,18 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
   return new String(encoded, Charset.defaultCharset());
   } 
         
-  void SyntaxHighlight()
+  void clearSyntaxHighlight()
     {
+      globSyntaxHighlights.clear();
+    }
+  
+     void SyntaxHighlight()
+    {
+      globSyntaxHighlights.clear();
       Matcher kwMatcher = keywordPat.matcher(getEntireText());
       while(kwMatcher.find())
       {
-        retb.addHighlight(kwMatcher.start(), kwMatcher.end(), notationAttr);
+        globSyntaxHighlights.addHighlight(kwMatcher.start(), kwMatcher.end(), notationAttr);
         //some of these will match other identifiers which have a keyword
         // as a substring. these will get fixed anyway by the code below.
       }
@@ -1523,24 +1545,24 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
               int startIndex=byteToCPOffset[startIndexCP];
               int endIndex=byteToCPOffset[endIndexCP];
               if(category.equals("def")) // there could be a \r at end
-                retb.addHighlight(startIndex, endIndex, defnAttr);
+                globSyntaxHighlights.addHighlight(startIndex, endIndex, defnAttr);
               else if(category.equals("constr"))
-                retb.addHighlight(startIndex, endIndex, constrAttr);
+                globSyntaxHighlights.addHighlight(startIndex, endIndex, constrAttr);
               else if(category.equals("not"))
-                retb.addHighlight(startIndex, endIndex, notationAttr);
+                globSyntaxHighlights.addHighlight(startIndex, endIndex, notationAttr);
               else if(category.equals("thm"))
-                retb.addHighlight(startIndex, endIndex, thmAttr);
+                globSyntaxHighlights.addHighlight(startIndex, endIndex, thmAttr);
               else if(category.equals("proj"))
-                retb.addHighlight(startIndex, endIndex, defnAttr);
+                globSyntaxHighlights.addHighlight(startIndex, endIndex, defnAttr);
               else if(category.equals("ind"))
-                retb.addHighlight(startIndex, endIndex, indAttr);
+                globSyntaxHighlights.addHighlight(startIndex, endIndex, indAttr);
               else if(category.equals("rec"))
-                retb.addHighlight(startIndex, endIndex, indAttr);
+                globSyntaxHighlights.addHighlight(startIndex, endIndex, indAttr);
               else if(category.equals("var"))
-                retb.addHighlight(startIndex, endIndex, varAttr);
+                globSyntaxHighlights.addHighlight(startIndex, endIndex, varAttr);
               }
               
-            }
+            } 
             
             
         }

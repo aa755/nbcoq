@@ -275,6 +275,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     });
 
     org.openide.awt.Mnemonics.setLocalizedText(UnivButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.UnivButton.text")); // NOI18N
+    UnivButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.UnivButton.toolTipText")); // NOI18N
     UnivButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         UnivButtonActionPerformed(evt);
@@ -289,6 +290,7 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
     });
 
     org.openide.awt.Mnemonics.setLocalizedText(parseNamesButton, org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.parseNamesButton.text")); // NOI18N
+    parseNamesButton.setToolTipText(org.openide.util.NbBundle.getMessage(ProofError.class, "ProofError.parseNamesButton.toolTipText")); // NOI18N
     parseNamesButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         parseNamesButtonActionPerformed(evt);
@@ -641,7 +643,8 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
 
     private void UnivButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UnivButtonActionPerformed
         // TODO add your handling code here:
-        editorDoc.debugUnivInconsistency();
+        //editorDoc.debugUnivInconsistency();
+      editorDoc.clearSyntaxHighlight();
     }//GEN-LAST:event_UnivButtonActionPerformed
 
   private void TopUnivsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TopUnivsButtonActionPerformed
