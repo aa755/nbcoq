@@ -16,6 +16,7 @@ Key features :
 
 6) A drop down for entering queries like SearchAbout, Check, Print , e.t.c. The dropdown remembers old queries. There is a checkbox to display query output on a separate popup window. This is useful to compare definitions.
 
+7) Experimental support for coqdoc-like syntax hihglihgitng using .glob files ; color categories include Variables, theorems, definitions, inductive definitions, constructors of (coInductive) types. If an uptodate .glob file is present, one can click SH to do syntax highlighting. After that, deleting contents preserves .glob based syntax highlighting. So does insertion and modification, except that the new text is not highlighted. For that, one has to compile again to create fresh .glob file and then click SH again. It should be possible to automate the compilation part.
 
 Installation:
 
@@ -29,16 +30,13 @@ It will find this netbeans project and ask if you wish to open it.
 Say yes.
 
 Right click on the project node and click Install in Development IDE.
-(If you made some changes to plugin code, you might want to click debug. Tt will open another instance of netbeans
-and let you debug the code.)
-
 
 Prediodically, you might want to go a git pull to get the latest features (and bugs).
 If you do that, Right click on the project node and click Install in Development IDE and restart the IDE
 once the reload is finished (might take ~20 seconds to build).
 
 
-There is a video demonstration/documentation of this plugin at 
+There is an old and outdated video demonstration/documentation of this plugin at 
 http://www.youtube.com/watch?v=94D5RVK-cQg
  (watch the video in HD to avoid blurred text)
 
@@ -53,6 +51,7 @@ A list of known issues can be found at:
 https://github.com/aa755/nbcoq/issues?state=open
 Feel free to file bugs and feature requests if you encounter one.
 
+If you make changes to the code fo this plugin, you can click Debug in netbeans menu for this project. It will open another instance of netbeans and let you debug the plugin code. You can visually set breakpoints, view variables and watches, e.t.c.
 
 Shortcuts:
 
