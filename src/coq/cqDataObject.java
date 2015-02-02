@@ -1479,8 +1479,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
           String globContents = readFile(glob.getPath());
           String [] lines= globContents.split("\n");
           final String entText=getEntireText();
-          int [] byteToCPOffset = new int[entText.length()*2]; 
-          // the factor of 2 is a crude approximate (assuming each char takes at most  bytes). it might not work some decates later
+          int [] byteToCPOffset = new int[entText.getBytes().length]; 
           final int entLen = entText.length();
           int byteOffset=0;
           for (int cpOffset=0;cpOffset<entLen;cpOffset++)
@@ -1492,46 +1491,58 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             byteOffset=newByteOffset;
             
           }
+          int globLineCount=0;
           for (String line:lines)
           {
-            if(line.startsWith("R")) {
+            globLineCount++;
+            if(globLineCount<3) continue;
+            String category;
+            int startIndexCP= 0;
+            int endIndexCP= 0;
+            if(line.startsWith("R")) { // reference to already defined thing
               line=line.substring(1);
               int colonIndex= line.indexOf(":");
               int spaceIndex= line.indexOf(" ");
-              if(0<colonIndex && colonIndex<spaceIndex)
-              {
-                int startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
-                int endIndexCP=Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
-                String vfileword= entText.substring(startIndexCP, endIndexCP+1);
-                int startIndex=byteToCPOffset[startIndexCP];
-                int endIndex=byteToCPOffset[endIndexCP];
-                String [] words = line.split(" ");
-                String lastWord=words[words.length-1];
-                if(lastWord.trim().equals("def")) // there could be a \r at end
-                  retb.addHighlight(startIndex, endIndex+1, defnAttr);
-                else if(lastWord.trim().equals("constr"))
-                  retb.addHighlight(startIndex, endIndex+1, constrAttr);
-                else if(lastWord.trim().equals("not"))
-                  retb.addHighlight(startIndex, endIndex+1, notationAttr);
-                else if(lastWord.trim().equals("thm"))
-                  retb.addHighlight(startIndex, endIndex+1, thmAttr);
-                else if(lastWord.trim().equals("proj"))
-                  retb.addHighlight(startIndex, endIndex+1, defnAttr);
-                else if(lastWord.trim().equals("ind"))
-                  retb.addHighlight(startIndex, endIndex+1, indAttr);
-                else if(lastWord.trim().equals("rec"))
-                  retb.addHighlight(startIndex, endIndex+1, indAttr);
-                else if(lastWord.trim().equals("var"))
-                  retb.addHighlight(startIndex, endIndex+1, varAttr);
-                  
-                  //getDocument().setParagraphAttributes
-                    //      (startIndex, endIndex-startIndex, defnAttr, true);
+              startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
+              endIndexCP=1+Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
+              String [] words = line.split(" ");
+              String lastWord=words[words.length-1];
+              category=lastWord.trim();
+            }
+            else { // new definition
+              int spaceIndex= line.indexOf(" ");
+              category=line.substring(0,spaceIndex+1).trim();
+              line=line.substring(spaceIndex).trim();
+              int colonIndex= line.indexOf(":");
+              spaceIndex= line.indexOf(" ");
+              startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
+              endIndexCP=1+Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
+            }
+
+            if(0<startIndexCP && startIndexCP<endIndexCP) {
+              int startIndex=byteToCPOffset[startIndexCP];
+              int endIndex=byteToCPOffset[endIndexCP];
+              if(category.equals("def")) // there could be a \r at end
+                retb.addHighlight(startIndex, endIndex, defnAttr);
+              else if(category.equals("constr"))
+                retb.addHighlight(startIndex, endIndex, constrAttr);
+              else if(category.equals("not"))
+                retb.addHighlight(startIndex, endIndex, notationAttr);
+              else if(category.equals("thm"))
+                retb.addHighlight(startIndex, endIndex, thmAttr);
+              else if(category.equals("proj"))
+                retb.addHighlight(startIndex, endIndex, defnAttr);
+              else if(category.equals("ind"))
+                retb.addHighlight(startIndex, endIndex, indAttr);
+              else if(category.equals("rec"))
+                retb.addHighlight(startIndex, endIndex, indAttr);
+              else if(category.equals("var"))
+                retb.addHighlight(startIndex, endIndex, varAttr);
               }
               
             }
             
             
-          }
         }
         catch(IOException ex)
         {
