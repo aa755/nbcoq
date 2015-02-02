@@ -1102,11 +1102,11 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     final Pattern keywordPat=Pattern.compile(keywords);
     boolean lastCharIsDot;
     private CoqError lastError;
-    private static String indentStrs = "-+*";
+    private static final String indentStrs = "-+*";
     /**
      * file object denoting this file
      */
-    private FileObject fileObj;
+    private final FileObject fileObj;
     class CoqError{
         public int startLoc;
         public int endLoc;
@@ -1521,24 +1521,33 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             String category;
             int startIndexCP= 0;
             int endIndexCP= 0;
-            if(line.startsWith("R")) { // reference to already defined thing
-              line=line.substring(1);
-              int colonIndex= line.indexOf(":");
-              int spaceIndex= line.indexOf(" ");
-              startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
-              endIndexCP=1+Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
-              String [] words = line.split(" ");
-              String lastWord=words[words.length-1];
-              category=lastWord.trim();
-            }
-            else { // new definition
-              int spaceIndex= line.indexOf(" ");
-              category=line.substring(0,spaceIndex+1).trim();
-              line=line.substring(spaceIndex).trim();
-              int colonIndex= line.indexOf(":");
-              spaceIndex= line.indexOf(" ");
-              startIndexCP=Integer.parseInt(line.substring(0, colonIndex));
-              endIndexCP=1+Integer.parseInt(line.substring(colonIndex+1, spaceIndex));
+            try {
+
+              if (line.startsWith("R")) { // reference to already defined thing
+                line = line.substring(1);
+                int colonIndex = line.indexOf(":");
+                int spaceIndex = line.indexOf(" ");
+                startIndexCP = Integer.parseInt(line.substring(0, colonIndex));
+                endIndexCP = 1 + Integer.parseInt(line.substring(colonIndex + 1, spaceIndex));
+                String[] words = line.split(" ");
+                String lastWord = words[words.length - 1];
+                category = lastWord.trim();
+              } else { // new definition
+                int spaceIndex = line.indexOf(" ");
+                category = line.substring(0, spaceIndex + 1).trim();
+                line = line.substring(spaceIndex).trim();
+                int colonIndex = line.indexOf(":");
+                spaceIndex = line.indexOf(" ");
+                startIndexCP = Integer.parseInt(line.substring(0, colonIndex));
+                endIndexCP = startIndexCP + 1; // in some cases, 
+                //the .glob file omits end index, specially for 1-character notations.
+                try {
+                  endIndexCP = 1 + Integer.parseInt(line.substring(colonIndex + 1, spaceIndex));
+                } catch (NumberFormatException e) {
+                }
+              }
+            } catch (NumberFormatException ex) {
+              continue;
             }
 
             if(0<startIndexCP && startIndexCP<endIndexCP) {
