@@ -1057,7 +1057,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             new Color(200, 255, 200));
     private static final AttributeSet compiledCodeAttrDark =
             AttributesUtilities.createImmutable(StyleConstants.Background,
-            new Color(50, 20, 0));
+            new Color(10, 20, 30));
     private static final AttributeSet errorCodeAttr =
             AttributesUtilities.createImmutable(StyleConstants.Background,
             new Color(255, 100, 100));
@@ -1067,6 +1067,9 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
     private static final AttributeSet indAttr =
             AttributesUtilities.createImmutable(StyleConstants.Foreground,
             new Color(150, 150, 255));
+    private static final AttributeSet varAttr =
+            AttributesUtilities.createImmutable(StyleConstants.Foreground,
+            new Color(250, 250, 0));
     private static final AttributeSet constrAttr =
             AttributesUtilities.createImmutable(StyleConstants.Foreground,
             new Color(200, 0, 100));
@@ -1518,6 +1521,8 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                   retb.addHighlight(startIndex, endIndex+1, indAttr);
                 else if(lastWord.trim().equals("rec"))
                   retb.addHighlight(startIndex, endIndex+1, indAttr);
+                else if(lastWord.trim().equals("var"))
+                  retb.addHighlight(startIndex, endIndex+1, varAttr);
                   
                   //getDocument().setParagraphAttributes
                     //      (startIndex, endIndex-startIndex, defnAttr, true);
