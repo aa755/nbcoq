@@ -1095,10 +1095,10 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
             AttributesUtilities.createImmutable(StyleConstants.Foreground,
             new Color(255, 50, 50));
     
-    final String keywords="((Definition)|(Fixpoint)|(Lemma)|(Theorem)|(Section)"
+    final String keywords="([^a-zA-Z]((Definition)|(Fixpoint)|(Lemma)|(Theorem)|(Section)"
             + "|(Inductive)|(Qed)|(Defined)|(Require)|(Record)|(Instance)"
             + "|(Export)|(Import)|(Notation)|(CoFixpoint)"
-            + "|(CoInductive)|(match)|(end))";
+            + "|(CoInductive)|(match)|(end)|(Coercion)|(end))[^a-zA-Z0-9])";
     final Pattern keywordPat=Pattern.compile(keywords);
     boolean lastCharIsDot;
     private CoqError lastError;
@@ -1504,14 +1504,16 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
           int [] byteToCPOffset = new int[entText.getBytes().length]; 
           final int entLen = entText.length();
           int byteOffset=0;
+          String entTextB = entText;
           for (int cpOffset=0;cpOffset<entLen;cpOffset++)
           {
-            int newByteOffset= entText.substring(0,cpOffset+1).getBytes().length;
-            for(int i=byteOffset;i<newByteOffset;i++)
-              byteToCPOffset[i]=cpOffset;
-            
-            byteOffset=newByteOffset;
-            
+            int byteDelta= entTextB.substring(0,1).getBytes().length;
+            for(int i=0;i<byteDelta;i++)
+            {
+              byteToCPOffset[byteOffset+i]=cpOffset;
+            }
+            byteOffset=byteOffset+byteDelta;
+            entTextB=entTextB.substring(1);
           }
           int globLineCount=0;
           for (String line:lines)
