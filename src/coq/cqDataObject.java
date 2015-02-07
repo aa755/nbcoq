@@ -1363,9 +1363,12 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
                 {
                     int startOffset=Integer.parseInt(root.getAttributeValue("loc_s"));
                     int endOffset=Integer.parseInt(root.getAttributeValue("loc_e"));
+                    int [] byteToUniOffMap = byteToUnicodeOffsetMap(sendtocoq);
                     lastError=new CoqError();
-                    lastError.startLoc= compiledOffset.intValue() + startOffset ;
-                    lastError.endLoc= compiledOffset.intValue() + endOffset;
+                    lastError.startLoc= compiledOffset.intValue() 
+                                          + byteToUniOffMap[startOffset] ;
+                    lastError.endLoc= compiledOffset.intValue() 
+                                        + byteToUniOffMap[endOffset];
                 }catch(NumberFormatException ex)
                 {
                     lastError=new CoqError();
@@ -1483,6 +1486,25 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
       globSyntaxHighlights.clear();
     }
   
+    int [] byteToUnicodeOffsetMap(String entText)
+    {
+      int [] byteToCPOffset = new int[entText.getBytes().length]; 
+      final int entLen = entText.length();
+      int byteOffset=0;
+      String entTextB = entText;
+      for (int cpOffset=0;cpOffset<entLen;cpOffset++)
+      {
+        int byteDelta= entTextB.substring(0,1).getBytes().length;
+        for(int i=0;i<byteDelta;i++)
+        {
+          byteToCPOffset[byteOffset+i]=cpOffset;
+        }
+        byteOffset=byteOffset+byteDelta;
+        entTextB=entTextB.substring(1);
+      }
+      return byteToCPOffset;
+    }
+  
      void SyntaxHighlight()
     {
       globSyntaxHighlights.clear();
@@ -1501,20 +1523,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
           String globContents = readFile(glob.getPath());
           String [] lines= globContents.split("\n");
           final String entText=getEntireText();
-          int [] byteToCPOffset = new int[entText.getBytes().length]; 
-          final int entLen = entText.length();
-          int byteOffset=0;
-          String entTextB = entText;
-          for (int cpOffset=0;cpOffset<entLen;cpOffset++)
-          {
-            int byteDelta= entTextB.substring(0,1).getBytes().length;
-            for(int i=0;i<byteDelta;i++)
-            {
-              byteToCPOffset[byteOffset+i]=cpOffset;
-            }
-            byteOffset=byteOffset+byteDelta;
-            entTextB=entTextB.substring(1);
-          }
+          int [] byteToCPOffset = byteToUnicodeOffsetMap(entText); 
           int globLineCount=0;
           for (String line:lines)
           {
