@@ -99,9 +99,19 @@ public class ProofSubgoal {
     static class Hypothesis
     {
         private static final Color COLOR=Color.RED;
-        ArrayList<String> vars;
+        private ArrayList<String> vars;
+        /** used to decide whether to add a new variable to this bunch
+         */
+        private int varsCharsSize;
         String type;
         JTextArea typeAr;
+
+    /**
+     * @return the varsCharsSize
+     */
+    public int getVarsCharsSize() {
+      return varsCharsSize;
+    }
 
         static class HypTransferHandler extends TransferHandler{
             String srcVar;
@@ -112,7 +122,7 @@ public class ProofSubgoal {
                 this.dobj = dobj;
             }
             
-
+            
             @Override
             protected Transferable createTransferable(JComponent jc) {
                 return new StringSelection(srcVar);
@@ -194,17 +204,36 @@ public class ProofSubgoal {
             
         }
         
-        public Hypothesis(ArrayList<String> vars, String type) {
-            this.vars = vars;
-            this.type = type;
+//        public Hypothesis(ArrayList<String> vars, String type) {
+//            this.vars = vars;
+//            this.type = type;
+//        }
+        
+        /**
+         * Do NOT directly access this.vars.
+         * This should be the only way to change it
+         * @param var 
+         */
+        void addVar (String var)
+        {
+            this.vars.add(var);
+            varsCharsSize+=var.length();          
         }
         
+
+        int numVars ()
+        {
+            return this.vars.size();
+        }
+
         final void initFromVar(String var, String type)
         {
             this.vars = new ArrayList<String>();
             this.vars.add(var);
-            this.type = type;            
+            this.type = type;
+            varsCharsSize=var.length();
         }
+        
         public Hypothesis(String var, String type) {
             initFromVar(var, type);
         }
@@ -319,7 +348,7 @@ public class ProofSubgoal {
           //  JPanel buttonPanel=new JPanel(new FlowLayout());
             Font fnt=dobj.getEditor().getOpenedPanes()[0].getFont();
             Font newF=fnt.deriveFont((float)(fnt.getSize() + dobj.getFontDelta()));
-            for(int i=0;i<vars.size();i++)
+            for(int i=0;i<numVars();i++)
             {
                 DnDButton but=new DnDButton(vars.get(i));
                 but.setMaximumSize(but.getMinimumSize());
@@ -437,6 +466,7 @@ public class ProofSubgoal {
     return conclP;
     }
     
+    final static int MAX_CHARS_IN_BUNCHED_VARS=30;
     /**
      * final because it is called in constructor
      */
@@ -445,22 +475,21 @@ public class ProofSubgoal {
         ConcurrentHashMap<String,Integer> typeLocs=new ConcurrentHashMap<String, Integer>();
         ArrayList<Hypothesis> compactedList = new ArrayList<Hypothesis>();
         
-        for(int i=0;i<hypothesis.size();i++)
+      for (Hypothesis hyp : hypothesis) {
+        boolean typePresent=typeLocs.containsKey(hyp.type);
+        if(typePresent && compactedList.get(typeLocs.get(hyp.type)).varsCharsSize
+                        <MAX_CHARS_IN_BUNCHED_VARS)
         {
-           Hypothesis hyp=hypothesis.get(i);
-           boolean typePresent=typeLocs.containsKey(hyp.type);
-           if(typePresent)
-           {
-               int index=typeLocs.get(hyp.type);
-               assert(hyp.vars.size()==1);
-               compactedList.get(index).vars.add(hyp.vars.get(0));
-           }
-           else
-           {
-               compactedList.add(hyp);
-               typeLocs.put(hyp.type, compactedList.size()-1);
-           }
+          int index=typeLocs.get(hyp.type);
+          assert(hyp.vars.size()==1);
+          compactedList.get(index).addVar(hyp.vars.get(0));
         }
+        else
+        {
+          compactedList.add(hyp);
+          typeLocs.put(hyp.type, compactedList.size()-1);
+        }
+      }
         hypothesis=compactedList;
     }
 }
