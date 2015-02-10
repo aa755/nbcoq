@@ -1116,7 +1116,7 @@ public class cqDataObject extends MultiDataObject implements KeyListener, Undoab
         {
             addErrorHighlight(startLoc, endLoc);
             
-            //if(uiWindow.isJumpToErrorChecked())
+            if(uiWindow.isJumpToErrorChecked())
               jumpToOffset(startLoc);
         }
     }
