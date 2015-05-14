@@ -550,7 +550,9 @@ public class ProofError extends javax.swing.JPanel implements ListSelectionListe
        String regexp=queryRegexp.getText();
        if(!regexp.isEmpty())
        {
-           ArrayList<JTextArea> areas = curGoal.getTextAreas();
+         ArrayList<JTextArea> areas=new ArrayList<JTextArea>();
+         if(curGoal!=null)
+            areas.addAll(curGoal.getTextAreas());
            areas.add(jTextArea1); // this has to be the last one
           // for the next arrows to work
             int count=0;
