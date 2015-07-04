@@ -1,7 +1,7 @@
 nbcoq : Coq plugin for Netbeans
 =====
 
-NOTE: This plugin was delveloped for Coq version 8.4pl2. It does NOT work with the new 8.4pl3 version because the xml communication protocol for coqtop was changed. Hopefully I would fix that when I start working on my next big Coq project.
+NOTE: This plugin was delveloped for Coq version 8.4pl2. It does NOT work with 8.4pl3 or later versions because the xml communication protocol for coqtop was changed. 
 
 Key features :
 1) All of netbeans's features. I regularly use features like (regexp) search (and replace) content in a project (not just individual files), multiple windows (usually on multiple screens), live version control information. Given the drastic variation in pixel densities screens, the font of the proof window can be adjusted independently of the editor (click on the + or - button)
